@@ -1,0 +1,11 @@
+
+---@param o unit
+---@param args unit.options
+return function (o,args)
+    require ".appearence"(o,args)
+    require ".attribute"(o,args)
+    require ".placement"(o,args)
+    require ".combat"(o,args)
+    require ".skill"(o,args)
+    require ".target"(o,args)
+end

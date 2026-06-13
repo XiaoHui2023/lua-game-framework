@@ -1,0 +1,2 @@
+---@alias state.key
+---| "test"

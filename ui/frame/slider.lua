@@ -1,0 +1,75 @@
+---@class models.ui
+local g = require "..base"
+---@type jass
+local jass = require "jass"
+
+---@class models.ui
+---@field SLIDER_VERTICAL 垂直滑动
+---@field SLIDER_HORIZONTAL 水平滑动
+g.SLIDER_VERTICAL = "SliderVertical"
+g.SLIDER_HORIZONTAL = "SliderHorizontal"
+
+---@class models.ui.slider.options : ui.options
+---@field direction string 滑动方向，默认水平
+---@field percent number 百分比，默认1
+
+---@param args models.ui.slider.options
+---@return ui.slider 返回对象
+g.slider = function(args)
+    -- 默认值
+    args.direction = args.direction or g.SLIDER_HORIZONTAL
+    args.width = args.width or 0.139
+    args.percent = args.percent or 1
+    args.label = args.direction == g.SLIDER_VERTICAL and g.DEFAULT_SLIDER_Y_FRAME() or g.DEFAULT_SLIDER_X_FRAME()
+    args.type = args.type or "slider"
+
+    ---@class ui.slider : ui
+    local o = g.create(args)
+
+    ---@type hook.set 滑动方向
+    o.direction = o.factory.set(args.direction)
+
+    ---@type hook.set 滑块的百分比
+    o.percent = o.factory.set(args.percent)
+
+    ---@type hook.event 百分比变化事件（new_percent,old_percent）
+    o.on_percent_change = o.factory.event()
+
+    -- 过滤处理滑块的百分比，如果是纵向滑，则颠倒 per : 百分比
+    local function filter_percent(per)
+        -- 得到类型
+        local direction = o.direction()
+
+        -- 纵向滑
+        if direction == g.SLIDER_VERTICAL then
+            per = 1 - per
+        end
+
+        return per
+    end
+
+    -- 初始百分比
+    jass.dzapi.frame_set_value(o.handle(), o.percent())
+
+    -- 注册定时器，响应百分比变化
+    o.factory.interval(
+        function()
+            local old_percent = o.percent()
+            local new_percent = jass.dzapi.frame_get_value(o.handle())
+
+            -- 百分比变动，触发回调函数
+            if old_percent ~= new_percent then
+                -- 过滤百分比
+                new_percent = filter_percent(new_percent)
+
+                -- 设置百分比
+                o.percent.set(new_percent)
+
+                -- 运行钩子
+                o.on_percent_change(new_percent, old_percent)
+            end
+        end
+    )
+
+    return o
+end
