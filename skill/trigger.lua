@@ -1,6 +1,6 @@
----@class models.skill
+---@class framework.skill
 local g = require ".base"
-local factory_model = require "models.factory"
+local factory_model = require "lib.reactive".factory
 
 ---@class skill.trigger.options: factory.options
 

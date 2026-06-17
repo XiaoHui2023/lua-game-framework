@@ -1,11 +1,11 @@
----@class models.skill
+---@class framework.skill
 local g = require ".base"
 
 ---@class skill.active.options: skill.options
 ---@field cooldown? number 初始冷却时间
----@field max_cooldown number 初始最大冷却时间
+---@field max_cooldown number 初始最大冷却时�?
 
--- 技能
+-- 技�?
 ---@param args skill.active.options
 ---@return skill.active
 g.create_active = function (args)
@@ -18,17 +18,17 @@ g.create_active = function (args)
     ---@type hook.set 剩余冷却时间<number>
     o.cooldown = o.factory.set(args.cooldown)
 
-    ---@type core.stat 最大冷却时间
+    ---@type skill.stat 最大冷却时�?
     o.max_cooldown = o.create_stat({
         kind = "cooldown",
         unit = "number",
         value = args.max_cooldown,
     })
 
-    ---@type hook.semaphore 锁
+    ---@type hook.semaphore �?
     o.lock = o.factory.semaphore()
 
-    ---@type hook.event 释放技能事件
+    ---@type hook.event 释放技能事�?
     o.on_cast = o.factory.event()
     
     ---@type hook.event 冷却就绪事件
@@ -38,8 +38,8 @@ g.create_active = function (args)
     o.on_cooldown_start = o.factory.event()
 
     -- 减少冷却时间
-    ---@param delta number 减少的冷却时间
-    ---@return boolean 是否减少了冷却时间
+    ---@param delta number 减少的冷却时�?
+    ---@return boolean 是否减少了冷却时�?
     o.reduce_cooldown = function (delta)
         if delta <= 0 then
             return false
@@ -53,8 +53,8 @@ g.create_active = function (args)
     -- 释放
     ---@return boolean 是否释放成功
     o.cast = function()
-        -- 被锁定
-        if o.lock.is_acquired then
+        -- 被锁�?
+        if o.lock.is_acquired() then
             return false
         end
 

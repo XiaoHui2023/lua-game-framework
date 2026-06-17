@@ -1,8 +1,8 @@
----@type models.event
-local g = require ".base"
+---@type framework.event
+local g = require ".apis"
 
-require ".bindings"
-require ".sync"
-require ".key_binding"
+require ".types"
+require ".settings"
+require ".impl"
 
 return g

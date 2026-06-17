@@ -1,6 +1,6 @@
----@class models.unit
+﻿---@class framework.unit
 local g = require "..base"
-local list = require "list"
+local list = require "lib.list"
 
 ---@param o unit
 ---@param args unit.options
@@ -8,10 +8,10 @@ return function (o,args)
     ---@class unit
     o = o
 
-    ---@type hook.add 目标组<list<unit>>
+    ---@type hook.add 鐩爣缁?list<unit>>
     o.target_groups = o.factory.add()
 
-    ---@type hook.computed 目标<unit>
+    ---@type hook.computed 鐩爣<unit>
     o.targets = o.factory.computed(function()
         ---@type list<unit>
         local us = list()
@@ -30,7 +30,7 @@ return function (o,args)
         return us
     end)
     
-    ---@type hook.computed 友方目标<list<unit>>
+    ---@type hook.computed 鍙嬫柟鐩爣<list<unit>>
     o.friendly_targets = o.factory.computed(function()
         ---@type list<unit>
         local targets = o.targets()
@@ -48,7 +48,7 @@ return function (o,args)
         )
     end)
     
-    ---@type hook.computed 敌方目标<list<unit>>
+    ---@type hook.computed 鏁屾柟鐩爣<list<unit>>
     o.hostile_targets = o.factory.computed(function()
         ---@type list<unit>
         local targets = o.targets()
@@ -66,7 +66,7 @@ return function (o,args)
         )
     end)
     
-    ---@type hook.computed 中立目标<list<unit>>
+    ---@type hook.computed 涓珛鐩爣<list<unit>>
     o.neutral_targets = o.factory.computed(function()
         ---@type list<unit>
         local targets = o.targets()
@@ -84,8 +84,8 @@ return function (o,args)
         )
     end)
 
-    -- 选中单位
-    ---@param player? player 玩家
+    -- 閫変腑鍗曚綅
+    ---@param player? player 鐜╁
     o.select = function(player)
         player = player or o.player()
         g.select(o.handle(), player.handle())

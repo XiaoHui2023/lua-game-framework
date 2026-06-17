@@ -1,36 +1,38 @@
-﻿---@class models.ui
----@field DEFAULT_SLOT_IMAGE_IMAGE any 默认插槽图片
----@field DEFAULT_SLOT_PROGRESS_IMAGE any 默认插槽进度图片
----@field DEFAULT_SLOT_BACKGROUND_IMAGE any 默认插槽背景图片
+---@type lib.tablex
+local table = require "lib.tablex"
+---@class framework.ui
+---@field DEFAULT_SLOT_IMAGE_IMAGE any 榛樿鎻掓Ы鍥剧墖
+---@field DEFAULT_SLOT_PROGRESS_IMAGE any 榛樿鎻掓Ы杩涘害鍥剧墖
+---@field DEFAULT_SLOT_BACKGROUND_IMAGE any 榛樿鎻掓Ы鑳屾櫙鍥剧墖
 local g = require "..base"
 
 ---@class ui.slot.progress.options: ui.options
----@field enable? boolean 是否启用
+---@field enable? boolean 鏄惁鍚敤
 
 ---@class ui.slot.image.options: ui.options
----@field enable? boolean 是否启用
+---@field enable? boolean 鏄惁鍚敤
 
 ---@class ui.slot.background.options: ui.options
----@field enable? boolean 是否启用
+---@field enable? boolean 鏄惁鍚敤
 
 ---@class ui.slot.text.options: ui.options
----@field enable? boolean 是否启用
+---@field enable? boolean 鏄惁鍚敤
 
 ---@class ui.slot.options: ui.options
----@field progress? ui.slot.progress.options 进度选项
----@field image? ui.slot.image.options 图片选项
----@field background? ui.slot.background.options 背景选项
----@field text? ui.slot.text.options 文字选项
+---@field progress? ui.slot.progress.options 杩涘害閫夐」
+---@field image? ui.slot.image.options 鍥剧墖閫夐」
+---@field background? ui.slot.background.options 鑳屾櫙閫夐」
+---@field text? ui.slot.text.options 鏂囧瓧閫夐」
 
 -- slot
 g.DEFAULT_SLOT_IMAGE_IMAGE = nil
 g.DEFAULT_SLOT_PROGRESS_IMAGE = nil
 g.DEFAULT_SLOT_BACKGROUND_IMAGE = nil
 
--- 插槽
+-- 鎻掓Ы
 ---@param args? ui.slot.options
 ---@param ... ui.slot.options
----@return ui.slot 返回对象
+---@return ui.slot 杩斿洖瀵硅薄
 g.slot = function(args, ...)
     args = table.deep_merge(args, ...)
     args = args or {}
@@ -51,13 +53,13 @@ g.slot = function(args, ...)
     args.text.size = args.text.size or 1
 
     ---@class ui.slot : ui.void
-    ---@field progress? ui.progress 进度条
-    ---@field image? ui.image 图片
+    ---@field progress? ui.progress 杩涘害鏉?
+    ---@field image? ui.image 鍥剧墖
     local o = g.void(args)
 
-    -- 创建背景
+    -- 鍒涘缓鑳屾櫙
     if args.background.enable then
-        ---@type ui.image 背景子UI
+        ---@type ui.image 鑳屾櫙瀛怳I
         o.background = g.image(args.background, {
             name = "background",
             anchor = g.anchor({
@@ -69,9 +71,9 @@ g.slot = function(args, ...)
         o.background = nil
     end
 
-    -- 创建进度条
+    -- 鍒涘缓杩涘害鏉?
     if args.progress.enable then
-        ---@type ui.progress 进度条子UI
+        ---@type ui.progress 杩涘害鏉″瓙UI
         o.progress = g.progress(args.progress, {
             name = "progress",
             anchor = g.anchor({
@@ -83,9 +85,9 @@ g.slot = function(args, ...)
         o.progress = nil
     end
 
-    -- 创建图片
+    -- 鍒涘缓鍥剧墖
     if args.image.enable then
-        ---@type ui.image 图片子UI
+        ---@type ui.image 鍥剧墖瀛怳I
         o.image = g.image(args.image, {
             name = "image",
             anchor = g.anchor({
@@ -97,9 +99,9 @@ g.slot = function(args, ...)
         o.image = nil
     end
 
-    -- 创建文字
+    -- 鍒涘缓鏂囧瓧
     if args.text.enable then
-        ---@type ui.text 文字子UI
+        ---@type ui.text 鏂囧瓧瀛怳I
         o.text = g.text(args.text, {
             name = "text",
             anchor = g.anchor({
@@ -111,7 +113,7 @@ g.slot = function(args, ...)
         o.text = nil
     end
 
-    -- 设置像素大小为最大的子控件
+    -- 璁剧疆鍍忕礌澶у皬涓烘渶澶х殑瀛愭帶浠?
     o.pixel_size.compute(function()
         ---@type number,number
         local max_width,max_height = 0,0

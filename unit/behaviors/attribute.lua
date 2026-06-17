@@ -1,4 +1,4 @@
----@type models.unit
+---@type framework.unit
 local g = require "..base"
 
 ---@class unit.options

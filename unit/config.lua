@@ -1,33 +1,37 @@
----@class models.unit
----@field DEFAULT_KEY any 默认出生单位KEY
----@field DEFAULT_MOVE_SPEED number 默认出生移速
----@field DEFAULT_BASE_ATTACK_SPEED number 默认出生基础攻击速度
----@field DEFAULT_ATTACK_SPEED number 默认出生攻击速度
----@field DEFAULT_ATTACK_RANGE number 默认出生攻击范围
----@field DEFAULT_TURN_SPEED number 默认出生转身速度
----@field DEFAULT_MODEL model 默认出生模型
----@field DEFAULT_PLAYER player 默认出生玩家
----@field DEFAULT_HEALTH number 默认出生血量
----@field DEFAULT_MAX_HEALTH number 默认出生最大血量
----@field DEFAULT_DAMAGE number 默认出生基础伤害
----@field DEFAULT_FACTION faction 默认出生阵营
----@field DEFAULT_COLOR_ENABLE boolean 默认出生颜色使能
----@field DEFAULT_COLOR color 默认出生颜色
----@field DEFAULT_OVERLAY_ENABLE boolean 默认出生覆盖使能
----@field DEFAULT_OVERLAY color 默认出生覆盖
----@field DEFAULT_OUTLINE_ENABLE boolean 默认出生描边使能
----@field DEFAULT_OUTLINE color 默认出生描边
----@field DEFAULT_ALPHA number 默认出生透明度
----@field DEFAULT_ANIMATION_SPEED number 默认出生动画速度
----@field DEFAULT_HEIGHT number 默认出生高度
----@field DEFAULT_SCALE number 默认出生缩放
----@field DEFAULT_SCALE_X number 默认出生X轴缩放
----@field DEFAULT_SCALE_Y number 默认出生Y轴缩放
----@field DEFAULT_SCALE_Z number 默认出生Z轴缩放
+---@class framework.unit
+---@field DEFAULT_POSITION point 默认出生点
+---@field DEFAULT_FACING number 默认出生朝向
+---@field DEFAULT_KEY any 榛樿鍑虹敓鍗曚綅KEY
+---@field DEFAULT_MOVE_SPEED number 榛樿鍑虹敓绉婚€?
+---@field DEFAULT_BASE_ATTACK_SPEED number 榛樿鍑虹敓鍩虹鏀诲嚮閫熷害
+---@field DEFAULT_ATTACK_SPEED number 榛樿鍑虹敓鏀诲嚮閫熷害
+---@field DEFAULT_ATTACK_RANGE number 榛樿鍑虹敓鏀诲嚮鑼冨洿
+---@field DEFAULT_TURN_SPEED number 榛樿鍑虹敓杞韩閫熷害
+---@field DEFAULT_MODEL model 榛樿鍑虹敓妯″瀷
+---@field DEFAULT_PLAYER player 榛樿鍑虹敓鐜╁
+---@field DEFAULT_HEALTH number 榛樿鍑虹敓琛€閲?
+---@field DEFAULT_MAX_HEALTH number 榛樿鍑虹敓鏈€澶ц閲?
+---@field DEFAULT_DAMAGE number 榛樿鍑虹敓鍩虹浼ゅ
+---@field DEFAULT_FACTION faction 榛樿鍑虹敓闃佃惀
+---@field DEFAULT_COLOR_ENABLE boolean 榛樿鍑虹敓棰滆壊浣胯兘
+---@field DEFAULT_COLOR color 榛樿鍑虹敓棰滆壊
+---@field DEFAULT_OVERLAY_ENABLE boolean 榛樿鍑虹敓瑕嗙洊浣胯兘
+---@field DEFAULT_OVERLAY color 榛樿鍑虹敓瑕嗙洊
+---@field DEFAULT_OUTLINE_ENABLE boolean 榛樿鍑虹敓鎻忚竟浣胯兘
+---@field DEFAULT_OUTLINE color 榛樿鍑虹敓鎻忚竟
+---@field DEFAULT_ALPHA number 榛樿鍑虹敓閫忔槑搴?
+---@field DEFAULT_ANIMATION_SPEED number 榛樿鍑虹敓鍔ㄧ敾閫熷害
+---@field DEFAULT_HEIGHT number 榛樿鍑虹敓楂樺害
+---@field DEFAULT_SCALE number 榛樿鍑虹敓缂╂斁
+---@field DEFAULT_SCALE_X number 榛樿鍑虹敓X杞寸缉鏀?
+---@field DEFAULT_SCALE_Y number 榛樿鍑虹敓Y杞寸缉鏀?
+---@field DEFAULT_SCALE_Z number 榛樿鍑虹敓Z杞寸缉鏀?
 local g = require ".base"
----@type colorlib
-local color = require "color"
+---@type lib.colorlib
+local color = require "lib.color"
 
+g.DEFAULT_POSITION = {x = 0, y = 0}
+g.DEFAULT_FACING = 0
 g.DEFAULT_KEY = nil
 g.DEFAULT_MOVE_SPEED = 225
 g.DEFAULT_BASE_ATTACK_SPEED = 1

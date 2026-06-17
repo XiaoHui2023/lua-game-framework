@@ -1,9 +1,11 @@
-﻿---@class models.ui
+---@type lib.tablex
+local table = require "lib.tablex"
+---@class framework.ui
 local g = require "..base"
 
 ---@param args ui.options
 ---@param ... ui.options
----@return ui.progress 返回对象
+---@return ui.progress 杩斿洖瀵硅薄
 g.progress = function(args,...)
     args = table.merge(args, ...)
     args.image = args.image or g.DEFAULT_IMAGE

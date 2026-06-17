@@ -1,4 +1,4 @@
----@class models.chat
+---@class framework.chat
 local g = require ".base"
 
 ---@type number 聊天记录个数限制

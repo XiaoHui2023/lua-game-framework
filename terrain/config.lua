@@ -1,4 +1,4 @@
----@class models.terrain
+---@class framework.terrain
 ---@field UNIT_SIZE number 单位大小
 local g = require ".base"
 

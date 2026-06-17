@@ -1,4 +1,4 @@
----@type models.ui
+---@type framework.ui
 local g = require "..base"
 
 ---@param o ui

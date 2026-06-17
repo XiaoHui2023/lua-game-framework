@@ -1,10 +1,47 @@
----@class models.ui
+---@class framework.ui
 local g = require "..base"
-local event_registry_core = require "core.event_registry"
+---@type lib.tablex
+local table = require "lib.tablex"
+---@type lib.reactive
+local hook = require "lib.reactive"
+
+---@param keys string[]
+---@return ui.event.registry
+local function create_event_registry(keys)
+    ---@class ui.event.registry
+    local registry = {}
+
+    ---@type table<string, hook.event>
+    local events = {}
+    for _, key in ipairs(keys) do
+        events[key] = hook.event()
+    end
+
+    function registry.get(key)
+        return events[key]
+    end
+
+    function registry.add(key, callback)
+        return events[key].add(callback)
+    end
+
+    ---@param obj hook.factory
+    ---@param event_map table<string, hook.event>
+    function registry.register(obj, event_map)
+        for key, trigger in table.sorted_pairs(event_map) do
+            local handler = registry.get(key)
+            obj.delete.add(trigger.add(function(...)
+                handler.run(obj, ...)
+            end))
+        end
+    end
+
+    return registry
+end
 
 ---@class ui.options
----@field focusable? boolean 是否可聚焦，默认否
----@field clickable? boolean 是否可点击，默认否
+---@field focusable? boolean 是否可聚焦，默认�?
+---@field clickable? boolean 是否可点击，默认�?
 
 ---@alias ui.event.key
 ---| "left_up"
@@ -15,10 +52,10 @@ local event_registry_core = require "core.event_registry"
 ---| "blur"
 ---| "click"
 
----@class ui.event.registry: core.event_registry
+---@class ui.event.registry
 ---@field get fun(key:ui.event.key):hook.event 获取事件
 ---@field add fun(key:ui.event.key, callback:fun(ui:ui,...)):fun() 添加事件钩子
-g.event_registry = event_registry_core({
+g.event_registry = create_event_registry({
     "left_up",
     "left_down",
     "right_up",
@@ -72,7 +109,7 @@ return function (o,args)
         if not o.focusable() then
             return
         end
-        -- 需要可见
+        -- 需要可�?
         if not o.visible() then
             return
         end
@@ -83,7 +120,7 @@ return function (o,args)
         if not o.focusable() then
             return
         end
-        -- 需要可见
+        -- 需要可�?
         if not o.visible() then
             return
         end
@@ -94,7 +131,7 @@ return function (o,args)
         if not o.clickable() then
             return
         end
-        -- 需要可见
+        -- 需要可�?
         if not o.visible() then
             return
         end
@@ -105,7 +142,7 @@ return function (o,args)
         if not o.clickable() then
             return
         end
-        -- 需要可见
+        -- 需要可�?
         if not o.visible() then
             return
         end
@@ -116,7 +153,7 @@ return function (o,args)
         if not o.clickable() then
             return
         end
-        -- 需要可见
+        -- 需要可�?
         if not o.visible() then
             return
         end
@@ -127,7 +164,7 @@ return function (o,args)
         if not o.clickable() then
             return
         end
-        -- 需要可见
+        -- 需要可�?
         if not o.visible() then
             return
         end
@@ -135,14 +172,14 @@ return function (o,args)
         o.on_mouse_right_up()
     end))
 
-    -- 鼠标进入则聚焦
+    -- 鼠标进入则聚�?
     o.on_focus.add(
         function()
             o.is_focused.set(true)
         end
     )
 
-    -- 鼠标离开则取消聚焦
+    -- 鼠标离开则取消聚�?
     o.on_blur.add(
         function()
             o.is_focused.set(false)

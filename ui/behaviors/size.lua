@@ -1,7 +1,7 @@
----@type models.ui
+---@type framework.ui
 local g = require "..base"
----@type models.event
-local event = require "models.event"
+---@type framework.event
+local event = require "framework.event"
 
 ---@alias ui.size_mode
 ---| "fill" 拉伸
@@ -160,8 +160,8 @@ return function (o,args)
     end)
 
     -- 绑定窗口大小改变事件
-    o.delete.add(g.ON_WINDOW_SIZE_CHANGE.add(function(width, height)
-        o.window_size.set(width, height)
+    o.delete.add(g.ON_WINDOW_SIZE_CHANGE(function(api)
+        o.window_size.set(api.width, api.height)
     end))
 
     -- 包装相对尺寸获取

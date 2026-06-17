@@ -1,7 +1,7 @@
----@type models.timer
+---@type framework.timer
 local g = require ".base"
 
-require ".bindings"
+require ".impl"
 require ".core"
 
 return g

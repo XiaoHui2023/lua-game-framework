@@ -1,4 +1,4 @@
----@type models.ui
+---@type framework.ui
 local g = require "..base"
 ---@type mathx.geometry
 local geometry = require "mathx.geometry"
@@ -29,7 +29,7 @@ return function (o)
         ---@type ui 最短距离的ui
         local min_ui = nil
 
-        if o.snap.count > 0 then
+        if o.snap.count() > 0 then
             ---@type list 吸附列表
             local list = o.snap()
             ---@type point 当前位置

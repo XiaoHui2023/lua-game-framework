@@ -1,14 +1,14 @@
----@class models.faction
+---@class framework.faction
 local g = {}
----@type utils.hook
-local hook = require "utils.hook"
+---@type lib.reactive
+local hook = require "lib.reactive"
 
----@type hook.add 阵营对象池
-g.POOL_OBJECT = hook.add()
+---@type hook.add 闃佃惀瀵硅薄鍒楄〃
+g.POOL_OBJECT = hook.collection()
 
 ---@alias faction.stance
----| "neutral"    # 中立立场（既不伤害也不帮助）
----| "friendly"   # 友好立场（互相帮助，不伤害）
----| "hostile"    # 敌对立场（互相伤害，不帮助）
+---| "neutral"    # 涓珛绔嬪満锛堟棦涓嶄激瀹充篃涓嶅府鍔╋級
+---| "friendly"   # 鍙嬪ソ绔嬪満锛堜簰鐩稿府鍔╋紝涓嶄激瀹筹級
+---| "hostile"    # 鏁屽绔嬪満锛堜簰鐩镐激瀹筹紝涓嶅府鍔╋級
 
 return g

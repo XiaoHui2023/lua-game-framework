@@ -1,7 +1,7 @@
----@type models.ui
+---@type framework.ui
 local g = require "..base"
----@type models.event
-local event = require "models.event"
+---@type framework.event
+local event = require "framework.event"
 
 ---@class ui.anchor_position.options : ui.anchor
 ---@field vertical_space? number 垂直间距

@@ -1,4 +1,4 @@
----@class models.timer
+---@class framework.timer
 ---@field create fun(interval: number, func: fun()) 创建计时器
 local g = {}
 

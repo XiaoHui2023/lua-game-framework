@@ -1,4 +1,4 @@
----@class models.game
+---@class framework.game
 local g = require ".base"
 
 ---@type point 垃圾回收点位置

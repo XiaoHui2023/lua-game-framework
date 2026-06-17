@@ -1,40 +1,18 @@
----@class models.chat
+---@class framework.chat
 local g = {}
----@type utils.hook
-local hook = require "utils.hook"
-local list = require "list"
+---@type fun(tb?: any[]): list
+local list = require "lib.list"
+---@type framework.chat.apis
+local apis = require ".apis"
 
----@type hook.event 用户输入聊天事件（player,content）
-g.ON_INPUT = hook.event()
-
----@type hook.event 聊天记录改变事件
-g.ON_MESSAGE_CHANGE = hook.event()
+g.ON_INPUT = apis.ON_INPUT
+g.ON_MESSAGE_CHANGE = apis.ON_MESSAGE_CHANGE
 
 ---@class message
----@field player player 玩家
----@field content string 内容
+---@field player player
+---@field content string
 
----@type list<message> 聊天记录
+---@type list<message>
 g.MESSAGE_HISTORY = list()
-
--- 绑定输入事件。调用输入信息处理函数, 并添加到聊天记录中
-g.ON_INPUT.add(function(player, str)
-    ---@type message
-    local msg = {
-        player = player,
-        content = str,
-    }
-    g.MESSAGE_HISTORY.append(msg)
-
-    local list = g.MESSAGE_HISTORY
-    local limit = g.MESSAGE_LIMIT
-
-    -- 数目限制
-    while list.count > limit do
-        list.pop_front()
-    end
-
-    g.ON_MESSAGE_CHANGE(list)
-end)
 
 return g

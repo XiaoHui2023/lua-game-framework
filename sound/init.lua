@@ -1,8 +1,8 @@
----@type models.sound
+---@type framework.sound
 local g = require ".base"
 
 require ".config"
-require ".bindings"
+require ".impl"
 require ".object"
 
 return g

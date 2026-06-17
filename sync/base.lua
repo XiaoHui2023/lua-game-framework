@@ -1,28 +1,30 @@
-﻿---@class models.sync
----@field send fun(head: string, data: table) 发送同步数据（需要做好数据类型兼容）
----@field listen fun(head: string, callback: fun(player:player, data: table)) 监听同步数据（需要做好数据类型兼容）
+---@type lib.metatablex
+local metatable = require "lib.metatablex"
+---@class framework.sync
+---@field send fun(head: string, data: table) 鍙戦€佸悓姝ユ暟鎹紙闇€瑕佸仛濂芥暟鎹被鍨嬪吋瀹癸級
+---@field listen fun(head: string, callback: fun(player:player, data: table)) 鐩戝惉鍚屾鏁版嵁锛堥渶瑕佸仛濂芥暟鎹被鍨嬪吋瀹癸級
 local g = {}
----@type utils.hook
-local hook = require "utils.hook"
+---@type lib.reactive
+local hook = require "lib.reactive"
 
--- 同步计数
+-- 鍚屾璁℃暟
 local COUNT = 0
 
----得到一个不重复的字段
+---寰楀埌涓€涓笉閲嶅鐨勫瓧绗︿覆
 ---@return string
 local function gen_unique_parameter()
     local param = ""
 
-    -- 按62进制压缩值
+    -- 32杩涘埗鍘嬬缉瀛楃涓?
     local function cal62(n)
-        -- 声明
+        -- 澹版槑
         local sum = 62
         local c
 
-        -- 计算
+        -- 璁＄畻
         local mod = math.floor(n % sum)
 
-        -- 取值
+        -- 鍙栧€?
         if mod <= 9 then
             c = string.char(string.byte("0") + mod)
         elseif mod <= 9 + 26 then
@@ -31,16 +33,16 @@ local function gen_unique_parameter()
             c = string.char(string.byte("A") + mod - 10 - 26)
         end
 
-        -- 拼接
+        -- 鎷兼帴
         param = c .. param
 
-        -- 递归
+        -- 閫掑綊
         if n >= sum then
             cal62(n / sum)
         end
     end
 
-    -- 62进制计算
+    -- 62杩涘埗璁＄畻
     cal62(COUNT)
 
     -- ++
@@ -49,23 +51,22 @@ local function gen_unique_parameter()
     return param
 end
 
----注册同步触发器
----@return sync 同步事件对象
+---娉ㄥ唽鍚屾瑙﹀彂鍣?---@return sync 鍚屾浜嬩欢瀵硅薄
 g.register = function()
-    -- 生成字段
+    -- 鐢熸垚瀛楁
     local param = gen_unique_parameter()
 
-    ---@type hook.event<table> 请求事件
+    ---@type hook.event<table> 璇锋眰浜嬩欢
     local on_send = hook.event()
 
-    ---@type hook.event<player, table> 同步事件
+    ---@type hook.event<player, table> 鍚屾浜嬩欢
     local on_receive = hook.event()
 
     ---@class sync
     ---@operator call(table):nil
     local o = {}
 
-    -- 同步数据
+    -- 鍚屾鏁版嵁
     ---@param data table
     o.run = function(data)
         on_send(data)
@@ -73,9 +74,9 @@ g.register = function()
         g.send(param, data)
     end
 
-    ---添加同步动作
-    ---@param func fun(player:player, response:table):nil 触发函数
-    ---@return fun() 删除函数
+    ---娣诲姞鍚屾鍔ㄤ綔
+    ---@param func fun(player:player, response:table):nil 瑙﹀彂鍑芥暟
+    ---@return fun() 鍒犻櫎鍑芥暟
     o.add = function(func)
         return on_receive.add(func)
     end

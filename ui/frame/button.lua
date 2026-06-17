@@ -1,4 +1,4 @@
----@class models.ui
+---@class framework.ui
 local g = require "..base"
 
 ---@class ui.button.options : ui.options

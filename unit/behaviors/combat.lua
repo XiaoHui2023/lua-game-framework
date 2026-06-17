@@ -1,25 +1,25 @@
----@type models.unit
+---@type framework.unit
 local g = require "..base"
----@type models.event
-local event = require "models.event"
+---@type framework.event
+local event = require "framework.event"
 
-event.ON_UNIT_DAMAGE_TAKEN.add(function (target_handle, source_handle)
-    local target = g.HANDLE_TO_OBJECT[target_handle]
-    local source = g.HANDLE_TO_OBJECT[source_handle]
-    source.on_attack_release(target)
+event.ON_UNIT_DAMAGE_TAKEN(function (api)
+    local target = g.HANDLE_TO_OBJECT[api.target_handle]
+    local source = g.HANDLE_TO_OBJECT[api.source_handle]
+    if source and source.on_attack_release then
+        source.on_attack_release(target)
+    end
 end)
 
 ---@class unit.options
----@field health number? 血量
----@field max_health number? 最大血量
----@field damage number? 伤害
+---@field health number? 血�?---@field max_health number? 最大血�?---@field damage number? 伤害
 
----@class unit.combat.context: core.combat.context
+---@class unit.combat.context: lib.combat.context
 ---@field target unit 目标
 ---@field source? unit 来源
 ---@field inflictor? object 施加者（中介或来源本身）
 
----@class unit.combat.result: core.combat.result
+---@class unit.combat.result: lib.combat.result
 ---@field target unit 目标
 ---@field source unit 来源
 ---@field inflictor object 施加者（中介或来源本身）
@@ -34,39 +34,38 @@ return function (o,args)
     args.max_health = args.max_health or g.DEFAULT_MAX_HEALTH
     args.damage = args.damage or g.DEFAULT_DAMAGE
 
-    ---@type hook.set 血量<number>
+    ---@type hook.set<number> 血�?
     o.health = o.factory.set(args.health)
-    ---@type hook.set 最大血量<number>
+    ---@type hook.set<number> 最大血�?
     o.max_health = o.factory.set(args.max_health)
-    ---@type hook.set 伤害<number>
+    ---@type hook.set<number> 伤害
     o.damage = o.factory.set(args.damage)
-    ---@type hook.event 普通攻击释放事件（目标）
+    ---@type hook.event 普通攻击释放事件（目标�?
     o.on_attack_release = o.factory.event()
-    ---@type hook.event 受到伤害事件（unit.combat.result）
+    ---@type hook.event 受到伤害事件（unit.combat.result�?
     o.on_damage_taken = o.factory.event()
-    ---@type hook.event 造成伤害事件（unit.combat.result）
+    ---@type hook.event 造成伤害事件（unit.combat.result�?
     o.on_damage_dealt = o.factory.event()
-    ---@type hook.event 被控制事件（unit.combat.result）
+    ---@type hook.event 被控制事件（unit.combat.result�?
     o.on_crowd_controlled = o.factory.event()
     ---@type hook.event 生命值变化事件（新生命值，旧生命值）
     o.on_health_changed = o.factory.event()
 
-    ---@type core.combat
-    local combat = require "core.combat"()
+    ---@type lib.combat
+    local combat = require "lib.combat"()
 
-    ---@type core.combat.attacker
+    ---@type lib.combat.attacker
     o.combat_attacker = combat.attacker
-    ---@type core.combat.defender
+    ---@type lib.combat.defender
     o.combat_defender = combat.defender
 
     -- 打击
-    ---@param context unit.combat.context 上下文
-    ---@return unit.combat.result 结果
+    ---@param context unit.combat.context 上下�?    ---@return unit.combat.result 结果
     o.combat = function(context)
         ---@type unit
         local target = context.target
 
-        -- 默认值
+        -- 默认�?
         context.source = context.source or o
         context.inflictor = context.inflictor or context.source
 
@@ -114,32 +113,11 @@ return function (o,args)
         end
     end
 
-    -- 设置生命值
-    ---@param health number 生命值
+    -- 设置生命�?    ---@param health number 生命�?
     o.set_health = function(health)
-        local old_health = o.health
+        local old_health = o.health()
         o.health.set(health)
-        -- 触发生命值变化事件
-        o.on_health_changed(health, old_health)
+        -- 触发生命值变化事�?        o.on_health_changed(health, old_health)
     end
 
-    -- 暴露
-    o.factory.exposed_context.set("health", function ()
-        return {
-            value = o.health(),
-            unit = "number",
-        }
-    end)
-    o.factory.exposed_context.set("max_health", function ()
-        return {
-            value = o.max_health(),
-            unit = "number",
-        }
-    end)
-    o.factory.exposed_context.set("damage", function ()
-        return {
-            value = o.damage(),
-            unit = "number",
-        }
-    end)
 end

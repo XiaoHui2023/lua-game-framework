@@ -1,9 +1,8 @@
----@type models.player
+---@type framework.player
 local g = require ".base"
 
 require ".config"
-require ".bindings"
-require ".object"
+require ".impl"
 require ".behaviors"
 
 return g

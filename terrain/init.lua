@@ -1,8 +1,8 @@
----@type models.terrain
+---@type framework.terrain
 local g = require ".base"
 
 require ".config"
-require ".bindings"
+require ".impl"
 require ".painter"
 require ".render"
 

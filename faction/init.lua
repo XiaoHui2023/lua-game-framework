@@ -1,4 +1,4 @@
----@type models.faction
+---@type framework.faction
 local g = require ".base"
 
 require ".object"

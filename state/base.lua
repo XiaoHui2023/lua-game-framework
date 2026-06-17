@@ -1,18 +1,18 @@
-﻿---@class models.state
-local g = require ".base"
-local factory_model = require "models.factory"
+---@type lib.tablex
+local table = require "lib.tablex"
+---@class framework.state
+local g = {}
+local factory_model = require "lib.reactive".factory
 
 ---@class state.options: factory.options
----@field on_run? fun(context:state.context):nil 运行事件
+---@field on_run? fun(context:state.context):nil 杩愯浜嬩欢
 
 ---@class state.context
----@field domain state.domain 域
----@field state? state 状态
----@field once_done? hook.once_event 完成事件
----@field target_point? point 目标点
----@field source? any 来源
+---@field domain state.domain 鍩?---@field state? state 鐘舵€?---@field once_done? hook.once_event 瀹屾垚浜嬩欢
+---@field target_point? point 鐩爣
+---@field source? any 鏉ユ簮
 
--- 创建域
+-- 鍒涘缓瀵硅薄
 ---@param state state
 ---@return state.domain
 local function create_domain(state)
@@ -27,13 +27,13 @@ local function create_domain(state)
         domain = o,
     }
 
-    ---@type hook.set 上下文<state.context>
+    ---@type hook.set 涓婁笅鏂噑tate.context>
     o.context = o.factory.set(context)
 
-    ---@type hook.set 是否结束了<boolean>
+    ---@type hook.set<boolean> 鏄惁缁撴潫
     o.is_interrupted = o.factory.set(false)
 
-    ---@type hook.event 中断事件
+    ---@type hook.event 涓柇浜嬩欢
     o.on_interrupt = o.factory.event()
 
     o.on_interrupt.add(function ()
@@ -46,8 +46,7 @@ local function create_domain(state)
     return o
 end
 
--- 继承上下文
----@param state state
+-- 缁ф壙涓婁笅鏂?---@param state state
 ---@return state.context
 local function load_context(state)
     ---@type state.context
@@ -56,8 +55,7 @@ local function load_context(state)
     return ctx
 end
 
--- 状态
----@param args? state.options
+-- 鐘舵€?---@param args? state.options
 ---@return state
 g.create = function (args)
     args = args or {}
@@ -66,16 +64,20 @@ g.create = function (args)
     local o = factory_model(args)
     o.set_class("state")
 
-    ---@type boolean 是否正在运行
+    ---@type boolean 鏄惁姝ｅ湪杩愯
     local is_running = false
 
-    ---@type boolean 是否结束了
+    ---@type boolean 鏄惁缁撴潫
     local is_finished = false
 
-    ---@type hook.add 子状态<state>
+    ---@type hook.add 瀛愮姸鎬乻tate>
     o.sub_states = o.factory.add()
+    o.sub_states.wrap_add(function(state)
+        o.factory.capture("", state)
+        return state
+    end)
 
-    ---@type hook.computed 域<state.domain>
+    ---@type hook.computed ?? state.domain>
     o.domain = o.factory.computed(function()
         ---@type state.domain?
         local parent = o.parent()
@@ -85,7 +87,7 @@ g.create = function (args)
         return o.create_domain()
     end)
 
-    ---@type hook.computed 是否需要停止<boolean>
+    ---@type hook.computed<boolean> 鏄惁闇€瑕佸仠姝?
     o.should_stop = o.factory.computed(function()
         ---@type state.domain
         local domain = o.domain()
@@ -95,40 +97,40 @@ g.create = function (args)
         return false
     end)
 
-    ---@type hook.computed 第一个下级<state?>
+    ---@type hook.computed 绗竴涓笅绾tate?>
     o.first_sub_state = o.factory.computed(function()
         return o.sub_states().first()
     end)
 
-    ---@type hook.computed 最后一个下级<state?>
+    ---@type hook.computed 鏈€鍚庝竴涓笅绾tate?>
     o.last_sub_state = o.factory.computed(function()
         return o.sub_states().last()
     end)
 
-    ---@type hook.computed 前级<state?>
+    ---@type hook.computed 鍓嶇骇<state?>
     o.prev_state = o.factory.computed(function()
         ---@type state?
         local parent = o.parent()
         if parent then
-            return parent.children().prev_state(o)
+            return parent.sub_states().prev(o)
         end
         return nil
     end)
 
-    ---@type hook.computed 后级<state?>
+    ---@type hook.computed 鍚庣骇<state?>
     o.next_state = o.factory.computed(function()
         ---@type state?
         local parent = o.parent()
         if parent then
-            return parent.children().next_state(o)
+            return parent.sub_states().next(o)
         end
         return nil
     end)
 
-    ---@type hook.event 结束事件
+    ---@type hook.event 缁撴潫浜嬩欢
     o.on_finish = o.factory.event()
 
-    -- 创建域
+    -- 鍒涘缓瀵硅薄
     ---@return state.domain
     o.create_domain = function ()
         ---@type state.domain
@@ -139,7 +141,7 @@ g.create = function (args)
         return domain
     end
 
-    -- 向前传播
+    -- 鍚戝墠浼犳挱
     local function propagate_forward()
         ---@type state?
         local next_state = o.next_state()
@@ -148,22 +150,22 @@ g.create = function (args)
         end
     end
 
-    -- 尝试结束
+    -- 灏濊瘯缁撴潫
     local function try_finish()
-        -- 不重复执行
+        -- 涓嶉噸澶嶆墽琛?
         if is_finished then
             return
         end
         is_finished = true
 
-        -- 执行结束事件
+        -- 鎵ц缁撴潫浜嬩欢
         o.on_finish()
 
-        -- 向前传播
+        -- 鍚戝墠浼犳挱
         propagate_forward()
     end
 
-    -- 向下传播
+    -- 鍚戜笅浼犳挱
     local function propagate_down()
         ---@type state?
         local first_sub_state = o.first_sub_state()
@@ -178,25 +180,24 @@ g.create = function (args)
             return
         end
 
-        -- 没有下级，直接传播
-        try_finish()
+        -- 娌℃湁涓嬬骇锛岀洿鎺ヤ紶閫?        try_finish()
     end
 
-    -- 运行
+    -- 杩愯
     o.run = function ()
-        -- 需要停止
+        -- 闇€瑕佸仠姝?
         if o.should_stop() then
             return
         end
-        -- 不重复执行
+        -- 涓嶉噸澶嶆墽琛?
         if is_running then
             return
         end
         is_running = true
 
-        -- 执行运行事件
+        -- 鎵ц杩愯浜嬩欢
         if o.on_run then
-            ---@type hook.once_event 完成
+            ---@type hook.once_event 瀹屾垚
             local once_done = o.factory.once_event()
             ---@class state.context
             local ctx = load_context(o)
@@ -206,36 +207,34 @@ g.create = function (args)
             return
         end
 
-        -- 没有运行事件，直接传播
-        propagate_down()
+        -- 娌℃湁杩愯浜嬩欢锛岀洿鎺ヤ紶閫?        propagate_down()
     end
 
-    -- 打断
-    ---@return boolean 是否成功打断
+    -- 鎵撴柇
+    ---@return boolean 鏄惁鎴愬姛鎵撴柇
     o.interrupt = function ()
-        -- 触发中断事件
+        -- 瑙﹀彂涓柇浜嬩欢
         o.on_interrupt()
 
-        -- 触发下级中断事件
-        o.children().for_each(function (child)
+        -- 瑙﹀彂涓嬬骇涓柇浜嬩欢
+        o.sub_states().for_each(function (child)
             child.interrupt()
         end)
 
-        -- 触发后级打断事件
+        -- 瑙﹀彂鍚庣骇鎵撴柇浜嬩欢
         ---@type state?
-        local next = o.next()
+        local next = o.next_state()
         if next then
             next.interrupt()
         end
 
-        -- 删除自己
+        -- 鍒犻櫎鑷繁
         o.delete()
 
         return true
     end
 
-    -- 构建树
-    ---@param tree state.tree
+    -- 鏋勫缓鏍?    ---@param tree state.tree
     o.build_tree = function (tree)
         g.build_tree(tree,o)
     end
@@ -244,19 +243,15 @@ g.create = function (args)
 end
 
 ---@class state.tree.options : state.options
----@field key state.key 模板键
-
+---@field key state.key 妯℃澘閿?
 ---@alias state.tree (state.options[]|state.tree[])
 
--- 构建状态树
+-- 鏋勫缓鐘舵€佹爲
 ---@param tree state.tree
----@param parent? state 父状态
----@return state state
+---@param parent? state 鐖剁姸鎬?---@return state state
 g.build_tree = function (tree, parent)
-    -- 构建一层
-    ---@param tree_level state.tree
-    ---@param parent? state 父状态
-    ---@return state
+    -- 鏋勫缓涓€鐐?    ---@param tree_level state.tree
+    ---@param parent? state 鐖剁姸鎬?    ---@return state
     local function build_level(tree_level,parent)
         if not parent then
             parent = g.create()
@@ -282,7 +277,7 @@ g.build_tree = function (tree, parent)
     return build_level(tree,parent)
 end
 
--- 通过键获取生成器
+-- 閫氳繃閿幏鍙栫敓鎴愬櫒
 ---@param key state.key
 ---@return fun(options: state.options): state
 g.get_generator_by_key = function (key)

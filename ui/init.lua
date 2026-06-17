@@ -1,7 +1,7 @@
----@type models.ui
+---@type framework.ui
 local g = require ".base"
 
-require ".bindings"
+require ".impl"
 require ".object"
 require ".frame"
 require ".widget"

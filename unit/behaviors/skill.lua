@@ -1,4 +1,4 @@
----@class models.unit
+---@class framework.unit
 local g = require "..base"
 
 ---@param o unit
@@ -7,7 +7,7 @@ return function (o,args)
     ---@class unit
     o = o
 
-    ---@type hook.add 被动技能<skill>
+    ---@type hook.add 被动技能skill>
     o.skills = o.factory.add()
 
     -- 添加技能时，绑定单位
@@ -21,7 +21,7 @@ return function (o,args)
             context.unit = o
             skill.context.set(context)
             -- 绑定删除
-            o.children.add(skill)
+            o.factory.capture("", skill)
             return skill
         end
     )

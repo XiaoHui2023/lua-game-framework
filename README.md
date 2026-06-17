@@ -1,46 +1,105 @@
 # lua-game-framework
 
-Lua 游戏通用框架，与 [lua-library](https://github.com/XiaoHui2023/lua-library) 配套使用。宿主侧通常将本仓库挂到 `script/lib/models/`，工具层挂到 `script/lib/utils/`。
+Lua game framework layer. The framework owns domain models, lifecycle helpers,
+and reactive state. It must not read a global engine directly; the host
+application installs an engine adapter before loading runtime modules, and
+runtime modules perform engine-specific injection.
 
-## 模块
+## Host Injection
 
-```text
-camera/     # 相机与交互
-chat/       # 聊天
-core/       # 战斗、属性暴露、移动、管线、模板渲染
-event/      # 事件与按键绑定
-faction/    # 阵营
-fx/         # 特效对象
-game/       # 游戏会话
-object/     # 通用游戏对象
-player/     # 玩家与选单位
-skill/      # 技能（主动/被动/目标/触发）
-sound/      # 音效
-state/      # 状态机
-sync/       # 同步
-terrain/    # 地形绘制与渲染
-timer/      # 定时器
-ui/         # UI 框架（frame、widget、behaviors）
-unit/       # 单位与战斗/技能/放置等行为
-factory.lua # 工厂入口
-lighting.lua
-mod.lua     # 模块加载与依赖排序
-```
-
-## 依赖
-
-- `lua-library`：`utils.hook`、`utils.chain` 等
-- 宿主环境（如 Y3 地图脚本）提供的引擎 API
-
-## 加载
-
-由运行入口把 `lib` 目录加入 `package.path`（与 `lua-library` 相同）：
+The host entry should install the engine once:
 
 ```lua
-local main_source = debug.getinfo(1, "S").source
-local script_root = main_source:sub(1, 1) == "@" and main_source:sub(2) or main_source
-script_root = script_root:match("^(.*)[/\\][^/\\]+$") or "."
-package.path = script_root .. "/lib/?.lua;" .. script_root .. "/lib/?/init.lua;" .. package.path
+require "framework.engine".install_y3(y3, {
+    log = log,
+    GameAPI = GameAPI,
+})
+
+require "runtime"
 ```
 
-业务脚本只写模块名（如 `require "models.game"`），不写本机绝对路径。
+Runtime bindings then read the adapter through:
+
+```lua
+local engine = require "framework.engine".require()
+local y3 = engine.y3
+```
+
+For another engine, provide the same capabilities through `framework.engine.set`.
+The reusable library should depend on the injected adapter, not on `_G.y3`.
+
+The generic runtime expects these adapter fields:
+
+```lua
+require "framework.engine".set({
+    log = {
+        error = function(message) end,
+    },
+    math_backend = {
+        random_float = function(min, max) end,
+        sin = function(value) end,
+        asin = function(value) end,
+        cos = function(value) end,
+        atan = function(value) end,
+    },
+    schedule_next_frame = function(flush) end,
+    configure_log = function(debug_enabled) end,
+    is_debug_mode = function() return false end,
+})
+```
+
+Engine-specific runtime files may require extra adapter fields. The Y3 runtime
+bindings use `engine.y3` and `engine.GameAPI`.
+
+## Layout
+
+```text
+runtime/            host bootstrap, framework injection, and library backend setup
+lib/reactive/       engine-independent reactive primitives
+framework/          reusable engine-independent game framework
+config/             project-level defaults and overrides
+scene/              map scene instances
+prefab/             reusable prefab definitions
+game/systems/       gameplay systems
+game/plugins/       optional gameplay/UI/camera plugins
+```
+
+Inside a framework domain module:
+
+```text
+init.lua            public module facade and same-directory load order
+state.lua           module-level mutable state; plain Lua values only
+types.lua           EmmyLua-only payload/object type declarations when they would crowd init.lua
+settings.lua        framework default values and overridable knobs
+apis.lua            callback.api declarations owned by this framework module
+impl/               engine-independent callback handler registrations
+factory/create file domain object construction API, named by responsibility
+```
+
+Avoid generic `base.lua`, `config.lua`, and `api.lua` in framework submodules. Split them
+by responsibility instead: use `init.lua` for the facade/contract and load order,
+`state.lua` for module-level mutable state, `settings.lua` for defaults, `types.lua` for
+large annotation-only type blocks, and `apis.lua` only for callback API
+declarations. Module-level state must be plain Lua data, not reactive refs,
+events, or semaphores. Framework modules expose stable callback APIs from
+`apis.lua` through their module facade, and load engine-independent `impl/`
+handlers exactly once from `init.lua`. Engine-specific bindings live under
+`runtime/framework/`; framework API declarations do not require
+`framework.engine` or other runtime adapters. External engine capabilities are
+also callback APIs: declare them in `framework/*/apis.lua`, implement them in
+`runtime/framework/*`, and let framework `impl/` handlers handle pure state or
+engine-independent behavior.
+
+## Load Order
+
+The application should load in this order:
+
+```text
+framework.engine install
+runtime
+config
+scene / systems / plugins
+```
+
+Project defaults in `config/framework/*` must load before scene or system code
+creates framework objects.

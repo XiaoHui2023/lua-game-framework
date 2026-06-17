@@ -1,7 +1,7 @@
----@type models.game
+---@type framework.game
 local g = require ".base"
 
 require ".config"
-require ".bindings"
+require ".impl"
 
 return g

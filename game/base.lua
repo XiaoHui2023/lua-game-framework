@@ -1,16 +1,14 @@
----@class models.game
----@field end_game fun() 结束游戏
+---@class framework.game
+---@field end_game fun()
 local g = {}
----@type utils.hook
-local hook = require "utils.hook"
+---@type framework.game.apis
+local apis = require ".apis"
 
----@type hook.event 警告事件（content）
-g.ON_ALERT = hook.event()
+g.ON_ALERT = apis.ON_ALERT
 
--- 警告
----@param content string 警告内容
+---@param content string
 g.alert = function (content)
-    g.ON_ALERT(content)
+    g.ON_ALERT({ content = content })
 end
 
 return g

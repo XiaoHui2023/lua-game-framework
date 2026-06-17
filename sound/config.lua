@@ -1,4 +1,4 @@
----@class models.sound
+---@class framework.sound
 local g = require ".base"
 
 ---@type number 默认音量

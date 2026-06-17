@@ -1,43 +1,38 @@
----@class models.ui
+---@type lib.tablex
+local table = require "lib.tablex"
+---@class framework.ui
 local g = require "..base"
 
 ---@alias ui.container.mode
----| 'single' 只显示优先级最高的一个控件
----| 'stack' 全部控件都可见，按照顺序/布局排开
----| 'toggle' 槽位内可以切换当前激活的控件
----| 'overlay' 所有控件都显示，但按层级叠加
-
+---| 'single' 鍙樉绀轰紭鍏堢骇鏈€楂樼殑涓€涓帶浠?---| 'stack' 鍏ㄩ儴鎺т欢閮藉彲瑙侊紝鎸夌収椤哄簭/甯冨眬鎺掑紑
+---| 'toggle' 妲戒綅鍐呭彲浠ュ垏鎹㈠綋鍓嶆縺娲荤殑鎺т欢
+---| 'overlay' 鎵€鏈夋帶浠堕兘鏄剧ず锛屼絾鎸夊眰绾у彔鏀?
 ---@alias ui.container.layout.type
----| "horizontal"  -- 水平排列
----| "vertical"    -- 垂直排列
----| "grid"        -- 网格排列
+---| "horizontal"  -- 姘村钩鎺掑垪
+---| "vertical"    -- 鍨傜洿鎺掑垪
+---| "grid"        -- 缃戞牸鎺掑垪
 
 ---@alias ui.container.layout.flow
----| "top_to_bottom"  -- 从上到下
----| "bottom_to_top"  -- 从下到上
----| "left_to_right"  -- 从左到右
----| "right_to_left"  -- 从右到左
+---| "top_to_bottom"  -- 浠庝笂鍒颁笅
+---| "bottom_to_top"  -- 浠庝笅鍒颁笂
+---| "left_to_right"  -- 浠庡乏鍒板彸
+---| "right_to_left"  -- 浠庡彸鍒板乏
 
 ---@alias ui.container.layout.grid_wrap
----| "row"  -- 行优先
----| "column"  -- 列优先
-
+---| "row"  -- 琛屼紭鍏?---| "column"  -- 鍒椾紭鍏?
 ---@class ui.container.layout.options
----@field type? ui.container.layout.type 当前使用的布局类型（horizontal / vertical / grid）
----@field flow? ui.container.layout.flow 排列方向（horizontal/vertical 时生效）
----@field reverse? boolean 是否反向排列（等价于 flow 的快捷用法）
----@field spacing? number 控件之间的间距
----@field padding? number 外边距
----@field grid_columns? integer 网格列数
----@field grid_rows? integer 网格行数
----@field grid_wrap? ui.container.layout.grid_wrap 网格换行方式（行优先 / 列优先）
----@field grid_spacing? {x:number, y:number} 网格横纵间距
+---@field type? ui.container.layout.type 褰撳墠浣跨敤鐨勫竷灞€绫诲瀷锛坔orizontal / vertical / grid锛?---@field flow? ui.container.layout.flow 鎺掑垪鏂瑰悜锛坔orizontal/vertical 鏃剁敓鏁堬級
+---@field reverse? boolean 鏄惁鍙嶅悜鎺掑垪锛堢瓑浠蜂簬 flow 鐨勫揩鎹风敤娉曪級
+---@field spacing? number 鎺т欢涔嬮棿鐨勯棿璺?---@field padding? number 澶栬竟璺?---@field grid_columns? integer 缃戞牸鍒楁暟
+---@field grid_rows? integer 缃戞牸琛屾暟
+---@field grid_wrap? ui.container.layout.grid_wrap 缃戞牸鎹㈣鏂瑰紡锛堣浼樺厛 / 鍒椾紭鍏堬級
+---@field grid_spacing? {x:number, y:number} 缃戞牸妯旱闂磋窛
 
 ---@class ui.container.options: ui.options
----@field mode? ui.container.mode 模式
----@field layout? ui.container.layout.options 布局
+---@field mode? ui.container.mode 妯″紡
+---@field layout? ui.container.layout.options 甯冨眬
 
--- 容器
+-- 瀹瑰櫒
 ---@param args? ui.container.options
 ---@param ... ui.container.options
 ---@return ui.container
@@ -57,10 +52,10 @@ g.container = function(args,...)
     args.layout.grid_spacing = args.layout.grid_spacing or {x = 0, y = 0}
 
     ---@class ui.container: ui.void
-    ---@field layout ui.container.layout 布局
+    ---@field layout ui.container.layout 甯冨眬
     local o = g.void(args)
 
-    ---@type hook.add<ui> 控件
+    ---@type hook.add<ui> 鎺т欢
     o.widgets = o.factory.add({
         ---@param a ui
         ---@param b ui
@@ -70,54 +65,53 @@ g.container = function(args,...)
         end,
     })
 
-    ---@type hook.set<ui.container.mode> 模式
+    ---@type hook.set<ui.container.mode> 妯″紡
     o.mode = o.factory.set(args.mode)
 
-    ---@class ui.container.layout 布局
+    ---@class ui.container.layout 甯冨眬
     o.layout = {}
 
-    ---@type hook.set<ui.container.layout.type> 布局类型
+    ---@type hook.set<ui.container.layout.type> 甯冨眬绫诲瀷
     o.layout.type = o.factory.set(args.layout.type)
 
-    ---@type hook.set<ui.container.layout.flow> 排列方向
+    ---@type hook.set<ui.container.layout.flow> 鎺掑垪鏂瑰悜
     o.layout.flow = o.factory.set(args.layout.flow)
 
-    ---@type hook.set<boolean> 是否反向排列
+    ---@type hook.set<boolean> 鏄惁鍙嶅悜鎺掑垪
     o.layout.reverse = o.factory.set(args.layout.reverse)
 
-    ---@type hook.set<number> 控件之间的间距
+    ---@type hook.set<number> 鎺т欢涔嬮棿鐨勯棿璺?
     o.layout.spacing = o.factory.set(args.layout.spacing)
 
-    ---@type hook.set<number> 外边距
+    ---@type hook.set<number> 澶栬竟璺?
     o.layout.padding = o.factory.set(args.layout.padding)
 
-    ---@type hook.set<integer> 网格列数
+    ---@type hook.set<integer> 缃戞牸鍒楁暟
     o.layout.grid_columns = o.factory.set(args.layout.grid_columns)
     
-    ---@type hook.set<integer> 网格行数
+    ---@type hook.set<integer> 缃戞牸琛屾暟
     o.layout.grid_rows = o.factory.set(args.layout.grid_rows)
 
-    ---@type hook.set<ui.container.layout.grid_wrap> 网格换行方式
+    ---@type hook.set<ui.container.layout.grid_wrap> 缃戞牸鎹㈣鏂瑰紡
     o.layout.grid_wrap = o.factory.set(args.layout.grid_wrap)
 
-    ---@type hook.set<{x:number, y:number}> 网格横纵间距
+    ---@type hook.set<{x:number, y:number}> 缃戞牸妯旱闂磋窛
     o.layout.grid_spacing = o.factory.set(args.layout.grid_spacing)
 
-    -- 添加下级
+    -- 娣诲姞涓嬬骇
     ---@param ui ui
     o.add_child = function (ui)
         o.widgets.add(ui)
     end
 
-    -- 按列表顺序添加下级
-    ---@param uis ui[]
+    -- 鎸夊垪琛ㄩ『搴忔坊鍔犱笅绾?    ---@param uis ui[]
     o.add_children = function (uis)
         for _, ui in ipairs(uis) do
            o.add_child(ui) 
         end
     end
 
-    ---@type hook.computed<ui?> 优先级最高的控件
+    ---@type hook.computed<ui?> 浼樺厛绾ф渶楂樼殑鎺т欢
     local primary_widget = o.factory.computed(function()
         ---@type list<ui>
         local widgets = o.widgets()
@@ -127,17 +121,17 @@ g.container = function(args,...)
         return widgets.first()
     end)
 
-    ---@type hook.once_event 清除刷新事件 
+    ---@type hook.once_event 娓呴櫎鍒锋柊浜嬩欢 
     local once_clear_refresh = o.factory.once_event()
 
-    -- 得到single视觉大小
+    -- 寰楀埌single瑙嗚澶у皬
     local function get_single_visual_size()
         ---@type ui
         local ui = primary_widget()
         return ui.visual_size()
     end
 
-    -- 得到stack视觉大小
+    -- 寰楀埌stack瑙嗚澶у皬
     local function get_stack_visual_size()
         ---@type list<ui>
         local widgets = o.widgets()
@@ -145,9 +139,9 @@ g.container = function(args,...)
         local type = o.layout.type()
         
         if type == "horizontal" then
-            ---@type number 最大高度
+            ---@type number 鏈€澶ч珮搴?
             local max_height = 0
-            ---@type number 宽度总和
+            ---@type number 瀹藉害鎬诲拰
             local width_sum = 0
             widgets.for_each(
                 ---@param widget ui
@@ -161,9 +155,9 @@ g.container = function(args,...)
             )
             return width_sum, max_height
         elseif type == "vertical" then
-            ---@type number 最大宽度
+            ---@type number 鏈€澶у搴?
             local max_width = 0
-            ---@type number 高度总和
+            ---@type number 楂樺害鎬诲拰
             local height_sum = 0
             widgets.for_each(
                 ---@param widget ui
@@ -181,7 +175,7 @@ g.container = function(args,...)
         end
     end
 
-    -- 设置像素大小
+    -- 璁剧疆鍍忕礌澶у皬
     o.pixel_size.compute(function()
         ---@type ui.container.mode
         local mode = o.mode()
@@ -199,7 +193,7 @@ g.container = function(args,...)
         end
     end)
     
-    --- single布局
+    --- single甯冨眬
     local function layout_single()
         ---@type ui
         local ui = primary_widget()
@@ -208,21 +202,21 @@ g.container = function(args,...)
         if ui == nil then
             return
         end
-        -- 只显示一个
+        -- 鍙樉绀轰竴涓?
         widgets.for_each(
             ---@param widget ui
             function(widget)
                 if widget == ui then
                     return
                 end
-                once_clear_refresh(widget.hide_lock.acquire()) -- 获取隐藏锁
+                once_clear_refresh(widget.hide_lock.acquire()) -- 鑾峰彇闅愯棌閿?
             end
         )
 
         ui.anchor_center(o)
     end
 
-    --- stack布局
+    --- stack甯冨眬
     local function layout_stack()
         ---@type list<ui>
         local widgets = o.widgets()
@@ -300,7 +294,7 @@ g.container = function(args,...)
         )
     end
 
-    --- 刷新布局
+    --- 鍒锋柊甯冨眬
     local function refresh_layout()
         ---@type ui.container.mode
         local mode = o.mode()
@@ -313,17 +307,18 @@ g.container = function(args,...)
         end
     end
 
-    -- 重载添加控件
+    -- 閲嶈浇娣诲姞鎺т欢
     o.widgets.on_add.add(
         ---@param widget ui
         function(widget)
-            -- 添加下级
+            -- 娣诲姞涓嬬骇
             o.children.add(widget)
+            o.factory.capture("", widget)
 
-            -- 触发清除刷新事件
+            -- 瑙﹀彂娓呴櫎鍒锋柊浜嬩欢
             once_clear_refresh()
 
-            -- 刷新布局
+            -- 鍒锋柊甯冨眬
             refresh_layout()
         end
     )

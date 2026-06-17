@@ -1,0 +1,88 @@
+---@class event.input
+---@field world_pos point
+---@field window_pos point
+---@field unit? unit
+---@field destructible? any
+---@field key? event.key
+---@field mouse? event.mouse
+
+---@class event.input.sync: event.input
+---@field player player
+
+---@alias event.mouse
+---| "LEFT"
+---| "RIGHT"
+---| "MIDDLE"
+---| "WHEEL_UP"
+---| "WHEEL_DOWN"
+
+---@alias event.key
+---| "A"
+---| "B"
+---| "C"
+---| "D"
+---| "E"
+---| "F"
+---| "G"
+---| "H"
+---| "I"
+---| "J"
+---| "K"
+---| "L"
+---| "M"
+---| "N"
+---| "O"
+---| "P"
+---| "Q"
+---| "R"
+---| "S"
+---| "T"
+---| "U"
+---| "V"
+---| "W"
+---| "X"
+---| "Y"
+---| "Z"
+---| "0"
+---| "1"
+---| "2"
+---| "3"
+---| "4"
+---| "5"
+---| "6"
+---| "7"
+---| "8"
+---| "9"
+---| "F1"
+---| "F2"
+---| "F3"
+---| "F4"
+---| "F5"
+---| "F6"
+---| "F7"
+---| "F8"
+---| "F9"
+---| "F10"
+---| "F11"
+---| "F12"
+---| "SPACE"
+---| "ENTER"
+---| "ESCAPE"
+---| "TAB"
+---| "BACKSPACE"
+---| "SHIFT"
+---| "CONTROL"
+---| "ALT"
+---| "CAPSLOCK"
+---| "LEFT"
+---| "RIGHT"
+---| "UP"
+---| "DOWN"
+---| "HOME"
+---| "END"
+---| "PAGEUP"
+---| "PAGEDOWN"
+---| "PRINTSCREEN"
+---| "SCROLLLOCK"
+
+return true

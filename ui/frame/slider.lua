@@ -1,19 +1,19 @@
----@class models.ui
+---@class framework.ui
 local g = require "..base"
 ---@type jass
 local jass = require "jass"
 
----@class models.ui
+---@class framework.ui
 ---@field SLIDER_VERTICAL 垂直滑动
 ---@field SLIDER_HORIZONTAL 水平滑动
 g.SLIDER_VERTICAL = "SliderVertical"
 g.SLIDER_HORIZONTAL = "SliderHorizontal"
 
----@class models.ui.slider.options : ui.options
+---@class framework.ui.slider.options : ui.options
 ---@field direction string 滑动方向，默认水平
 ---@field percent number 百分比，默认1
 
----@param args models.ui.slider.options
+---@param args framework.ui.slider.options
 ---@return ui.slider 返回对象
 g.slider = function(args)
     -- 默认值

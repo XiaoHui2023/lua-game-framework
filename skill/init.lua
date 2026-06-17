@@ -1,4 +1,4 @@
----@type models.skill
+---@type framework.skill
 local g = require ".base"
 
 require ".passive"

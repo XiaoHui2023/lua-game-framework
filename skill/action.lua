@@ -1,9 +1,13 @@
-﻿---@class models.skill
+---@type lib.tablex
+local table = require "lib.tablex"
+---@class framework.skill
 local g = require ".base"
-local factory_model = require "models.factory"
-local Stat = require "core.stat"
----@type utils.hook
-local hook = require "utils.hook"
+local factory_model = require "lib.reactive".factory
+local Stat = require ".stat"
+---@type lib.reactive
+local hook = require "lib.reactive"
+---@type framework.skill.apis
+local apis = require ".apis"
 
 ---@class skill.action.options: factory.options
 ---@field stat_defs skill.stat.definition[] 数据定义列表
@@ -13,11 +17,10 @@ local hook = require "utils.hook"
 ---@class skill.stat.definition 定义
 ---@field name? string 名称
 ---@field kind skill.stat.kind 种类
----@field unit core.exposed.unit 单位
----@field value number 值
-
+---@field unit skill.stat.unit 单位
+---@field value number �?
 ---@type hook.event 创建动作事件<skill.action,skill.action.options>
-g.ON_CREATE_ACTION = hook.event()
+g.ON_CREATE_ACTION = apis.ON_CREATE_ACTION
 
 -- 创建动作
 ---@param args skill.action.options
@@ -31,7 +34,7 @@ g.create_action = function(args)
 
     o.on_run = args.on_run
 
-    ---@type hook.computed 上下文<skill.context>
+    ---@type hook.computed 上下文skill.context>
     o.context = o.factory.computed()
 
     ---@type hook.add 数据<skill.stat>
@@ -46,24 +49,18 @@ g.create_action = function(args)
     end
 
     -- 创建数据
-    ---@param args core.stat.options
-    ---@return core.stat
+    ---@param args skill.stat.options
+    ---@return skill.stat
     o.create_stat = function(args)
-        ---@type core.stat
+        ---@type skill.stat
         local stat = Stat(args)
-        -- 暴露属性
-        o.factory.expose_props(stat, function ()
-            return {
-                value = stat.value(),
-                unit = stat.unit(),
-            }
-        end)
+        -- 暴露属�?
         -- 添加
         o.stats.add(stat)
         return stat
     end
 
-    -- 静态注册数据
+    -- 静态注册数�?
     for name, stat_def in table.sorted_pairs(args.stat_defs) do
         stat_def.name = stat_def.name or name
         local stat = o.create_stat({
@@ -77,7 +74,10 @@ g.create_action = function(args)
     end
 
     -- 触发创建动作事件
-    g.ON_CREATE_ACTION(o, args)
+    g.ON_CREATE_ACTION({
+        action = o,
+        options = args,
+    })
 
     o.factory.register_hook_fields()
 

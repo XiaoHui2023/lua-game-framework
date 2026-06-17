@@ -1,7 +1,7 @@
----@type models.ui
+---@type framework.ui
 local g = require "..base"
----@type models.event
-local event = require "models.event"
+---@type framework.event
+local event = require "framework.event"
 
 ---@class ui.options
 ---@field show? boolean 是否显示（基础）
@@ -26,7 +26,7 @@ return function (o,args)
     ---@type hook.computed 可见性
     o.visible = o.factory.computed(function()
         -- 锁定隐藏
-        if o.hide_lock.is_acquired then
+        if o.hide_lock.is_acquired() then
             return false
         end
 
@@ -38,7 +38,7 @@ return function (o,args)
         end
 
         -- 显示锁（弱）
-        if o.weak_show.is_acquired then
+        if o.weak_show.is_acquired() then
             return true
         end
 

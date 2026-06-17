@@ -1,4 +1,6 @@
-﻿---@type models.ui
+---@type lib.metatablex
+local metatable = require "lib.metatablex"
+---@type framework.ui
 local g = require "..base"
 
 ---@param o ui
@@ -7,18 +9,18 @@ return function (o,args)
     ---@class ui
     o = o
 
-    ---@type hook.set 位置（百分比）
+    ---@type hook.set 浣嶇疆锛堢櫨鍒嗘瘮锛?
     o.relative_position = o.factory.set({x=0.5,y=0.5})
 
-    ---@type hook.set 像素位置
+    ---@type hook.set 鍍忕礌浣嶇疆
     o.pixel_position = o.factory.set({x=0,y=0})
 
-    -- 应用位置
+    -- 搴旂敤浣嶇疆
     o.pixel_position.on_change.add(function(position)
         g.set_position(o, position.x, position.y)
     end)
 
-    -- 包装像素位置
+    -- 鍖呰鍍忕礌浣嶇疆
     o.pixel_position.wrap_set(function(position)
         position.x = math.floor(position.x)
         position.y = math.floor(position.y)
@@ -28,11 +30,11 @@ return function (o,args)
         return old_position and position.x == old_position.x and position.y == old_position.y
     end)
 
-    -- 包装相对位置
+    -- 鍖呰鐩稿浣嶇疆
     o.relative_position.wrap_set(function(position)
         position.x = (position.x > 1 and 1) or (position.x < 0 and 0) or position.x
         position.y = (position.y > 1 and 1) or (position.y < 0 and 0) or position.y
-        -- 保留小数点后三位
+        -- 淇濈暀灏忔暟鐐瑰悗涓変綅
         position.x = math.floor(position.x * 1000) / 1000
         position.y = math.floor(position.y * 1000) / 1000
         return metatable.with_tostring_format(position, "<relative_position %.3f,%.3f>", position.x, position.y)
@@ -41,7 +43,7 @@ return function (o,args)
         return old_position and position.x == old_position.x and position.y == old_position.y
     end)
 
-    -- 像素转相对位置
+    -- 鍍忕礌杞浉瀵逛綅缃?
     o.pixel_position.on_change.add(function(position)
         local window_width, window_height = o.window_size()
         local relative_x = position.x / window_width
@@ -49,7 +51,7 @@ return function (o,args)
         o.relative_position.set({x=relative_x, y=relative_y})
     end)
 
-    -- 相对位置转像素位置
+    -- 鐩稿浣嶇疆杞儚绱犱綅缃?
     o.relative_position.on_change.add(function(position)
         local window_width, window_height = o.window_size()
         local pixel_x = window_width * position.x

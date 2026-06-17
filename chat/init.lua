@@ -1,7 +1,7 @@
----@type models.chat
+---@type framework.chat
 local g = require ".base"
 
 require ".config"
-require ".bindings"
+require ".impl"
 
 return g

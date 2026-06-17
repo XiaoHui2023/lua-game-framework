@@ -1,4 +1,4 @@
----@class models.player
+---@class framework.player
 ---@field set_mouse_click_selection fun(handle: player.handle, enable: boolean) 为玩家开/关鼠标点选
 ---@field set_mouse_drag_selection fun(handle: player.handle, enable: boolean) 为玩家开/关鼠标框选
 ---@field set_mouse_wheel fun(handle: player.handle, enable: boolean) 为玩家开/关鼠标滚轮

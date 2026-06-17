@@ -1,6 +1,6 @@
----@type models.sync
+---@type framework.sync
 local g = require ".base"
 
-require ".bindings"
+require ".impl"
 
 return g

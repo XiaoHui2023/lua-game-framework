@@ -1,4 +1,4 @@
----@type models.ui
+---@type framework.ui
 local g = require "..base"
 
 ---@class ui.options
@@ -29,8 +29,8 @@ return function (o,args)
 
     local function bind_move()
         ---@param pos point
-        o.on_drag_end.add(g.ON_MOUSE_MOVE_ASYNC.add(function(pos)
-            o.on_drag(pos)
+        o.on_drag_end.add(g.ON_MOUSE_MOVE_ASYNC(function(api)
+            o.on_drag(api.position)
         end))
     end
 

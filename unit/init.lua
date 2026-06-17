@@ -1,8 +1,8 @@
----@class models.unit
+---@class framework.unit
 local g = require ".base"
 
 require ".config"
-require ".bindings"
+require ".impl"
 require ".object"
 
 return g

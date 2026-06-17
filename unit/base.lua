@@ -1,5 +1,5 @@
----@class models.unit
----@field new fun(key:any, position:point, player:player): unit.handle 创建单位
+---@class framework.unit
+---@field new fun(key:any, position:point, player:player, facing?:number): unit.handle 创建单位
 ---@field kill fun(handle:unit.handle) 杀死单位
 ---@field remove fun(handle:unit.handle) 删除单位
 ---@field revive fun(handle:unit.handle) 复活单位

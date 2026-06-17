@@ -1,4 +1,4 @@
----@class models.terrain
+---@class framework.terrain
 ---@field set_texture fun(position:point,texture:any,range?:number) 设置地面纹理
 ---@field set_collision fun(position:point) 设置碰撞
 ---@field COLLISION_SIZE number 碰撞大小（宽高）

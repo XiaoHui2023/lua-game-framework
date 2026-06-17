@@ -1,5 +1,7 @@
-﻿---@class models.ui
----@field DEFAULT_IMAGE any 默认图片
+---@type lib.tablex
+local table = require "lib.tablex"
+---@class framework.ui
+---@field DEFAULT_IMAGE any 榛樿鍥剧墖
 local g = require "..base"
 
 -- image
@@ -7,7 +9,7 @@ g.DEFAULT_IMAGE = nil
 
 ---@param args ui.options
 ---@param ... ui.options
----@return ui.image 返回对象
+---@return ui.image 杩斿洖瀵硅薄
 g.image = function(args,...)
     args = table.merge(args, ...)
     args.image = args.image or g.DEFAULT_IMAGE

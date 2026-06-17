@@ -1,39 +1,41 @@
-﻿---@class models.sound
+---@type lib.metatablex
+local metatable = require "lib.metatablex"
+---@class framework.sound
 local g = require ".base"
----@type models.timer
-local Timer = require "models.timer"
+---@type framework.timer
+local Timer = require "framework.timer"
 
----@type any 记录上一个音效句柄
+---@type any 璁板綍涓婁竴涓煶鏁堝彞鏌?
 local LAST_HANDLE = nil
 
----@type table<any, boolean> 音效冷却库
+---@type table<any, boolean> 闊虫晥鍐峰嵈搴?
 local MAP_COOLDOWN = {}
 
----@type number 音效冷却间隔
+---@type number 闊虫晥鍐峰嵈闂撮殧
 local COOLDOWN_INTERVAL = 0.1
 
--- 播放声音
----@param sound any 声音文件
----@return fun() 返回停止这个音效的函数
+-- 鎾斁澹伴煶
+---@param sound any 澹伴煶鏂囦欢
+---@return fun() 杩斿洖鍋滄杩欎釜闊虫晥鐨勫嚱鏁?
 local function play(sound)
     assert(sound ~= nil, "handle is nil")
 
-    -- 冷却
+    -- 鍐峰嵈
     if MAP_COOLDOWN[sound] ~= nil then
         return function() end
     else
         MAP_COOLDOWN[sound] = true
     end
 
-    -- 同名连放
+    -- 鍚屽悕杩炴斁
     if LAST_HANDLE == sound then
         g.stop(LAST_HANDLE)
     end
 
-    -- 播放
+    -- 鎾斁
     local handle = g.play(sound)
 
-    -- 记录对象
+    -- 璁板綍瀵硅薄
     LAST_HANDLE = handle
 
     return function()
@@ -44,9 +46,9 @@ local function play(sound)
     end
 end
 
----定义声音
----@param sound any|table<any> 声音文件
----@return sound 音效对象
+---瀹氫箟澹伴煶
+---@param sound any|table<any> 澹伴煶鏂囦欢
+---@return sound 闊虫晥瀵硅薄
 g.define = function(sound)
     local sound_list
     if type(sound) == "table" then
@@ -59,16 +61,16 @@ g.define = function(sound)
     ---@operator call(...):fun()
     local o = {}
     
-    ---@type table<userdata> 句柄列表
+    ---@type table<userdata> 鍙ユ焺鍒楄〃
     o.sound_list = sound_list
 
-    ---@type integer 句柄列表长度
+    ---@type integer 鍙ユ焺鍒楄〃闀垮害
     o.length = #sound_list
 
     assert(o.length > 0, "sound_list is empty")
 
-    ---播放音效
-    ---@return fun() 返回停止这个音效的函数
+    ---鎾斁闊虫晥
+    ---@return fun() 杩斿洖鍋滄杩欎釜闊虫晥鐨勫嚱鏁?
     o.play = function()
         local sound
         if o.length == 1 then
@@ -88,8 +90,8 @@ g.define = function(sound)
     return o
 end
 
----音效冷却时间
----保证同一音效不会瞬时大量播放
+---闊虫晥鍐峰嵈鏃堕棿
+---淇濊瘉鍚屼竴闊虫晥涓嶄細鐬椂澶ч噺鎾斁
 Timer.loop(
     COOLDOWN_INTERVAL,
     function()

@@ -1,10 +1,10 @@
----@class models.faction
+---@class framework.faction
 local g = require ".base"
-local list = require "list"
-local factory = require "models.factory"
+local list = require "lib.list"
+local factory = require("lib.reactive").factory
 
 ---@class faction.options
----@field default_stance faction.stance? 默认对外立场
+---@field default_stance faction.stance? 榛樿瀵瑰绔嬪満
 
 ---@param args? faction.options
 ---@return faction
@@ -15,27 +15,27 @@ g.create = function(args)
     ---@class faction : factory
     local o = factory()
 
-    -- 入库
+    -- 鍏ュ簱
     o.delete.mount(g.POOL_OBJECT.add(o))
 
-    ---@type hook.set 默认对外立场<faction.stance>
+    ---@type hook.set 榛樿瀵瑰绔嬪満<faction.stance>
     o.default_stance = o.factory.set(args.default_stance)
 
-    ---@type hook.set 对外立场<table<faction, faction.stance>>
+    ---@type hook.set 瀵瑰绔嬪満<table<faction, faction.stance>>
     o.stance = o.factory.set({})
 
-    -- 得到对外立场
-    ---@param fac faction 对方阵营
-    ---@return faction.stance 对外立场
+    -- 寰楀埌瀵瑰绔嬪満
+    ---@param fac faction 瀵规柟闃佃惀
+    ---@return faction.stance 瀵瑰绔嬪満
     o.get_stance = function(fac)
         ---@type table<faction, faction.stance>
         local to_stance = o.stance()
         return to_stance[fac] or o.default_stance()
     end
 
-    -- 设置对外立场
-    ---@param fac faction 对方阵营
-    ---@param stance faction.stance 对外立场
+    -- 璁剧疆瀵瑰绔嬪満
+    ---@param fac faction 瀵规柟闃佃惀
+    ---@param stance faction.stance 瀵瑰绔嬪満
     o.set_stance = function(fac, stance)
         ---@type table<faction, faction.stance>
         local to_stance = o.stance()
@@ -43,14 +43,14 @@ g.create = function(args)
         o.stance.set(to_stance)
     end
 
-    ---@param fac faction 对方阵营
-    ---@return boolean 返回是否友好
+    ---@param fac faction 瀵规柟闃佃惀
+    ---@return boolean 杩斿洖鏄惁鍙嬪ソ
     o.is_friendly = function(fac)
         if o == fac then
             return true
         end
 
-        -- 是否是盟友
+        -- 鏄惁鏄洘鍙?
         if o.get_stance(fac) == "friendly" then
             return true
         end
@@ -58,14 +58,14 @@ g.create = function(args)
         return false
     end
 
-    ---@param fac faction 对方阵营
-    ---@return boolean 返回是否中立
+    ---@param fac faction 瀵规柟闃佃惀
+    ---@return boolean 杩斿洖鏄惁涓珛
     o.is_neutral = function(fac)
         if o == fac then
             return false
         end
 
-        -- 是否是中立
+        -- 鏄惁鏄腑绔?
         if o.get_stance(fac) == "neutral" then
             return true
         end
@@ -73,14 +73,14 @@ g.create = function(args)
         return false
     end
 
-    ---@param fac faction 对方阵营
-    ---@return boolean 返回是否敌对
+    ---@param fac faction 瀵规柟闃佃惀
+    ---@return boolean 杩斿洖鏄惁鏁屽
     o.is_hostile  = function(fac)
         if o == fac then
             return false
         end
 
-        -- 是否是敌人
+        -- 鏄惁鏄晫浜?
         if o.get_stance(fac) == "hostile" then
             return true
         end
@@ -88,9 +88,9 @@ g.create = function(args)
         return false
     end
 
-    ---@return list<faction> 所有同盟阵营
+    ---@return list<faction> 鎵€鏈夊悓鐩熼樀钀?
     o.ally = function()
-        -- 声明
+        -- 澹版槑
         local facs = list()
 
         g.POOL_OBJECT().for_each(
@@ -104,9 +104,9 @@ g.create = function(args)
         return facs
     end
 
-    ---@return list<faction> 所有敌对阵营
+    ---@return list<faction> 鎵€鏈夋晫瀵归樀钀?
     o.enemy = function()
-        -- 声明
+        -- 澹版槑
         local facs = list()
 
         g.POOL_OBJECT().for_each(
@@ -120,15 +120,15 @@ g.create = function(args)
         return facs
     end
 
-    ---设置同盟（对方不一定同盟）
-    ---@param fac faction 对方阵营
+    ---璁剧疆鍚岀洘锛堝鏂逛笉涓€瀹氬悓鐩燂級
+    ---@param fac faction 瀵规柟闃佃惀
     ---@return nil
     o.set_friendly = function(fac)
         if o == fac then
             return
         end
 
-        -- 不重复
+        -- 涓嶉噸澶?
         if o.get_stance(fac) == "friendly" then
             return
         end
@@ -136,8 +136,8 @@ g.create = function(args)
         o.set_stance(fac, "friendly")
     end
 
-    ---设置敌对（对方不一定敌对）
-    ---@param fac faction 对方阵营
+    ---璁剧疆鏁屽锛堝鏂逛笉涓€瀹氭晫瀵癸級
+    ---@param fac faction 瀵规柟闃佃惀
     ---@return nil
     o.set_hostile = function(fac)
         if o == fac then
@@ -151,24 +151,24 @@ g.create = function(args)
         o.set_stance(fac, "hostile")
     end
 
-    -- 结盟（双向）
-    ---@param fac faction 对方阵营
+    -- 缁撶洘锛堝弻鍚戯級
+    ---@param fac faction 瀵规柟闃佃惀
     ---@return nil
     o.ally_with = function(fac)
         o.set_friendly(fac)
         fac.set_friendly(o)
     end
 
-    -- 敌对（双向）
-    ---@param fac faction 对方阵营
+    -- 鏁屽锛堝弻鍚戯級
+    ---@param fac faction 瀵规柟闃佃惀
     ---@return nil
     o.hostile_with = function(fac)
         o.set_hostile(fac)
         fac.set_hostile(o)
     end
 
-    ---设置中立
-    ---@param fac faction 对方阵营
+    ---璁剧疆涓珛
+    ---@param fac faction 瀵规柟闃佃惀
     ---@return nil
     o.set_neutral = function(fac)
         if o == fac then
