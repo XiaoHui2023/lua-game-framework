@@ -57,6 +57,7 @@ bindings use `engine.y3` and `engine.GameAPI`.
 runtime/            host bootstrap, framework injection, and library backend setup
 lib/reactive/       engine-independent reactive primitives
 framework/          reusable engine-independent game framework
+framework/state_machine/ hierarchical state machine for gameplay orchestration
 config/             project-level defaults and overrides
 scene/              map scene instances
 prefab/             reusable prefab definitions
@@ -89,6 +90,45 @@ handlers exactly once from `init.lua`. Engine-specific bindings live under
 also callback APIs: declare them in `framework/*/apis.lua`, implement them in
 `runtime/framework/*`, and let framework `impl/` handlers handle pure state or
 engine-independent behavior.
+
+## State Machine
+
+`framework.state_machine` follows common state machine/statechart vocabulary:
+`machine`, `state`, `transition`, `guard`, `action`, `entry`, `exit`, and
+parent/child states. It is meant for gameplay orchestration such as blocking,
+counterattacks, projectiles, timed states, active/passive interrupts, and
+owner-based cleanup.
+
+```lua
+local sm = require "framework.state_machine"
+
+local machine = sm.machine({ name = "hero_state", owner = hero })
+
+local block = sm.state({
+    name = "block",
+    machine = machine,
+    on_entry = function(state)
+        state:add_timer(1.0, function()
+            state:done("timeout")
+        end)
+    end,
+})
+
+block:on("attacked", function(state, attack)
+    state:done("counter")
+end, { once = true })
+
+block:transition_to({
+    name = "counter",
+    on_entry = function(_, context)
+        -- context.reason == "counter"
+    end,
+})
+
+block:start()
+machine:emit("attacked", attack)
+machine:destroy("unit_destroy")
+```
 
 ## Load Order
 

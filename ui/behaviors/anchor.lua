@@ -3,6 +3,7 @@ local g = require "..base"
 ---@type framework.event
 local event = require "framework.event"
 
+-- 旧的手算锚定布局实现保留；官方 Y3 UI 锚点走 framework.ui.set_anchor。
 ---@class ui.anchor_position.options : ui.anchor
 ---@field vertical_space? number 垂直间距
 ---@field horizontal_space? number 水平间距

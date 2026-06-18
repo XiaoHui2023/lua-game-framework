@@ -3,7 +3,7 @@ local g = require "..base"
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@type lib.reactive
-local hook = require "lib.reactive"
+local reactive = require "lib.reactive"
 
 ---@param keys string[]
 ---@return ui.event.registry
@@ -11,10 +11,10 @@ local function create_event_registry(keys)
     ---@class ui.event.registry
     local registry = {}
 
-    ---@type table<string, hook.event>
+    ---@type table<string, reactive.event>
     local events = {}
     for _, key in ipairs(keys) do
-        events[key] = hook.event()
+        events[key] = reactive.event()
     end
 
     function registry.get(key)
@@ -25,8 +25,8 @@ local function create_event_registry(keys)
         return events[key].add(callback)
     end
 
-    ---@param obj hook.factory
-    ---@param event_map table<string, hook.event>
+    ---@param obj reactive.factory
+    ---@param event_map table<string, reactive.event>
     function registry.register(obj, event_map)
         for key, trigger in table.sorted_pairs(event_map) do
             local handler = registry.get(key)
@@ -40,8 +40,8 @@ local function create_event_registry(keys)
 end
 
 ---@class ui.options
----@field focusable? boolean 是否可聚焦，默认�?
----@field clickable? boolean 是否可点击，默认�?
+---@field focusable
+---@field clickable
 
 ---@alias ui.event.key
 ---| "left_up"
@@ -53,8 +53,8 @@ end
 ---| "click"
 
 ---@class ui.event.registry
----@field get fun(key:ui.event.key):hook.event 获取事件
----@field add fun(key:ui.event.key, callback:fun(ui:ui,...)):fun() 添加事件钩子
+---@field get fun(key:ui.event.key):reactive.event 鑾峰彇浜嬩欢
+---@field add fun(key:ui.event.key, callback:fun(ui:ui,...)):fun() 娣诲姞浜嬩欢閽╁瓙
 g.event_registry = create_event_registry({
     "left_up",
     "left_down",
@@ -74,42 +74,42 @@ return function (o,args)
     ---@class ui
     o = o
 
-    ---@type hook.set 鼠标焦点是否在UI上面
+    ---@type reactive.set 鼠标焦点是否在UI上面
     o.focusable = o.factory.set(args.focusable)
 
-    ---@type hook.set 是否可以点击
+    ---@type reactive.set 是否可以点击
     o.clickable = o.factory.set(args.clickable)
 
-    ---@type hook.event 鼠标左键抬起事件
+    ---@type reactive.event 鼠标左键抬起事件
     o.on_mouse_left_up = o.factory.event()
 
-    ---@type hook.event 鼠标左键按下事件
+    ---@type reactive.event 榧犳爣宸﹂敭鎸変笅浜嬩欢
     o.on_mouse_left_down = o.factory.event()
 
-    ---@type hook.event 鼠标右键抬起事件
+    ---@type reactive.event 鼠标右键抬起事件
     o.on_mouse_right_up = o.factory.event()
 
-    ---@type hook.event 鼠标右键按下事件
+    ---@type reactive.event 榧犳爣鍙抽敭鎸変笅浜嬩欢
     o.on_mouse_right_down = o.factory.event()
 
-    ---@type hook.event 聚焦事件
+    ---@type reactive.event 鑱氱劍浜嬩欢
     o.on_focus = o.factory.event()
 
-    ---@type hook.event 失去焦点事件
+    ---@type reactive.event 澶卞幓鐒︾偣浜嬩欢
     o.on_blur = o.factory.event()
 
-    ---@type hook.set 当前是否聚焦
+    ---@type reactive.set 当前是否聚焦
     o.is_focused = o.factory.set(false)
 
-    ---@type hook.event 点击事件
+    ---@type reactive.event 鐐瑰嚮浜嬩欢
     o.on_click = o.factory.event()
 
-    -- 注册事件
+    -- 娉ㄥ唽浜嬩欢
     o.delete.add(g.on_mouse_focus(o.handle(), function()
         if not o.focusable() then
             return
         end
-        -- 需要可�?
+        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
@@ -120,7 +120,7 @@ return function (o,args)
         if not o.focusable() then
             return
         end
-        -- 需要可�?
+        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
@@ -131,7 +131,7 @@ return function (o,args)
         if not o.clickable() then
             return
         end
-        -- 需要可�?
+        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
@@ -142,7 +142,7 @@ return function (o,args)
         if not o.clickable() then
             return
         end
-        -- 需要可�?
+        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
@@ -153,7 +153,7 @@ return function (o,args)
         if not o.clickable() then
             return
         end
-        -- 需要可�?
+        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
@@ -164,7 +164,7 @@ return function (o,args)
         if not o.clickable() then
             return
         end
-        -- 需要可�?
+        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
@@ -172,28 +172,28 @@ return function (o,args)
         o.on_mouse_right_up()
     end))
 
-    -- 鼠标进入则聚�?
+    -- 榧犳爣杩涘叆鍒欒仛锟
     o.on_focus.add(
         function()
             o.is_focused.set(true)
         end
     )
 
-    -- 鼠标离开则取消聚�?
+    -- 榧犳爣绂诲紑鍒欏彇娑堣仛锟
     o.on_blur.add(
         function()
             o.is_focused.set(false)
         end
     )
 
-    -- 鼠标左键按下点击
+    -- 榧犳爣宸﹂敭鎸変笅鐐瑰嚮
     o.on_mouse_left_down.add(
         function()
             o.on_click()
         end
     )
     
-    -- 注册事件
+    -- 娉ㄥ唽浜嬩欢
     g.event_registry.register(o,{
         left_up = o.on_mouse_left_up,
         left_down = o.on_mouse_left_down,

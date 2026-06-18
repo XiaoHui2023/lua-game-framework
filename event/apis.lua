@@ -50,6 +50,7 @@ M.ON_MOUSE_DOWN_ASYNC = callback.api({ name = "event.ON_MOUSE_DOWN_ASYNC" })
 M.ON_MOUSE_UP_ASYNC = callback.api({ name = "event.ON_MOUSE_UP_ASYNC" })
 
 ---@class event.Wheel
+---@field input event.input 本地异步输入数据，mouse 表示滚轮方向
 M.ON_WHEEL_UP = callback.api({ name = "event.ON_WHEEL_UP" })
 M.ON_WHEEL_DOWN = callback.api({ name = "event.ON_WHEEL_DOWN" })
 

@@ -1,6 +1,6 @@
 ---@type framework.sync
-local g = require ".base"
+local M = require ".base"
 
 require ".impl"
 
-return g
+return M

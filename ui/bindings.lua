@@ -309,6 +309,10 @@ g.set_position = function(ui, x, y)
     ui.handle():set_absolute_pos(x, y)
 end
 
+g.set_anchor = function(ui, x, y)
+    ui.handle():set_anchor(x, y)
+end
+
 g.set_progress = function(ui, progress)
     progress = (progress > 1 and 1) or progress
     progress = (progress < 0 and 0) or progress
@@ -325,10 +329,10 @@ g.set_rotation = function(ui, rotation)
         handle = get_progress_bar_image(ui)
     end
     if not handle then
-        handle = ui.handle
+        handle = ui.handle()
     end
 
-    ui.handle():set_widget_absolute_rotation(rotation)
+    handle:set_widget_absolute_rotation(rotation)
 end
 
 --[[

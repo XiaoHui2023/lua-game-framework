@@ -1,1 +1,2 @@
--- 玩家模块暂未注册框架内实现，保留入口用于后续聚合。
+-- Load player framework implementations.
+require ".select_unit"

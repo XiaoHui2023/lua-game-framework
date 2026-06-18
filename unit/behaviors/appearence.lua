@@ -149,10 +149,11 @@ return function (o,args)
         scale_z = scale_z or scale_x or 1
 
         ---@type model
-        local model = o.model()
-        local real_scale_x = scale_x * model.scale_x
-        local real_scale_y = scale_y * model.scale_y
-        local real_scale_z = scale_z * model.scale_z
+        local model = o.model() or {}
+        local model_scale = model.scale or 1
+        local real_scale_x = scale_x * (model.scale_x or model_scale)
+        local real_scale_y = scale_y * (model.scale_y or model_scale)
+        local real_scale_z = scale_z * (model.scale_z or model_scale)
 
         g.set_scale(o.handle(), real_scale_x, real_scale_y, real_scale_z)
     end

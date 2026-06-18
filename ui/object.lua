@@ -2,26 +2,26 @@
 local g = require ".base"
 local factory = require "lib.reactive".factory
 ---@type lib.reactive
-local hook = require "lib.reactive"
+local reactive = require "lib.reactive"
 ---@type framework.ui.apis
 local apis = require ".apis"
 
----@type hook.event 鍒涘缓浜嬩欢<ui>
+---@type reactive.event 鍒涘缓浜嬩欢<ui>
 g.ON_CREATE = apis.ON_CREATE
 
 ---@class ui.options : factory.options
----@field alpha? number 閫忔槑搴?---@field image? any 鍥剧墖璺緞
----@field layer? ui.layer 鍥惧眰
----@field parent? ui 鐖禪I
----@field type? ui.type 绫诲瀷
----@field priority? number 浼樺厛绾э紙灏忕殑浼樺厛绾э級
----@field progress? number 杩涘害锛堢櫨鍒嗘瘮锛?---@field rotation? number 鏃嬭浆锛堣搴︼級
----@field color? color? 棰滆壊
----@field align? ui.position 瀵归綈鏂瑰紡
----@field anchor? ui.anchor 鏂囨湰鐨勯敋鐐规病鏈夋柟浣嶄竴璇达紝鍙湁涓績銆傚疄闄呮柟浣嶅彇鍐充簬瀵归綈鏂瑰紡
+---@field alpha
+---@field layer
+---@field parent
+---@field type
+---@field priority
+---@field progress
+---@field color
+---@field align
+---@field anchor
 
----@param args? ui.options
----@return ui 杩斿洖UI瀵硅薄
+---@param args
+---@return ui 鏉╂柨娲朥I鐎电
 g.create = function(args)
     args = args or {}
     args.image = args.image or ""
@@ -34,58 +34,58 @@ g.create = function(args)
     ---@class ui : factory
     local o = factory(args)
 
-    -- 璁剧疆绫诲悕
+    -- 鐠佸墽鐤嗙猾璇叉倳
     o.set_class("ui")
 
-    ---@type hook.set<ui.handle> 鍙ユ焺
+    ---@type reactive.set<ui.handle> 閸欍儲鐒
     o.handle = o.factory.set(g.new(args.type, args.layer))
 
-    ---@type ui.type 绫诲瀷
+    ---@type ui.type 缁
     o.type = args.type
 
-    ---@type ui.layer 鍥惧眰
+    ---@type ui.layer 閸ユ儳鐪
     o.layer = args.layer
 
-    ---@type hook.set<integer> 浼樺厛绾?
+    ---@type reactive.set<integer> 娴兼ê鍘涚痪
     o.priority = o.factory.set(args.priority)
 
-    ---@type hook.set 閫忔槑搴?
+    ---@type reactive.set 閫忔槑搴
     o.alpha = o.factory.set(args.alpha)
 
-    ---@type hook.set 鍥剧墖
+    ---@type reactive.set 閸ュ墽澧
     o.image = o.factory.set(args.image)
 
-    ---@type hook.set<number> 杩涘害锛堢櫨鍒嗘瘮锛?
+    ---@type reactive.set<number> 杩涘害锛堢櫨鍒嗘瘮锛
     o.progress = o.factory.set(args.progress)
 
-    ---@type hook.set<number> 鏃嬭浆锛堣搴︼級
+    ---@type reactive.set<number> 閺冨
     o.rotation = o.factory.set(args.rotation)
 
-    ---@type hook.set<color?> 棰滆壊锛堜负绌鸿〃绀轰笉璁剧疆锛?
+    ---@type reactive.set<color
     o.color = o.factory.set(args.color)
 
-    ---@type hook.add<ui> children
+    ---@type reactive.add<ui> children
     o.children = o.factory.add()
 
-    -- 缁戝畾鍒犻櫎瀵硅薄
+    -- 缂佹垵鐣鹃崚鐘绘珟鐎电
     o.delete.add(
         function()
             g.delete(o.handle())
         end
     )
 
-    -- 鍏ュ簱
+    -- 閸忋儱绨
     g.HANDLE_TO_OBJECT[o.handle()] = o
     o.delete.add(function ()
         g.HANDLE_TO_OBJECT[o.handle()] = nil
     end)
 
-    -- 娉ㄥ唽琛屼负
+    -- 濞夈劌鍞界悰灞艰礋
     require ".behaviors"(o,args)
     -- 娉ㄥ唽浜嬩欢
     o.factory.register_hook_fields()
 
-    -- 瑙﹀彂鍒涘缓浜嬩欢
+    -- 鐟欙箑褰傞崚娑樼紦娴滃
     g.ON_CREATE({ ui = o })
 
     return o

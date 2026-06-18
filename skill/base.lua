@@ -1,54 +1,108 @@
-﻿---@class framework.skill
+---@class framework.skill
 local g = {}
+
 local factory_model = require "lib.reactive".factory
 local Stat = require ".stat"
 
 ---@class skill.context
----@field unit unit 鍗曚綅
+---@field unit? unit 释放者或拥有者单位，可由业务或引擎适配层注入
+---@field owner? any 技能拥有者，可用于玩家、装备、召唤物等非 unit 场景
+---@field engine? table 可选，引擎适配对象，放置运行时依赖钩子
+
+---@class skill.effect
+---@field name? string 效果名，便于调试和 UI 展示
+---@field description? string 效果描述，便于调试和 UI 展示
+---@field on_attach? fun(skill:skill):nil 可选，效果加入技能时调用
+---@field on_detach? fun(skill:skill):nil 可选，效果从技能移除或技能销毁时调用
+
+---@class skill.active_effect: skill.effect
+---@field on_cast? fun(skill:skill.active, request:skill.cast_request):any 可选，主动释放时调用
 
 ---@alias skill.stat.kind
----| 'damage' 浼ゅ
----| 'damage_coef' 浼ゅ绯绘暟
----| 'range' 鑼冨洿
----| 'radius' 鍗婂緞
----| 'distance' 璺濈
----| 'cone_angle' 鎵囧舰瑙掑害
----| 'cooldown' 鍐峰嵈鏃堕棿
----| 'duration' 鎸佺画鏃堕棿
+---| 'damage' 伤害
+---| 'damage_coef' 伤害系数
+---| 'range' 范围
+---| 'radius' 半径
+---| 'distance' 距离
+---| 'cone_angle' 扇形角度
+---| 'cooldown' 冷却时间
+---| 'duration' 持续时间
 
 ---@class skill.options: factory.options
----@field context? skill.context 涓婁笅锟?
--- 鍒涘缓鎶€锟?---@param args skill.options
+---@field name? string 技能名，可用于 UI、日志和调试
+---@field description? string 技能描述，可用于 UI 和调试
+---@field context? skill.context 上下文，由业务或引擎适配层注入
+---@field passive_effects? skill.effect[] 初始被动效果列表
+
+---@param effect skill.effect
+---@param skill skill
+local function attach_effect(effect, skill)
+    if type(effect.on_attach) == "function" then
+        effect.on_attach(skill)
+    end
+end
+
+---@param effect skill.effect
+---@param skill skill
+local function detach_effect(effect, skill)
+    if type(effect.on_detach) == "function" then
+        effect.on_detach(skill)
+    end
+end
+
+---@param args? skill.options
 ---@return skill
 g.new = function(args)
+    args = args or {}
     args.context = args.context or {}
 
     ---@class skill: factory
     local o = factory_model(args)
     o.set_class("skill")
 
-    ---@type hook.set 涓婁笅鏂噑kill.context>
+    ---@type hook.set<string>
+    o.display_name = o.factory.set(args.name or "")
+
+    ---@type hook.set<string>
+    o.description = o.factory.set(args.description or "")
+
+    ---@type hook.set<skill.context>
     o.context = o.factory.set(args.context)
 
-    ---@type hook.add 鏁版嵁<skill.stat>
+    ---@type hook.add<skill.stat>
     o.stats = o.factory.add()
 
-    ---@type hook.add 瑙﹀彂鍣╯kill.trigger>
+    ---@type hook.add<skill.trigger>
     o.triggers = o.factory.add()
 
-    ---@type hook.add 鐩爣<skill.target>
+    ---@type hook.add<skill.target>
     o.targets = o.factory.add()
 
-    -- 鍒涘缓鏁版嵁
-    ---@param args skill.stat.options
+    ---@type hook.add<skill.effect>
+    o.passive_effects = o.factory.add()
+
+    o.passive_effects.wrap_add(function(effect)
+        attach_effect(effect, o)
+        o.delete.add(function()
+            detach_effect(effect, o)
+        end)
+        return effect
+    end)
+
+    ---@param stat_args skill.stat.options
     ---@return skill.stat
-    o.create_stat = function(args)
+    o.create_stat = function(stat_args)
         ---@type skill.stat
-        local stat = Stat(args)
-        -- 娣诲姞
+        local stat = Stat(stat_args)
         o.stats.add(stat)
         o.factory.capture("", stat)
         return stat
+    end
+
+    ---@param effect skill.effect
+    ---@return fun()
+    o.add_passive_effect = function(effect)
+        return o.passive_effects.add(effect)
     end
 
     o.triggers.wrap_add(
@@ -61,7 +115,6 @@ g.new = function(args)
         end
     )
 
-    -- 娣诲姞鐩爣鏃舵彁渚涗笂涓嬫枃
     o.targets.wrap_add(
         ---@param target skill.target
         ---@return skill.target
@@ -71,6 +124,18 @@ g.new = function(args)
             return target
         end
     )
+
+    if args.passive_effects ~= nil then
+        for _, effect in ipairs(args.passive_effects) do
+            o.passive_effects.add(effect)
+        end
+    end
+
+    o.destroy = function()
+        o.factory.dispose()
+    end
+
+    o.dispose = o.destroy
 
     o.factory.register_hook_fields()
 

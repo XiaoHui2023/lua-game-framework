@@ -3,83 +3,94 @@ local g = require ".base"
 ---@type lib.debugx
 local debugx = require "lib.debugx"
 
----@class timer
----@field time_reset number
+---@class framework.timer.task
+---@field interval_time number
 ---@field time_remain number
----@field run fun()
+---@field run fun(interval_time?: number)
 ---@field is_running boolean
 
----@type timer[]
+---@type framework.timer.task[]
 local CENTER_TIMER_LIST = {}
 
 local CENTER_TIMER_INTERVAL = 0.01
+
+local function assert_interval_time(interval_time)
+    assert(type(interval_time) == "number" and interval_time > 0, "framework.timer interval must be positive")
+end
+
+local function normalize_loop_args(interval, func)
+    if type(interval) == "function" then
+        func, interval = interval, func
+    end
+    interval = interval or CENTER_TIMER_INTERVAL
+    assert_interval_time(interval)
+    if interval < CENTER_TIMER_INTERVAL then
+        interval = CENTER_TIMER_INTERVAL
+    end
+    assert(type(func) == "function", "framework.timer callback must be a function")
+    return interval, func
+end
+
+local function remove_center_timer(task)
+    if not task.is_running then
+        return
+    end
+    task.is_running = false
+    for i = #CENTER_TIMER_LIST, 1, -1 do
+        if CENTER_TIMER_LIST[i] == task then
+            table.remove(CENTER_TIMER_LIST, i)
+            return
+        end
+    end
+end
+
+local function add_center_timer(interval, func)
+    ---@type framework.timer.task
+    local task = {
+        interval_time = interval,
+        time_remain = interval,
+        run = func,
+        is_running = true,
+    }
+    table.insert(CENTER_TIMER_LIST, task)
+
+    return function()
+        remove_center_timer(task)
+    end
+end
 
 g.create(CENTER_TIMER_INTERVAL, function()
     g.COUNT = g.COUNT + CENTER_TIMER_INTERVAL
 
     local index = 1
     while index <= #CENTER_TIMER_LIST do
-        local timer = CENTER_TIMER_LIST[index]
-        timer.time_remain = timer.time_remain - CENTER_TIMER_INTERVAL
-        if timer.time_remain <= 0 then
-            timer.time_remain = timer.time_reset
-            xpcall(timer.run, function(err)
+        local task = CENTER_TIMER_LIST[index]
+        task.time_remain = task.time_remain - CENTER_TIMER_INTERVAL
+        if task.time_remain <= 0 then
+            task.time_remain = task.interval_time
+            xpcall(function()
+                task.run(task.interval_time)
+            end, function(err)
                 debugx.error(err)
             end)
         end
-        if CENTER_TIMER_LIST[index] == timer then
+        if CENTER_TIMER_LIST[index] == task then
             index = index + 1
         end
     end
 end)
 
----@param interval number
----@param func fun()
----@return fun()
-local function add_center_timer(interval, func)
-    ---@type timer
-    local timer = {
-        time_reset = interval,
-        time_remain = interval,
-        run = func,
-        is_running = true,
-    }
-    table.insert(CENTER_TIMER_LIST, timer)
-
-    return function()
-        if not timer.is_running then
-            return
-        end
-        timer.is_running = false
-        for i = #CENTER_TIMER_LIST, 1, -1 do
-            if CENTER_TIMER_LIST[i] == timer then
-                table.remove(CENTER_TIMER_LIST, i)
-                return
-            end
-        end
-    end
-end
-
----@alias timer.loop.func fun()
+---@alias timer.loop.func fun(interval_time?: number)
 
 ---@overload fun(func: timer.loop.func): function
 ---@overload fun(func: timer.loop.func, interval: number): function
 ---@overload fun(interval: number, func: timer.loop.func): function
----@param interval? number|fun()
----@param func timer.loop.func
+---@param interval? number|timer.loop.func
+---@param func? timer.loop.func|number
 ---@return fun()
-g.loop = function(interval, func)
-    if type(interval) == "function" then
-        func, interval = interval, func
-    end
-    ---@cast interval number
-    ---@cast func timer.loop.func
-    interval = interval or CENTER_TIMER_INTERVAL
-    interval = interval < CENTER_TIMER_INTERVAL and CENTER_TIMER_INTERVAL or interval
-
-    return add_center_timer(interval, function()
-        func()
-    end)
+function g.loop(interval, func)
+    local interval_time, callback = normalize_loop_args(interval, func)
+    return add_center_timer(interval_time, callback)
 end
 
 ---@overload fun(func: fun()): function
@@ -88,14 +99,14 @@ end
 ---@param func fun()|number
 ---@param interval? number|fun()
 ---@return fun()
-g.delay = function(func, interval)
+function g.delay(func, interval)
     if type(interval) == "function" then
         func, interval = interval, func
     end
-    ---@cast interval number
-    ---@cast func timer.loop.func
+    ---@cast func fun()
+    ---@cast interval number?
     interval = interval or 0
-    interval = interval < 0 and 0 or interval
+    assert(type(interval) == "number" and interval >= 0, "framework.timer delay interval must be non-negative")
 
     local delete
     delete = add_center_timer(interval, function()
@@ -105,13 +116,34 @@ g.delay = function(func, interval)
     return delete
 end
 
-require("lib.reactive").set_factory_timer_driver({
+function g.interval_time()
+    return CENTER_TIMER_INTERVAL
+end
+
+function g.get_default_interval_time()
+    return CENTER_TIMER_INTERVAL
+end
+
+g.driver = {
     register = function(trigger, interval)
         return g.loop(interval, trigger)
     end,
-    destroy = function(delete)
-        delete()
+    trigger = function(action, timer_model)
+        action(timer_model.get_interval_time())
     end,
-}, CENTER_TIMER_INTERVAL)
+    destroy = function(delete)
+        if type(delete) == "function" then
+            delete()
+        end
+    end,
+}
+
+function g.inject_reactive(reactive)
+    reactive = reactive or require "lib.reactive"
+    reactive.set_timer_driver(g.driver, CENTER_TIMER_INTERVAL)
+    reactive.set_factory_timer_driver(g.driver, CENTER_TIMER_INTERVAL)
+end
+
+g.inject_reactive()
 
 return g

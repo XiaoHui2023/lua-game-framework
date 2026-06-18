@@ -2,7 +2,7 @@
 local g = require ".base"
 
 require ".config"
+g.apis = require ".apis"
 require ".impl"
-require ".behaviors"
 
 return g
