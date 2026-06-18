@@ -11,12 +11,12 @@ local reactive = require "lib.reactive"
 ---@field callback fun(value:number, context
 
 ---@class skill.stat.value_pipeline
----@field modifiers reactive.add 鏁板€艰皟鏁村櫒鍒楄〃
+---@field modifiers reactive.add 字段说明
 ---@field run fun(context
 ---@class skill.stat.value_result
----@field value number 鏈€缁堝€
+---@field value number 字段说明
 ---@class skill.stat.options: reactive.factory.options
----@field kind string 鏁板€肩被鍨
+---@field kind string 字段说明
 ---@param get_base_value fun():number
 ---@param owner_factory reactive.factory
 ---@return skill.stat.value_pipeline

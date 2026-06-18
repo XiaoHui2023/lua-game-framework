@@ -1,21 +1,21 @@
 ---@class framework.ui
-local g = require "..base"
+local M = require "..base"
 
 
 ---@class ui.model.options : ui.options
 ---@field model any 模型路径
----@field type? ui.type 类型
+---@field type? ui.type UI 类型，默认是模型
 
 ---@param args ui.model.options
----@return ui.model 返回对象
-g.model = function(args)
+---@return ui.model 模型 UI 对象
+M.model = function(args)
     args.model = args.model or nil
     args.type = args.type or "model"
 
     ---@class ui.model : ui
-    local o = g.create(args)
+    local o = M.create(args)
 
-    ---@type hook.set 模型路径
+    ---@type lib.reactive.ref 模型路径
     o.model = o.factory.set(args.model)
     o.model.on_change.add(
         function(model)
@@ -24,16 +24,16 @@ g.model = function(args)
             end
 
             -- 应用
-            g.set_model(o.handle(), model)
+            M.set_model(o.handle(), model)
         end
     )
 
     -- 播放动画
     ---@param anima string 动画名
-    ---@param is_loop? boolean 是否循环
-    ---@param speed? number 速度
+    ---@param is_loop? boolean 是否循环播放动画
+    ---@param speed? number 播放速度，未填时使用引擎默认速度
     o.play = function(anima, is_loop,speed)
-        g.play_anima(o.handle(), anima, is_loop,speed)
+        M.play_anima(o.handle(), anima, is_loop,speed)
     end
 
     return o

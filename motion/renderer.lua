@@ -39,16 +39,16 @@ local function compare_modifier(a, b)
 end
 
 ---@class framework.motion.renderer.options: lib.reactive.factory.options
----@field dt? number
----@field reset_z? number
----@field reset_on_empty? boolean
----@field reset_height? fun(args:framework.motion.reset_height.args)
+---@field dt? number 字段说明
+---@field reset_z? number 字段说明
+---@field reset_on_empty? boolean 字段说明
+---@field reset_height? fun(args:framework.motion.reset_height.args) 字段说明
 
 ---@class framework.motion.reset_height.args
 ---@field reason string 复位原因
 ---@field z number 复位目标高度
----@field modifier? framework.motion.modifier 触发复位的修改器，可�?---@field result? framework.motion.result 当前渲染结果，可�?
----@param args? framework.motion.renderer.options
+---@field modifier? framework.motion.modifier 字段说明
+---@param args? framework.motion.renderer.options 参数说明
 ---@return framework.motion.renderer
 function M.renderer(args)
     args = args or {}
@@ -84,8 +84,8 @@ function M.renderer(args)
     o.loop_scope = o.factory.delete({ name = "loop" })
 
     ---@param reason string
-    ---@param modifier? framework.motion.modifier
-    ---@param result? framework.motion.result
+    ---@param modifier? framework.motion.modifier 参数说明
+    ---@param result? framework.motion.result 参数说明
     function o.reset_height(reason, modifier, result)
         local reset_args = {
             reason = reason,
@@ -101,7 +101,7 @@ function M.renderer(args)
 
     ---@param modifier framework.motion.modifier
     ---@param reason string
-    ---@param source? framework.motion.modifier
+    ---@param source? framework.motion.modifier 参数说明
     function o.interrupt_modifier(modifier, reason, source)
         if modifier.interrupted or modifier.finished then
             return
@@ -117,7 +117,7 @@ function M.renderer(args)
         end
     end
 
-    ---@param interrupt_args? { reason?: string, reset?: boolean, source?: framework.motion.modifier }
+    ---@param interrupt_args? { 参数说明
     function o.interrupt_all(interrupt_args)
         interrupt_args = interrupt_args or {}
         local reason = interrupt_args.reason or "interrupt_all"
@@ -164,7 +164,7 @@ function M.renderer(args)
         return remove
     end
 
-    ---@param args? framework.motion.modifier.options
+    ---@param args? framework.motion.modifier.options 参数说明
     ---@return framework.motion.modifier
     function o.create_modifier(args)
         local modifier = M.modifier(args)
@@ -176,7 +176,7 @@ function M.renderer(args)
         o.modifiers.clear()
     end
 
-    ---@param args? table
+    ---@param args? table 参数说明
     ---@return framework.motion.data
     function o.create_data(args)
         if args == nil then
@@ -194,7 +194,7 @@ function M.renderer(args)
         return M.data(data_args)
     end
 
-    ---@param args? table|framework.motion.data
+    ---@param args? table|framework.motion.data 参数说明
     ---@return framework.motion.result
     function o.render(args)
         local data = o.create_data(args)
@@ -236,7 +236,7 @@ function M.renderer(args)
         o.loop_scope = o.factory.delete({ name = "loop" })
     end
 
-    ---@param get_data? fun():table|framework.motion.data|nil
+    ---@param get_data? fun():table|framework.motion.data|nil 参数说明
     ---@return fun()
     function o.start(get_data)
         assert(get_data == nil or type(get_data) == "function", "motion renderer start get_data must be a function")

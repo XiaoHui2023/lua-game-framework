@@ -25,9 +25,9 @@ local function compare_modifier(a, b)
 end
 
 ---@class framework.appearance.renderer.options: lib.reactive.factory.options
----@field dt? number
----@field apply_change? fun(args:framework.appearance.apply_change.args)
----@field reset_kind? fun(args:framework.appearance.reset_kind.args)
+---@field dt? number 字段说明
+---@field apply_change? fun(args:framework.appearance.apply_change.args) 字段说明
+---@field reset_kind? fun(args:framework.appearance.reset_kind.args) 字段说明
 
 ---@class framework.appearance.apply_change.args
 ---@field kind string
@@ -37,11 +37,11 @@ end
 ---@class framework.appearance.reset_kind.args
 ---@field reason string
 ---@field kind string
----@field modifier? framework.appearance.modifier
----@field replacement? framework.appearance.modifier
----@field result? framework.appearance.result
+---@field modifier? framework.appearance.modifier 字段说明
+---@field replacement? framework.appearance.modifier 字段说明
+---@field result? framework.appearance.result 字段说明
 
----@param args? framework.appearance.renderer.options
+---@param args? framework.appearance.renderer.options 参数说明
 ---@return framework.appearance.renderer
 function M.renderer(args)
     args = args or {}
@@ -75,9 +75,9 @@ function M.renderer(args)
 
     ---@param kind string
     ---@param reason string
-    ---@param modifier? framework.appearance.modifier
-    ---@param replacement? framework.appearance.modifier
-    ---@param result? framework.appearance.result
+    ---@param modifier? framework.appearance.modifier 参数说明
+    ---@param replacement? framework.appearance.modifier 参数说明
+    ---@param result? framework.appearance.result 参数说明
     function o.reset_kind(kind, reason, modifier, replacement, result)
         local reset_args = {
             reason = reason,
@@ -94,7 +94,7 @@ function M.renderer(args)
 
     ---@param modifier framework.appearance.modifier
     ---@param reason string
-    ---@param replacement? framework.appearance.modifier
+    ---@param replacement? framework.appearance.modifier 参数说明
     function o.interrupt_modifier(modifier, reason, replacement)
         if modifier.interrupted or modifier.finished then
             return
@@ -107,7 +107,7 @@ function M.renderer(args)
     end
 
     ---@param kind string
-    ---@param interrupt_args? { reason?: string, reset?: boolean, replacement?: framework.appearance.modifier }
+    ---@param interrupt_args? { 参数说明
     function o.interrupt_kind(kind, interrupt_args)
         interrupt_args = interrupt_args or {}
         local reason = interrupt_args.reason or "interrupt_kind"
@@ -129,7 +129,7 @@ function M.renderer(args)
         end
     end
 
-    ---@param interrupt_args? { reason?: string, reset?: boolean }
+    ---@param interrupt_args? { 参数说明
     function o.interrupt_all(interrupt_args)
         interrupt_args = interrupt_args or {}
         local reason = interrupt_args.reason or "interrupt_all"
@@ -169,7 +169,7 @@ function M.renderer(args)
         return remove
     end
 
-    ---@param args? framework.appearance.modifier.options
+    ---@param args? framework.appearance.modifier.options 参数说明
     ---@return framework.appearance.modifier
     function o.create_modifier(args)
         local modifier = M.modifier(args)
@@ -181,7 +181,7 @@ function M.renderer(args)
         o.modifiers.clear()
     end
 
-    ---@param args? table
+    ---@param args? table 参数说明
     ---@return framework.appearance.data
     function o.create_data(args)
         if args == nil then
@@ -213,7 +213,7 @@ function M.renderer(args)
         end
     end
 
-    ---@param args? table|framework.appearance.data
+    ---@param args? table|framework.appearance.data 参数说明
     ---@return framework.appearance.result
     function o.render(args)
         local data = o.create_data(args)
@@ -255,7 +255,7 @@ function M.renderer(args)
         o.loop_scope = o.factory.delete({ name = "loop" })
     end
 
-    ---@param get_data? fun():table|framework.appearance.data|nil
+    ---@param get_data? fun():table|framework.appearance.data|nil 参数说明
     ---@return fun()
     function o.start(get_data)
         assert(get_data == nil or type(get_data) == "function", "appearance renderer start get_data must be a function")

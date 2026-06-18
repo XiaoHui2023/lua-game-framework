@@ -1,5 +1,5 @@
 ---@class framework.faction
-local g = require ".base"
+local M = require ".base"
 local list = require "lib.list"
 local factory = require("lib.reactive").factory
 
@@ -25,12 +25,12 @@ local function copy_stance_map(stance_by_faction)
 end
 
 ---@class faction.options
----@field name string? faction name.
----@field default_stance faction.stance? default stance to other factions.
+---@field name string? 字段说明
+---@field default_stance faction.stance? 字段说明
 
----@param args? faction.options
+---@param args? faction.options 参数说明
 ---@return faction
-g.create = function(args)
+M.create = function(args)
     args = args or {}
     args.name = args.name or ""
     args.default_stance = args.default_stance or "neutral"
@@ -45,7 +45,7 @@ g.create = function(args)
     })
     o.set_class("faction")
 
-    o.delete.mount(g.POOL_OBJECT.add(o))
+    o.delete.mount(M.POOL_OBJECT.add(o))
 
     ---@type hook.set<faction.stance>
     o.default_stance = o.factory.set(args.default_stance)
@@ -116,7 +116,7 @@ g.create = function(args)
     o.ally = function()
         local facs = list()
 
-        g.POOL_OBJECT().for_each(
+        M.POOL_OBJECT().for_each(
             function(fac)
                 if o.is_friendly(fac) then
                     facs.append(fac)
@@ -131,7 +131,7 @@ g.create = function(args)
     o.enemy = function()
         local facs = list()
 
-        g.POOL_OBJECT().for_each(
+        M.POOL_OBJECT().for_each(
             function(fac)
                 if o.is_hostile(fac) then
                     facs.append(fac)
@@ -146,7 +146,7 @@ g.create = function(args)
     o.neutral = function()
         local facs = list()
 
-        g.POOL_OBJECT().for_each(
+        M.POOL_OBJECT().for_each(
             function(fac)
                 if o.is_neutral(fac) then
                     facs.append(fac)
@@ -199,4 +199,4 @@ g.create = function(args)
     return o
 end
 
-return g
+return M

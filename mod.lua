@@ -1,12 +1,12 @@
 ---@class models.mod
 ---@operator call(...):mod
-local g = {}
+local M = {}
 ---@type utils.hook
 local hook = require "utils.hook"
 local factory = require "models.factory"
 
 ---@class mod.priority 优先级
-g.PRIORITY = {
+M.PRIORITY = {
     MODELS = -100,
     NORMAL = 0,
 }
@@ -18,7 +18,7 @@ local MODS = hook.add({
     end,
     ---@param a mod
     ---@param b mod
-    ---@return boolean?
+    ---@return boolean? 返回值
     compare = function(a,b)
         -- 依赖
         if a.to_dependency[b] then
@@ -34,13 +34,13 @@ local MODS = hook.add({
 
 -- 获取模块列表
 ---@return list<mod>
-g.get_mods = function()
+M.get_mods = function()
     return MODS.get()
 end
 
 -- 遍历模块
 ---@param func fun(mod:mod):nil
-g.for_each = function(func)
+M.for_each = function(func)
     MODS.get().for_each(func)
 end
 
@@ -49,23 +49,23 @@ local ID = 1
 
 ---@class mod.options : factory.options
 ---@field name string 名称
----@field description? string 描述
----@field dependencies? mod[] 依赖的mod
----@field tags? string[] 标签
----@field is_enabled? boolean 使能
----@field is_visible? boolean 用户可见
----@field priority? integer 优先级（越小越优先）
+---@field description? string 字段说明
+---@field dependencies? mod[] 字段说明
+---@field tags? string[] 字段说明
+---@field is_enabled? boolean 字段说明
+---@field is_visible? boolean 字段说明
+---@field priority? integer 字段说明
 
 -- 注册
 ---@param args mod.options
 ---@return mod
-g.register = function(args)
+M.register = function(args)
     args.description = args.description or ""
     args.dependencies = args.dependencies or {}
     args.tags = args.tags or {}
     args.is_enabled = args.is_enabled or true
     args.is_visible = args.is_visible or false
-    args.priority = args.priority or g.PRIORITY.NORMAL
+    args.priority = args.priority or M.PRIORITY.NORMAL
 
     ---@class mod: factory
     local o = factory(args)
@@ -181,6 +181,6 @@ g.register = function(args)
 end
 
 -- ()
-metatable.callable(g, g.register)
+metatable.callable(M, M.register)
 
-return g 
+return M 

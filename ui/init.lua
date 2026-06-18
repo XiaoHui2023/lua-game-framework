@@ -1,9 +1,9 @@
 ---@type framework.ui
-local g = require ".base"
+local M = require ".base"
 
 require ".impl"
 require ".object"
 require ".frame"
-require ".widget"
+require ".layout"
 
-return g
+return M

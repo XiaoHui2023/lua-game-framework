@@ -1,8 +1,7 @@
 ---@type framework.player
-local g = require ".base"
+local M = require ".base"
 
 require ".config"
-g.apis = require ".apis"
 require ".impl"
 
-return g
+return M

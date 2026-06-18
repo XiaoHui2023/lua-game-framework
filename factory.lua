@@ -8,11 +8,11 @@ local exposed_core = require "core.exposed"
 local template_render_core = require "core.template_render"
 
 ---@class factory.options: hook.factory.options
----@field interval_time number? 定时器间隔
----@field description_template? string 描述模板
+---@field interval_time number? 字段说明
+---@field description_template? string 字段说明
 
 -- 创建工厂对象
----@param args? factory.options 参数
+---@param args? factory.options 参数说明
 ---@return factory
 return function (args)
     args = args or {}
@@ -31,7 +31,7 @@ return function (args)
     ---@operator call(): hook.once_event
     o.factory.timer = {}
 
-    ---@type hook.set 定时器间隔
+    ---@type hook.set
     o.factory.timer.interval_time = o.factory.set(args.interval_time)
 
     -- 创建计时器
@@ -57,7 +57,7 @@ return function (args)
 
     -- 暴露属性
     ---@param obj hook.factory 对象
-    ---@param expression fun():core.exposed.item? 表达式
+    ---@param expression fun():core.exposed.item? 参数说明
     ---@return hook.once_event
     o.factory.expose_props = function (obj, expression)
         ---@type hook.once_event

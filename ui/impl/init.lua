@@ -1,1 +1,2 @@
--- UI 模块暂未注册框架内实现，保留入口用于后续聚合。
+require "framework.ui.impl.object"
+require "framework.ui.impl.mouse"

@@ -1,7 +1,7 @@
 ---@class framework.chat
-local g = require ".base"
+local M = require ".base"
 
 ---@type number 聊天记录个数限制
-g.MESSAGE_LIMIT = 100
+M.MESSAGE_LIMIT = 100
 
-return g
+return M

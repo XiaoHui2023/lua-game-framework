@@ -1,5 +1,5 @@
 ---@type framework.ui
-local g = require "..base"
+local M = require "framework.ui.base"
 ---@type framework.event
 local event = require "framework.event"
 
@@ -8,13 +8,13 @@ local event = require "framework.event"
 ---| "contain" 保持
 
 ---@class ui.options
----@field scale_factor? number 缩放因子
+---@field scale_factor? number 整体缩放因子
 ---@field width_scale_factor? number 宽度缩放因子
 ---@field height_scale_factor? number 高度缩放因子
----@field size_mode? ui.size_mode 尺寸模式
----@field width? number 宽度
----@field height? number 高度
----@field size? number 宽度和高度（百分比）
+---@field size_mode? ui.size_mode 尺寸适配模式
+---@field width? number 相对宽度比例
+---@field height? number 相对高度比例
+---@field size? number 默认正方形尺寸比例
 
 ---@param o ui
 ---@param args ui.options
@@ -30,12 +30,12 @@ return function (o,args)
     ---@class ui
     o = o
 
-    ---@type hook.computed 百分比大小<number,number>（直接设置的参数）
+    ---@type reactive.computed 百分比大小<number,number>（直接设置的参数）
     o.relative_size = o.factory.computed(function()
         return args.width, args.height
     end)
 
-    ---@type hook.computed 像素大小<number,number>（衍生出的值）
+    ---@type reactive.computed 像素大小<number,number>（衍生出的值）
     o.pixel_size = o.factory.computed(function()
         local width_percent, height_percent = o.relative_size()
         local window_width, window_height = o.window_size()
@@ -53,22 +53,22 @@ return function (o,args)
         return pixel_width, pixel_height
     end)
 
-    ---@type hook.set 整体缩放因子<number>
+    ---@type lib.reactive.ref 整体缩放因子<number>
     o.scale_factor = o.factory.set(args.scale_factor)
 
-    ---@type hook.set 宽度缩放因子<number>
+    ---@type lib.reactive.ref 宽度缩放因子<number>
     o.width_scale_factor = o.factory.set(args.width_scale_factor)
 
-    ---@type hook.set 高度缩放因子<number>
+    ---@type lib.reactive.ref 高度缩放因子<number>
     o.height_scale_factor = o.factory.set(args.height_scale_factor)
 
-    ---@type hook.set 窗口大小<number,number>
-    o.window_size = o.factory.set(g.get_window_width(), g.get_window_height())
+    ---@type lib.reactive.ref 窗口大小<number,number>
+    o.window_size = o.factory.set(M.get_window_width(), M.get_window_height())
 
-    ---@type hook.set 尺寸模式<ui.size_mode>
+    ---@type lib.reactive.ref 尺寸模式<ui.size_mode>
     o.size_mode = o.factory.set(args.size_mode)
     
-    ---@type hook.computed 宽高比（宽 ÷ 高），用于保持对象缩放时为正方形或固定比例
+    ---@type reactive.computed 宽高比（宽 ÷ 高），用于保持对象缩放时为正方形或固定比例
     o.size_ratio = o.factory.computed(function()
         ---@type ui.size_mode
         local size_mode = o.size_mode()
@@ -80,7 +80,7 @@ return function (o,args)
         end
     end)
 
-    ---@type hook.computed 得到大小总缩放（从最父级开始计算）<width:number,height:number>
+    ---@type reactive.computed 得到大小总缩放（从最父级开始计算）<width:number,height:number>
     o.total_size_scale_factor = o.factory.computed(function()
         local scale_factor = o.scale_factor()
         local width_scale_factor = o.width_scale_factor()
@@ -98,10 +98,10 @@ return function (o,args)
     end)
     
     -- 按缩放因子缩放尺寸
-    ---@param width number? 宽度
-    ---@param height number? 高度
-    ---@return number? width 宽度
-    ---@return number? height 高度
+    ---@param width number? 原始宽度
+    ---@param height number? 原始高度
+    ---@return number? width 缩放后宽度
+    ---@return number? height 缩放后高度
     local function scale_size(width, height)
         local scale_factor = o.scale_factor()
         local width_scale_factor = o.width_scale_factor()
@@ -113,10 +113,10 @@ return function (o,args)
     end
     
     -- 按总计缩放因子缩放尺寸
-    ---@param width number? 宽度
-    ---@param height number? 高度
-    ---@return number? width 宽度
-    ---@return number? height 高度
+    ---@param width number? 原始宽度
+    ---@param height number? 原始高度
+    ---@return number? width 总计缩放后宽度
+    ---@return number? height 总计缩放后高度
     local function total_scale_size(width, height)
         local width_scale_factor, height_scale_factor = o.total_size_scale_factor()
         width = width * width_scale_factor
@@ -124,43 +124,43 @@ return function (o,args)
         return width, height
     end
 
-    ---@type hook.computed 缩放过的相对尺寸
+    ---@type reactive.computed 缩放过的相对尺寸
     o.scaled_relative_size = o.factory.computed(function ()
         return scale_size(o.relative_size())
     end)
 
-    ---@type hook.computed 缩放过的像素尺寸
+    ---@type reactive.computed 缩放过的像素尺寸
     o.scaled_pixel_size = o.factory.computed(function ()
         return scale_size(o.pixel_size())
     end)
 
-    ---@type hook.computed 总计缩放过的相对尺寸
+    ---@type reactive.computed 总计缩放过的相对尺寸
     o.total_scaled_relative_size = o.factory.computed(function ()
         return total_scale_size(o.relative_size())
     end)
 
-    ---@type hook.computed 总计缩放过的像素尺寸
+    ---@type reactive.computed 总计缩放过的像素尺寸
     o.total_scaled_pixel_size = o.factory.computed(function ()
         return total_scale_size(o.pixel_size())
     end)
 
-    ---@type hook.computed 实际尺寸（决定应用）
+    ---@type reactive.computed 实际尺寸（决定应用）
     o.actual_size = o.factory.computed(function ()
         return o.total_scaled_pixel_size()
     end)
 
-    ---@type hook.computed 视觉尺寸（像素）
+    ---@type reactive.computed 视觉尺寸（像素）
     o.visual_size = o.factory.computed(function()
         return o.actual_size()
     end)
 
     -- 应用大小
     o.actual_size.on_change.add(function(width,height,...)
-        g.set_size(o, width, height)
+        M.set_size(o, width, height)
     end)
 
     -- 绑定窗口大小改变事件
-    o.delete.add(g.ON_WINDOW_SIZE_CHANGE(function(api)
+    o.delete.add(M.ON_WINDOW_SIZE_CHANGE(function(api)
         o.window_size.set(api.width, api.height)
     end))
 

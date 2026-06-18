@@ -1,7 +1,7 @@
 ---@type models.timer
-local g = require ".base"
+local M = require ".base"
 
-g.create = function(interval, func)
+M.create = function(interval, func)
     local timer = y3.timer.loop(interval, function (timer, count)
         func()
     end)
@@ -14,4 +14,4 @@ g.create = function(interval, func)
     end
 end
 
-return g
+return M

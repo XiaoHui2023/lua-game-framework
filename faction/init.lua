@@ -1,6 +1,6 @@
 ---@type framework.faction
-local g = require ".base"
+local M = require ".base"
 
 require ".object"
 
-return g
+return M

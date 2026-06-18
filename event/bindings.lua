@@ -1,5 +1,5 @@
-﻿---@type models.event
-local g = require ".base"
+---@type models.event
+local M = require ".base"
 ---@type models.player
 local Player = require "models.player"
 ---@type models.unit
@@ -12,19 +12,19 @@ y3.config.sync.key = true
 y3.config.sync.mouse = true
 y3.config.sync.camera = true
 
----@type unit? 鼠标悬停单位
+---@type unit?
 local hover_unit = nil
----@type any? 鼠标悬停可破坏物
+---@type any?
 local hover_destructible = nil
----@type point? 鼠标指向的世界坐标
+---@type point?
 local pointing_world_pos = nil
 
 ---@class event.load_input.options : event.input
----@field world_pos? point
----@field window_pos? point
+---@field world_pos? point 字段说明
+---@field window_pos? point 字段说明
 
 -- 加载输入信息
----@param args? event.load_input.options
+---@param args? event.load_input.options 参数说明
 ---@return event.input
 local function load_input(args)
     args = args or {}
@@ -53,37 +53,37 @@ y3.game:event('本地-鼠标-悬停', function (trg, data)
 end)
 
 y3.game:event('玩家-离开游戏', function (trg, data)
-    g.ON_PLAYER_LEAVE(data.player)
+    M.ON_PLAYER_LEAVE(data.player)
 end)
 
 y3.game:event('游戏-初始化', function (trg, data)
-    g.ON_GAME_INIT()
+    M.ON_GAME_INIT()
 end)
 
 y3.game:event('单位-受到伤害时', function (trg, data)
-    g.ON_UNIT_DAMAGE_TAKEN(data.unit, data.source_unit)
+    M.ON_UNIT_DAMAGE_TAKEN(data.unit, data.source_unit)
 end)
 
 y3.game:event('单位-造成伤害时', function (trg, data)
-    g.ON_UNTI_DAMAGE_DEALT(data.unit, data.target_unit)
+    M.ON_UNTI_DAMAGE_DEALT(data.unit, data.target_unit)
 end)
 
 --y3.game:event('单位-施放技能', function (trg, data)
 --end)
 
 y3.game:event('本地-鼠标-移动', function (trg, data)
-    g.ON_MOUSE_MOVE_ASYNC(load_input({
+    M.ON_MOUSE_MOVE_ASYNC(load_input({
         world_pos={x=data.pointing_world_pos:get_x(), y=data.pointing_world_pos:get_y()},
         window_pos={x=data.tar_x, y=data.tar_y},
     }))
 end)
 
 y3.game:event('本地-鼠标-滚轮', 'WHEEL_UP',function (trg, data)
-    g.ON_WHEEL_UP()
+    M.ON_WHEEL_UP()
 end)
 
 y3.game:event('本地-鼠标-滚轮', 'WHEEL_DOWN',function (trg, data)
-    g.ON_WHEEL_DOWN()
+    M.ON_WHEEL_DOWN()
 end)
 
 ---@type table<y3.Const.MouseKey,event.mouse>
@@ -97,13 +97,13 @@ local to_mouse = {
 
 for y3_mouse, event_mouse in table.sorted_pairs(to_mouse) do
     y3.game:event('本地-鼠标-按下', y3_mouse, function (trg, data)
-        g.ON_MOUSE_DOWN_ASYNC(load_input({
+        M.ON_MOUSE_DOWN_ASYNC(load_input({
             world_pos={x=data.pointing_world_pos.x, y=data.pointing_world_pos.y},
             mouse=event_mouse,
         }))
     end)
     y3.game:event('本地-鼠标-抬起', y3_mouse, function (trg, data)
-        g.ON_MOUSE_UP_ASYNC(load_input({
+        M.ON_MOUSE_UP_ASYNC(load_input({
             world_pos={x=data.pointing_world_pos.x, y=data.pointing_world_pos.y},
             mouse=event_mouse,
         }))
@@ -195,21 +195,21 @@ local to_key = {
 for y3_key, event_key in table.sorted_pairs(to_key) do
     ---@cast event_key event.key
     y3.game:event('本地-键盘-按下', y3_key, function (trg, data)
-        g.ON_KEY_DOWN_ASYNC(load_input({
+        M.ON_KEY_DOWN_ASYNC(load_input({
             key=event_key,
         }))
     end)
     y3.game:event('本地-键盘-抬起', y3_key, function (trg, data)
-        g.ON_KEY_UP_ASYNC(load_input({
+        M.ON_KEY_UP_ASYNC(load_input({
             key=event_key,
         }))
     end)
 end
 
 y3.timer.loop_frame(1,function()
-    g.ON_UPDATE()
+    M.ON_UPDATE()
     hook.ON_UPDATE()
-    g.ONCE_UPDATE()
+    M.ONCE_UPDATE()
 end)
 
 y3.game:event('选中-单位', function (trg, data)
@@ -224,7 +224,7 @@ y3.game:event('选中-单位', function (trg, data)
     if u == nil then
         return
     end
-    g.ON_SELECT_UNIT(player, u)
+    M.ON_SELECT_UNIT(player, u)
 end)
 
-return g
+return M

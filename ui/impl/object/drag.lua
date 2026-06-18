@@ -1,8 +1,8 @@
 ---@type framework.ui
-local g = require "..base"
+local M = require "framework.ui.base"
 
 ---@class ui.options
----@field dragable? boolean 是否可拖拽，默认否
+---@field dragable? boolean 是否允许拖拽
 
 ---@param o ui
 ---@param args ui.options
@@ -12,24 +12,24 @@ return function (o,args)
     ---@class ui
     o = o
 
-    ---@type hook.set 是否可以拖拽
+    ---@type lib.reactive.ref 是否可以拖拽
     o.draggable = o.factory.set(args.dragable)
 
-    ---@type hook.event 拖拽开始事件
+    ---@type reactive.event 拖拽开始事件
     o.on_drag_start = o.factory.event()
 
-    ---@type hook.event 拖拽事件（百分比位置: point）
+    ---@type reactive.event 拖拽事件（百分比位置: point）
     o.on_drag = o.factory.event()
 
-    ---@type hook.event 拖拽结束事件
+    ---@type reactive.event 拖拽结束事件
     o.on_drag_end = o.factory.event()
 
-    ---@type hook.set 当前是否拖拽
+    ---@type lib.reactive.ref 当前是否拖拽
     o.is_dragging = o.factory.set(false)
 
     local function bind_move()
         ---@param pos point
-        o.on_drag_end.add(g.ON_MOUSE_MOVE_ASYNC(function(api)
+        o.on_drag_end.add(M.ON_MOUSE_MOVE_ASYNC(function(api)
             o.on_drag(api.position)
         end))
     end

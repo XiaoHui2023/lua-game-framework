@@ -1,41 +1,39 @@
 ---@class models.camera
-local g = require ".base"
+local M = require ".base"
 
--- 设置镜头距离
----@param distance number 镜头距离
----@param duration number 持续时间
+---@param distance number 参数说明
+---@param duration number 参数说明
 local function set_distance(distance,duration)
-    g.set_distance(distance,duration)
-    g.DISTANCE.set(distance)
+    M.set_distance(distance,duration)
+    M.DISTANCE.set(distance)
 end
 
-g.normal = function (duration)
+M.normal = function (duration)
     duration = duration or 0
-    g.set_yaw(g.DEFAULT_YAW,duration)
-    g.set_pitch(g.DEFAULT_PITCH,duration)
-    g.set_roll(g.DEFAULT_ROLL,duration)
+    M.set_yaw(M.DEFAULT_YAW,duration)
+    M.set_pitch(M.DEFAULT_PITCH,duration)
+    M.set_roll(M.DEFAULT_ROLL,duration)
 end
 
-g.reset = function(duration)
+M.reset = function(duration)
     duration = duration or 0
-    g.normal(duration)
-    set_distance(g.DEFAULT_DISTANCE,duration)
+    M.normal(duration)
+    set_distance(M.DEFAULT_DISTANCE,duration)
 end
 
--- 用户控制锁
-g.USER_CONTROL.on_acquire.add(function()
+M.USER_CONTROL.on_acquire.add(function()
     -- 禁用控制权
-    g.set_user_control(false)
+    M.set_user_control(false)
 end)
-g.USER_CONTROL.on_release.add(function()
+M.USER_CONTROL.on_release.add(function()
     -- 启用控制权
-    g.set_user_control(true)
+    M.set_user_control(true)
 end)
 
-g.scroll = function(distance)
-    local distance_max = g.DEFAULT_FAR_DISTANCE
-    local distance_min = g.DEFAULT_NEAR_DISTANCE
-    local duration = g.DEFAULT_WHEEL_DURATION
+M.scroll = function(distance)
+    local distance_max = M.DEFAULT_FAR_DISTANCE
+    local distance_min = M.DEFAULT_NEAR_DISTANCE
+    local duration = M.DEFAULT_WHEEL_DURATION
     
     -- 限制
     distance = (distance > distance_max and distance_max) or distance
@@ -45,12 +43,12 @@ g.scroll = function(distance)
     set_distance(distance, duration)
 end
 
-g.scroll_up = function()
-    g.scroll(g.DISTANCE()+g.DEFAULT_WHEEL_STEP)
+M.scroll_up = function()
+    M.scroll(M.DISTANCE()+M.DEFAULT_WHEEL_STEP)
 end
 
-g.scroll_down = function()
-    g.scroll(g.DISTANCE()-g.DEFAULT_WHEEL_STEP)
+M.scroll_down = function()
+    M.scroll(M.DISTANCE()-M.DEFAULT_WHEEL_STEP)
 end
 
-return g
+return M

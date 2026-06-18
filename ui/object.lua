@@ -1,32 +1,32 @@
 ---@class framework.ui
-local g = require ".base"
-local factory = require "lib.reactive".factory
+local M = require ".base"
 ---@type lib.reactive
 local reactive = require "lib.reactive"
+local factory = reactive.factory
 ---@type framework.ui.apis
 local apis = require ".apis"
 
----@type reactive.event 鍒涘缓浜嬩欢<ui>
-g.ON_CREATE = apis.ON_CREATE
+---@type reactive.event
+M.ON_CREATE = apis.ON_CREATE
 
 ---@class ui.options : factory.options
----@field alpha
----@field layer
----@field parent
----@field type
----@field priority
----@field progress
----@field color
----@field align
----@field anchor
+---@field alpha? integer 透明度，范围 0 到 255
+---@field layer? ui.handle 所属 UI 层
+---@field parent? ui 父级 UI
+---@field type? ui.type UI 类型
+---@field priority? integer 同级排序优先级
+---@field progress? number 初始进度值，范围 0 到 1
+---@field color? color 初始颜色
+---@field align? ui.position 文本排列位置
+---@field anchor? ui.anchor 初始锚点配置
 
----@param args
----@return ui 鏉╂柨娲朥I鐎电
-g.create = function(args)
+---@param args? ui.options UI 创建参数
+---@return ui UI 对象
+M.create = function(args)
     args = args or {}
     args.image = args.image or ""
     args.alpha = args.alpha or 255
-    args.layer = args.layer or g.LAYER.DEFAULT
+    args.layer = args.layer or M.LAYER.DEFAULT
     args.priority = args.priority or 0
     args.progress = args.progress or 1
     args.rotation = args.rotation or 0
@@ -34,61 +34,67 @@ g.create = function(args)
     ---@class ui : factory
     local o = factory(args)
 
-    -- 鐠佸墽鐤嗙猾璇叉倳
     o.set_class("ui")
 
-    ---@type reactive.set<ui.handle> 閸欍儲鐒
-    o.handle = o.factory.set(g.new(args.type, args.layer))
+    ---@type lib.reactive.ref
+    o.parent = o.factory.set(args.parent)
 
-    ---@type ui.type 缁
+    local parent_handle = args.parent and args.parent.handle() or args.layer
+
+    ---@type lib.reactive.ref
+    o.handle = o.factory.set(M.new(args.type, parent_handle))
+
+    ---@type ui.type UI 类型
     o.type = args.type
 
-    ---@type ui.layer 閸ユ儳鐪
+    ---@type ui.layer
     o.layer = args.layer
 
-    ---@type reactive.set<integer> 娴兼ê鍘涚痪
+    ---@type lib.reactive.ref
     o.priority = o.factory.set(args.priority)
 
-    ---@type reactive.set 閫忔槑搴
+    ---@type lib.reactive.ref
     o.alpha = o.factory.set(args.alpha)
 
-    ---@type reactive.set 閸ュ墽澧
+    ---@type lib.reactive.ref
     o.image = o.factory.set(args.image)
 
-    ---@type reactive.set<number> 杩涘害锛堢櫨鍒嗘瘮锛
+    ---@type lib.reactive.ref
     o.progress = o.factory.set(args.progress)
 
-    ---@type reactive.set<number> 閺冨
+    ---@type lib.reactive.ref
     o.rotation = o.factory.set(args.rotation)
 
-    ---@type reactive.set<color
+    ---@type lib.reactive.ref
     o.color = o.factory.set(args.color)
 
     ---@type reactive.add<ui> children
-    o.children = o.factory.add()
+    o.children = o.factory.add({
+        prevent_duplicate = true,
+    })
 
-    -- 缂佹垵鐣鹃崚鐘绘珟鐎电
+    if args.parent then
+        args.parent.children.add(o)
+    end
+
     o.delete.add(
         function()
-            g.delete(o.handle())
+            M.delete(o.handle())
         end
     )
 
-    -- 閸忋儱绨
-    g.HANDLE_TO_OBJECT[o.handle()] = o
+    M.HANDLE_TO_OBJECT[o.handle()] = o
     o.delete.add(function ()
-        g.HANDLE_TO_OBJECT[o.handle()] = nil
+        M.HANDLE_TO_OBJECT[o.handle()] = nil
     end)
 
-    -- 濞夈劌鍞界悰灞艰礋
-    require ".behaviors"(o,args)
-    -- 娉ㄥ唽浜嬩欢
+    apis.OBJECT_CREATED({ ui = o, options = args })
+    -- 注册事件
     o.factory.register_hook_fields()
 
-    -- 鐟欙箑褰傞崚娑樼紦娴滃
-    g.ON_CREATE({ ui = o })
+    M.ON_CREATE({ ui = o })
 
     return o
 end
 
-return g
+return M

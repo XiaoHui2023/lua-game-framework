@@ -1,5 +1,5 @@
 ---@class framework.ui
-local g = require "..base"
+local M = require "framework.ui.base"
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@type lib.reactive
@@ -53,9 +53,9 @@ end
 ---| "click"
 
 ---@class ui.event.registry
----@field get fun(key:ui.event.key):reactive.event 鑾峰彇浜嬩欢
----@field add fun(key:ui.event.key, callback:fun(ui:ui,...)):fun() 娣诲姞浜嬩欢閽╁瓙
-g.event_registry = create_event_registry({
+---@field get fun(key:ui.event.key):reactive.event 按事件名获取响应式事件
+---@field add fun(key:ui.event.key, callback:function):function 按事件名添加回调并返回删除函数
+M.event_registry = create_event_registry({
     "left_up",
     "left_down",
     "right_up",
@@ -74,97 +74,91 @@ return function (o,args)
     ---@class ui
     o = o
 
-    ---@type reactive.set 鼠标焦点是否在UI上面
+    ---@type lib.reactive.ref 鼠标焦点是否在UI上面
     o.focusable = o.factory.set(args.focusable)
 
-    ---@type reactive.set 是否可以点击
+    ---@type lib.reactive.ref 是否可以点击
     o.clickable = o.factory.set(args.clickable)
 
-    ---@type reactive.event 鼠标左键抬起事件
+    ---@type reactive.event
     o.on_mouse_left_up = o.factory.event()
 
-    ---@type reactive.event 榧犳爣宸﹂敭鎸変笅浜嬩欢
+    ---@type reactive.event
     o.on_mouse_left_down = o.factory.event()
 
-    ---@type reactive.event 鼠标右键抬起事件
+    ---@type reactive.event
     o.on_mouse_right_up = o.factory.event()
 
-    ---@type reactive.event 榧犳爣鍙抽敭鎸変笅浜嬩欢
+    ---@type reactive.event
     o.on_mouse_right_down = o.factory.event()
 
-    ---@type reactive.event 鑱氱劍浜嬩欢
+    ---@type reactive.event
     o.on_focus = o.factory.event()
 
-    ---@type reactive.event 澶卞幓鐒︾偣浜嬩欢
+    ---@type reactive.event
     o.on_blur = o.factory.event()
 
-    ---@type reactive.set 当前是否聚焦
+    ---@type lib.reactive.ref 当前是否聚焦
     o.is_focused = o.factory.set(false)
 
-    ---@type reactive.event 鐐瑰嚮浜嬩欢
+    ---@type reactive.event
     o.on_click = o.factory.event()
 
-    -- 娉ㄥ唽浜嬩欢
-    o.delete.add(g.on_mouse_focus(o.handle(), function()
+    -- 注册事件
+    o.delete.add(M.on_mouse_focus(o.handle(), function()
         if not o.focusable() then
             return
         end
-        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
 
         o.on_focus()
     end))
-    o.delete.add(g.on_mouse_blur(o.handle(), function()
+    o.delete.add(M.on_mouse_blur(o.handle(), function()
         if not o.focusable() then
             return
         end
-        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
 
         o.on_blur()
     end))
-    o.delete.add(g.on_mouse_left_down(o.handle(), function()
+    o.delete.add(M.on_mouse_left_down(o.handle(), function()
         if not o.clickable() then
             return
         end
-        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
 
         o.on_mouse_left_down()
     end))
-    o.delete.add(g.on_mouse_left_up(o.handle(), function()
+    o.delete.add(M.on_mouse_left_up(o.handle(), function()
         if not o.clickable() then
             return
         end
-        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
 
         o.on_mouse_left_up()
     end))
-    o.delete.add(g.on_mouse_right_down(o.handle(), function()
+    o.delete.add(M.on_mouse_right_down(o.handle(), function()
         if not o.clickable() then
             return
         end
-        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
 
         o.on_mouse_right_down()
     end))
-    o.delete.add(g.on_mouse_right_up(o.handle(), function()
+    o.delete.add(M.on_mouse_right_up(o.handle(), function()
         if not o.clickable() then
             return
         end
-        -- 闇€瑕佸彲锟
         if not o.visible() then
             return
         end
@@ -172,29 +166,26 @@ return function (o,args)
         o.on_mouse_right_up()
     end))
 
-    -- 榧犳爣杩涘叆鍒欒仛锟
     o.on_focus.add(
         function()
             o.is_focused.set(true)
         end
     )
 
-    -- 榧犳爣绂诲紑鍒欏彇娑堣仛锟
     o.on_blur.add(
         function()
             o.is_focused.set(false)
         end
     )
 
-    -- 榧犳爣宸﹂敭鎸変笅鐐瑰嚮
     o.on_mouse_left_down.add(
         function()
             o.on_click()
         end
     )
     
-    -- 娉ㄥ唽浜嬩欢
-    g.event_registry.register(o,{
+    -- 注册事件
+    M.event_registry.register(o,{
         left_up = o.on_mouse_left_up,
         left_down = o.on_mouse_left_down,
         right_up = o.on_mouse_right_up,

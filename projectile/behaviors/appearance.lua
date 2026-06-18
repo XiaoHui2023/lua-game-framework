@@ -2,12 +2,12 @@
 local projectile = require "..base"
 
 ---@class projectile.options
----@field scale? number
----@field scale_x? number
----@field scale_y? number
----@field scale_z? number
----@field animation_speed? number
----@field visible? boolean
+---@field scale? number 字段说明
+---@field scale_x? number 字段说明
+---@field scale_y? number 字段说明
+---@field scale_z? number 字段说明
+---@field animation_speed? number 字段说明
+---@field visible? boolean 字段说明
 
 ---@param o projectile
 ---@param args projectile.options

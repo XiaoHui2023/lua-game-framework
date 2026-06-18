@@ -1,7 +1,7 @@
 ---@type framework.chat
-local g = require ".base"
+local M = require ".base"
 
 require ".config"
 require ".impl"
 
-return g
+return M

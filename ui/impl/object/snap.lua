@@ -1,5 +1,5 @@
 ---@type framework.ui
-local g = require "..base"
+local M = require "framework.ui.base"
 ---@type mathx.geometry
 local geometry = require "mathx.geometry"
 
@@ -8,21 +8,21 @@ return function (o)
     ---@class ui
     o = o
 
-    ---@type hook.event 吸附悬浮事件（吸附物：ui）
+    ---@type reactive.event 吸附悬浮事件（吸附物：ui）
     o.on_snap_hover = o.factory.event()
 
-    ---@type hook.event 吸附离开事件（吸附物：ui）
+    ---@type reactive.event 吸附离开事件（吸附物：ui）
     o.on_snap_leave = o.factory.event()
 
-    ---@type hook.event 吸附放下事件（吸附物：ui）
+    ---@type reactive.event 吸附放下事件（吸附物：ui）
     o.on_snap_drop = o.factory.event()
 
-    ---@type hook.add 吸附
+    ---@type reactive.add 吸附
     o.snap = o.factory.add()
 
-    ---@type ui? 当前吸附ui
+    ---@type ui?
     local snap_ui
-    ---@type ui? 上一次吸附ui
+    ---@type ui?
     local last_snap_ui
 
     local function render_drag()
@@ -103,7 +103,7 @@ return function (o)
 
     o.snap.on_add.add(
         ---@param target ui
-        ---@param delete hook.once_event
+        ---@param delete reactive.once_event
         function(target, delete)
             target.delete.mount(delete)
         end

@@ -1,10 +1,10 @@
 ---@class framework.camera.state
----@field distance number 当前镜头距离
----@field yaw number 当前镜头导航角
----@field pitch number 当前镜头俯仰角
----@field roll number 当前镜头滚角
----@field user_control_enabled boolean 玩家手动镜头控制是否启用
----@field user_control_lock_count integer 玩家手动镜头控制锁计数
+---@field distance number 字段说明
+---@field yaw number 字段说明
+---@field pitch number 字段说明
+---@field roll number 字段说明
+---@field user_control_enabled boolean 字段说明
+---@field user_control_lock_count integer 字段说明
 local M = {
     distance = 0,
     yaw = 0,

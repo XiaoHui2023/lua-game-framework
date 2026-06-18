@@ -1,8 +1,8 @@
 ---@type framework.timer
-local g = require ".base"
+local M = require ".base"
 
 require ".impl"
-require ".bindings"
+require ".apis"
 require ".core"
 
-return g
+return M

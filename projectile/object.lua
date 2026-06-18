@@ -10,14 +10,14 @@ M.ON_CREATE = apis.ON_CREATE
 M.ON_DESTROY = apis.ON_DESTROY
 
 ---@class projectile.options: lib.reactive.factory.options
----@field effect? any
----@field owner? unit
----@field position? point
----@field facing? number
----@field height? number
----@field duration? number
+---@field effect? any 字段说明
+---@field owner? unit 字段说明
+---@field position? point 字段说明
+---@field facing? number 字段说明
+---@field height? number 字段说明
+---@field duration? number 字段说明
 
----@param args? projectile.options
+---@param args? projectile.options 参数说明
 ---@param ... projectile.options
 ---@return projectile
 M.create = function(args, ...)

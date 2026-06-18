@@ -1,8 +1,8 @@
 ---@class framework.unit
-local g = require ".base"
+local M = require ".base"
 
 require ".config"
 require ".impl"
 require ".object"
 
-return g
+return M

@@ -1,10 +1,10 @@
 ---@type framework.ui
-local g = require "..base"
+local M = require "framework.ui.base"
 ---@type framework.event
 local event = require "framework.event"
 
 ---@class ui.options
----@field show? boolean 是否显示（基础）
+---@field show? boolean 初始是否显示
 
 ---@param o ui
 ---@param args ui.options
@@ -14,18 +14,17 @@ return function (o,args)
     ---@class ui
     o = o
     
-    ---@type hook.semaphore 隐藏锁
+    ---@type reactive.semaphore
     o.hide_lock = o.factory.semaphore()
     
-    ---@type hook.semaphore 弱显示锁
+    ---@type reactive.semaphore
     o.weak_show = o.factory.semaphore()
 
-    ---@type hook.set 基础显示<boolean>
+    ---@type lib.reactive.ref 基础显示<boolean>
     o.show = o.factory.set(args.show)
 
-    ---@type hook.computed 可见性
+    ---@type reactive.computed 可见性
     o.visible = o.factory.computed(function()
-        -- 锁定隐藏
         if o.hide_lock.is_acquired() then
             return false
         end
@@ -37,7 +36,6 @@ return function (o,args)
             return false
         end
 
-        -- 显示锁（弱）
         if o.weak_show.is_acquired() then
             return true
         end
@@ -49,7 +47,7 @@ return function (o,args)
     -- 应用可见性
     o.visible.on_change.add(
         function(on)
-            g.set_visible(o.handle(), on)
+            M.set_visible(o.handle(), on)
         end
     )
 

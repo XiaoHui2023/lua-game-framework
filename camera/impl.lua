@@ -1,4 +1,3 @@
--- 注册镜头框架的纯状态处理：夹紧距离边界，并把角度、距离、玩家控制开关写入 camera.state。
 ---@type framework.camera.apis
 local apis = require ".apis"
 ---@type framework.camera.state

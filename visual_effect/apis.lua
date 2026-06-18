@@ -8,7 +8,7 @@
 ---@field SET_SCALE lib.callback.api 设置指定特效的三轴缩放
 ---@field SET_COLOR lib.callback.api 设置指定特效的颜色与透明度
 ---@field SET_ANIMATION_SPEED lib.callback.api 设置指定特效的动画播放速度
----@field SET_DURATION lib.callback.api 设置指定特效的剩余持续时间
+---@field SET_DURATION lib.callback.api 字段说明
 ---@field SET_VISIBLE lib.callback.api 设置指定特效是否可见
 local M = {}
 
@@ -19,7 +19,7 @@ local callback = require "lib.callback"
 ---@field key any 特效资源标识；通常来自 assets.effect
 ---@field target visual_effect.target 特效创建目标，可以是世界坐标或单位句柄
 ---@field options visual_effect.options 创建特效时使用的可选参数
----@field handle? visual_effect.handle runtime 创建后写回的特效句柄
+---@field handle? visual_effect.handle 字段说明
 ---@type lib.callback.api
 M.CREATE = callback.api({ name = "visual_effect.CREATE" })
 
@@ -37,9 +37,9 @@ M.SET_POSITION = callback.api({ name = "visual_effect.SET_POSITION" })
 M.SET_HEIGHT = callback.api({ name = "visual_effect.SET_HEIGHT" })
 
 ---@class framework.visual_effect.api.SetRotation: framework.visual_effect.api.Handle
----@field x? number X 轴旋转角度；省略时为 0
----@field y? number Y 轴旋转角度；省略时为 0
----@field z? number Z 轴旋转角度；省略时为 0
+---@field x? number 字段说明
+---@field y? number 字段说明
+---@field z? number 字段说明
 ---@type lib.callback.api
 M.SET_ROTATION = callback.api({ name = "visual_effect.SET_ROTATION" })
 
@@ -49,15 +49,15 @@ M.SET_ROTATION = callback.api({ name = "visual_effect.SET_ROTATION" })
 M.SET_FACING = callback.api({ name = "visual_effect.SET_FACING" })
 
 ---@class framework.visual_effect.api.SetScale: framework.visual_effect.api.Handle
----@field scale_x? number X 轴缩放；省略时为 1
----@field scale_y? number Y 轴缩放；省略时跟随 scale_x
----@field scale_z? number Z 轴缩放；省略时跟随 scale_x
+---@field scale_x? number 字段说明
+---@field scale_y? number 字段说明
+---@field scale_z? number 字段说明
 ---@type lib.callback.api
 M.SET_SCALE = callback.api({ name = "visual_effect.SET_SCALE" })
 
 ---@class framework.visual_effect.api.SetColor: framework.visual_effect.api.Handle
----@field color? color RGB 颜色；省略时使用白色
----@field alpha? number 透明度，范围 0 到 255；省略时使用 color.alpha 或 255
+---@field color? color 字段说明
+---@field alpha? number 字段说明
 ---@type lib.callback.api
 M.SET_COLOR = callback.api({ name = "visual_effect.SET_COLOR" })
 
@@ -67,7 +67,7 @@ M.SET_COLOR = callback.api({ name = "visual_effect.SET_COLOR" })
 M.SET_ANIMATION_SPEED = callback.api({ name = "visual_effect.SET_ANIMATION_SPEED" })
 
 ---@class framework.visual_effect.api.SetDuration: framework.visual_effect.api.Handle
----@field duration number 剩余持续时间，单位为秒
+---@field duration number 字段说明
 ---@type lib.callback.api
 M.SET_DURATION = callback.api({ name = "visual_effect.SET_DURATION" })
 

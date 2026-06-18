@@ -1,10 +1,10 @@
 ---@class event.input
 ---@field world_pos point
 ---@field window_pos point
----@field unit? unit
----@field destructible? any
----@field key? event.key
----@field mouse? event.mouse
+---@field unit? unit 字段说明
+---@field destructible? any 字段说明
+---@field key? event.key 字段说明
+---@field mouse? event.mouse 字段说明
 
 ---@class event.input.sync: event.input
 ---@field player player

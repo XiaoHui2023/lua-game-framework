@@ -15,7 +15,7 @@ local M = {}
 ---@field final_pos lib.point
 ---@field final_z number
 
----@param args? table
+---@param args? table 参数说明
 ---@return framework.motion.data
 function M.data(args)
     args = args or {}

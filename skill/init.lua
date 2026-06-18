@@ -1,5 +1,5 @@
 ---@type framework.skill
-local g = require ".base"
+local M = require ".base"
 
 require ".passive"
 require ".active"
@@ -7,4 +7,4 @@ require ".trigger"
 require ".target"
 require ".action"
 
-return g
+return M

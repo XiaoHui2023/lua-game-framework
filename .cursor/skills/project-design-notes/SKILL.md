@@ -35,6 +35,8 @@ Lua 游戏通用框架：在宿主环境（如 Y3 地图脚本）上提供可复
 - `apis.lua` 与 `settings.lua` 的公开 `---@field` 必须在类型后写中文语义说明；callback payload 字段要说明用途、单位和可选性，禁止只写类型。
 - `impl` 代码很少时使用单文件 `impl.lua`；只有实现拆成多份时才使用 `impl/` 目录和 `impl/init.lua` 聚合。
 
+- Runtime dependency injection rule: host/engine callable capabilities for `framework/*` must be declared in `framework/<module>/apis.lua` and implemented by `runtime/framework/<module>.lua` registering `module.apis` handlers. Runtime code must not replace framework facade functions. One-off runtime handlers are registered inline, and each registration has a short Chinese responsibility comment.
+
 ## 备忘与待定（原记录）
 
 - 首批模块划分（场景、实体、输入、存档等）待后续决议。

@@ -8,7 +8,7 @@ local function distance(a, b)
 end
 
 ---@class projectile.options
----@field collision_radius? number
+---@field collision_radius? number 字段说明
 
 ---@param o projectile
 ---@param args projectile.options
@@ -18,7 +18,7 @@ return function(o, args)
     o.collision_radius = o.factory.set(args.collision_radius)
 
     ---@param position point
-    ---@param radius? number
+    ---@param radius? number 参数说明
     ---@return boolean
     o.is_colliding_position = function(position, radius)
         radius = radius or 0
@@ -26,7 +26,7 @@ return function(o, args)
     end
 
     ---@param unit unit
-    ---@param radius? number
+    ---@param radius? number 参数说明
     ---@return boolean
     o.is_colliding_unit = function(unit, radius)
         if unit == nil or unit.position == nil then

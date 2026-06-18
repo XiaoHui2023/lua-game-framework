@@ -1,21 +1,21 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.ui
-local g = require "..base"
+local M = require "..base"
 
----绌虹殑
----@param args? ui.options
+---空节点
+---@param args? ui.options 空节点创建参数
 ---@param ... ui.options
----@return ui.void 杩斿洖瀵硅薄
-g.void = function(args,...)
+---@return ui.void 空节点 UI 对象
+M.void = function(args,...)
     args = args or {}
     args = table.merge(args, ...)
     args.type = args.type or "void"
 
     ---@class ui.void : ui
-    local o = g.create(args)
+    local o = M.create(args)
 
-    ---@type hook.event<ui> 瀛愬厓绱犲竷灞€鍙樺寲浜嬩欢
+    ---@type reactive.event<ui>
     o.on_children_layout_change = o.factory.event()
 
     return o

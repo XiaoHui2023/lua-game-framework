@@ -6,31 +6,18 @@ local metatable = require "lib.metatablex"
 local M = {}
 ---@type lib.reactive
 local reactive = require "lib.reactive"
+---@type framework.sync.apis
+local apis = require ".apis"
 
 local COUNT = 0
-
-local function get_y3()
-    local ok, engine = pcall(require, "runtime.engine")
-    if ok and engine.get ~= nil then
-        local current = engine.get()
-        if current ~= nil and current.y3 ~= nil then
-            return current.y3
-        end
-    end
-
-    return y3
-end
+M.apis = apis
 
 M.send = function(head, data)
-    get_y3().sync.send(head, data)
+    apis.SEND({ head = head, data = data })
 end
 
 M.listen = function(head, callback)
-    get_y3().sync.onSync(head, function(data, source)
-        ---@type framework.player
-        local Player = require "framework.player"
-        callback(Player.ID_TO_OBJECT[source.id], data)
-    end)
+    apis.LISTEN({ head = head, callback = callback })
 end
 
 ---@return string

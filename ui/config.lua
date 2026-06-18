@@ -1,6 +1,6 @@
 ---@class framework.ui
-local g = require ".base"
+local M = require ".base"
 
 -- text
 
-return g
+return M

@@ -1,4 +1,3 @@
--- 为玩家挂载按键绑定集合，并提供按键绑定对象的创建、事件转发和销毁清理。
 ---@class framework.event
 local event = require "..apis"
 ---@type lib.reactive
@@ -9,7 +8,7 @@ local Player = require "framework.player"
 local player_apis = Player.apis
 
 ---@class player
----@field key_bindings reactive.collection<event.key_binding> 玩家持有的按键绑定集合。
+---@field key_bindings reactive.collection<event.key_binding> 字段说明
 
 ---@param player player
 local function setup_key_bindings(player)
@@ -30,13 +29,13 @@ end
 
 ---@class event.key_binding.options
 ---@field player player 绑定所属玩家。
----@field name string 按键绑定名称。
----@field category? string 按键绑定分类。
----@field key event.key 按键。
----@field on_press_async? fun(input:event.input) 本地异步按下回调。
----@field on_release_async? fun(input:event.input) 本地异步抬起回调。
----@field on_press_sync? fun(input:event.input.sync) 同步后按下回调。
----@field on_release_sync? fun(input:event.input.sync) 同步后抬起回调。
+---@field name string 字段说明
+---@field category? string 字段说明
+---@field key event.key 字段说明
+---@field on_press_async? fun(input:event.input) 字段说明
+---@field on_release_async? fun(input:event.input) 字段说明
+---@field on_press_sync? fun(input:event.input.sync) 字段说明
+---@field on_release_sync? fun(input:event.input.sync) 字段说明
 
 ---@param args event.key_binding.options
 ---@return event.key_binding

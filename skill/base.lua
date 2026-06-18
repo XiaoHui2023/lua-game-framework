@@ -1,22 +1,22 @@
 ---@class framework.skill
-local g = {}
+local M = {}
 
 local factory_model = require "lib.reactive".factory
 local Stat = require ".stat"
 
 ---@class skill.context
----@field unit? unit 释放者或拥有者单位，可由业务或引擎适配层注入
----@field owner? any 技能拥有者，可用于玩家、装备、召唤物等非 unit 场景
----@field engine? table 可选，引擎适配对象，放置运行时依赖钩子
+---@field unit? unit 字段说明
+---@field owner? any 字段说明
+---@field engine? table 字段说明
 
 ---@class skill.effect
----@field name? string 效果名，便于调试和 UI 展示
----@field description? string 效果描述，便于调试和 UI 展示
----@field on_attach? fun(skill:skill):nil 可选，效果加入技能时调用
----@field on_detach? fun(skill:skill):nil 可选，效果从技能移除或技能销毁时调用
+---@field name? string 字段说明
+---@field description? string 字段说明
+---@field on_attach? fun(skill:skill):nil 字段说明
+---@field on_detach? fun(skill:skill):nil 字段说明
 
 ---@class skill.active_effect: skill.effect
----@field on_cast? fun(skill:skill.active, request:skill.cast_request):any 可选，主动释放时调用
+---@field on_cast? fun(skill:skill.active, 字段说明
 
 ---@alias skill.stat.kind
 ---| 'damage' 伤害
@@ -25,14 +25,14 @@ local Stat = require ".stat"
 ---| 'radius' 半径
 ---| 'distance' 距离
 ---| 'cone_angle' 扇形角度
----| 'cooldown' 冷却时间
----| 'duration' 持续时间
+---| 'cooldown'
+---| 'duration'
 
 ---@class skill.options: factory.options
----@field name? string 技能名，可用于 UI、日志和调试
----@field description? string 技能描述，可用于 UI 和调试
----@field context? skill.context 上下文，由业务或引擎适配层注入
----@field passive_effects? skill.effect[] 初始被动效果列表
+---@field name? string 字段说明
+---@field description? string 字段说明
+---@field context? skill.context 字段说明
+---@field passive_effects? skill.effect[] 字段说明
 
 ---@param effect skill.effect
 ---@param skill skill
@@ -50,9 +50,9 @@ local function detach_effect(effect, skill)
     end
 end
 
----@param args? skill.options
+---@param args? skill.options 参数说明
 ---@return skill
-g.new = function(args)
+M.new = function(args)
     args = args or {}
     args.context = args.context or {}
 
@@ -142,4 +142,4 @@ g.new = function(args)
     return o
 end
 
-return g
+return M

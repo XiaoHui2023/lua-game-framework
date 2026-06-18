@@ -1,6 +1,6 @@
 ---@class framework.state_machine.machine.options
----@field name? string 状态机名称，用于 debug 与批量销毁
----@field owner? any 归属对象，例如单位、技能实例或抛射物来源
+---@field name? string 字段说明
+---@field owner? any 字段说明
 
 ---@class framework.state_machine.machine
 ---@field type string 类型标记
@@ -10,7 +10,7 @@
 local Machine = {}
 Machine.__index = Machine
 
----@param args? framework.state_machine.machine.options
+---@param args? framework.state_machine.machine.options 参数说明
 ---@return framework.state_machine.machine
 local function create_machine(args)
     args = args or {}
@@ -62,7 +62,7 @@ function Machine:emit(event_name, ...)
 end
 
 ---@param dt number
----@param context? any
+---@param context? any 参数说明
 function Machine:update(dt, context)
     local states = {}
     for index, state in ipairs(self.states) do
@@ -75,7 +75,7 @@ function Machine:update(dt, context)
     end
 end
 
----@param reason? string
+---@param reason? string 参数说明
 function Machine:destroy(reason)
     if self._destroyed then
         return

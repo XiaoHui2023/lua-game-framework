@@ -1,8 +1,8 @@
 ---@class framework.log.backend
----@field debug? fun(...) 输出调试日志，可选
----@field info? fun(...) 输出普通日志，可选
----@field warn? fun(...) 输出警告日志，可选
----@field error? fun(...) 输出错误日志，可选
+---@field debug? fun(...) 字段说明
+---@field info? fun(...) 字段说明
+---@field warn? fun(...) 字段说明
+---@field error? fun(...) 字段说明
 
 ---@class framework.log
 local M = {}

@@ -22,7 +22,7 @@ M.REQUEST_CAST = callback.api({ name = "skill.REQUEST_CAST" })
 ---@field skill skill.active 即将释放的主动技能
 ---@field request skill.cast_request 本次释放携带的输入请求
 ---@field cancelled boolean 是否取消本次释放，处理器可修改
----@field reason? string 可选，取消原因
+---@field reason? string 字段说明
 M.BEFORE_CAST = callback.api({ name = "skill.BEFORE_CAST" })
 
 ---@class skill.api.AfterCast: lib.callback.instance

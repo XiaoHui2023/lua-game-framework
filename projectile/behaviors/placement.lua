@@ -2,9 +2,9 @@
 local projectile = require "..base"
 
 ---@class projectile.options
----@field position? point
----@field facing? number
----@field height? number
+---@field position? point 字段说明
+---@field facing? number 字段说明
+---@field height? number 字段说明
 
 ---@param o projectile
 ---@param args projectile.options

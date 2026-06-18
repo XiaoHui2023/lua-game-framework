@@ -1,37 +1,37 @@
 ---@type framework.unit
-local g = require "..base"
+local M = require "..base"
 
 ---@class unit.options
----@field model? model 模型
----@field color_enable? boolean 颜色使能
----@field color? color 颜色
----@field overlay_enable? boolean 覆盖使能
----@field overlay color? 覆盖
----@field outline_enable? boolean 描边使能
----@field outline? color 描边
----@field alpha? number 透明度
----@field animation_speed? number 动画速度
----@field scale? number 缩放
----@field scale_x? number X轴缩放
----@field scale_y? number Y轴缩放
----@field scale_z? number Z轴缩放
+---@field model? model 字段说明
+---@field color_enable? boolean 字段说明
+---@field color? color 字段说明
+---@field overlay_enable? boolean 字段说明
+---@field overlay color? 字段说明
+---@field outline_enable? boolean 字段说明
+---@field outline? color 字段说明
+---@field alpha? number 字段说明
+---@field animation_speed? number 字段说明
+---@field scale? number 字段说明
+---@field scale_x? number 字段说明
+---@field scale_y? number 字段说明
+---@field scale_z? number 字段说明
 
 ---@param o unit
 ---@param args unit.options
 return function (o,args)
-    args.model = args.model or g.DEFAULT_MODEL
-    args.color_enable = args.color_enable or g.DEFAULT_COLOR_ENABLE
-    args.color = args.color or g.DEFAULT_COLOR
-    args.overlay_enable = args.overlay_enable or g.DEFAULT_OVERLAY_ENABLE
-    args.overlay = args.overlay or g.DEFAULT_OVERLAY
-    args.outline_enable = args.outline_enable or g.DEFAULT_OUTLINE_ENABLE
-    args.outline = args.outline or g.DEFAULT_OUTLINE
-    args.alpha = args.alpha or g.DEFAULT_ALPHA
-    args.animation_speed = args.animation_speed or g.DEFAULT_ANIMATION_SPEED
-    args.scale = args.scale or g.DEFAULT_SCALE
-    args.scale_x = args.scale_x or args.scale or g.DEFAULT_SCALE_X
-    args.scale_y = args.scale_y or args.scale or g.DEFAULT_SCALE_Y
-    args.scale_z = args.scale_z or args.scale or g.DEFAULT_SCALE_Z
+    args.model = args.model or M.DEFAULT_MODEL
+    args.color_enable = args.color_enable or M.DEFAULT_COLOR_ENABLE
+    args.color = args.color or M.DEFAULT_COLOR
+    args.overlay_enable = args.overlay_enable or M.DEFAULT_OVERLAY_ENABLE
+    args.overlay = args.overlay or M.DEFAULT_OVERLAY
+    args.outline_enable = args.outline_enable or M.DEFAULT_OUTLINE_ENABLE
+    args.outline = args.outline or M.DEFAULT_OUTLINE
+    args.alpha = args.alpha or M.DEFAULT_ALPHA
+    args.animation_speed = args.animation_speed or M.DEFAULT_ANIMATION_SPEED
+    args.scale = args.scale or M.DEFAULT_SCALE
+    args.scale_x = args.scale_x or args.scale or M.DEFAULT_SCALE_X
+    args.scale_y = args.scale_y or args.scale or M.DEFAULT_SCALE_Y
+    args.scale_z = args.scale_z or args.scale or M.DEFAULT_SCALE_Z
 
     ---@class unit
     o = o
@@ -68,12 +68,12 @@ return function (o,args)
         return model or o.model()
     end)
     o.model.on_change.add(function(model)
-        g.replace_model(o.handle(), model.key)
+        M.replace_model(o.handle(), model.key)
     end)
 
     -- 设置颜色
     local function set_color(enable, co, alpha)
-        g.set_color(o.handle(), enable, co, alpha)
+        M.set_color(o.handle(), enable, co, alpha)
     end
     
     -- 重载设置颜色使能
@@ -99,7 +99,7 @@ return function (o,args)
 
     -- 设置覆盖
     local function set_overlay(enable, co)
-        g.set_overlay(o.handle(), enable, co)
+        M.set_overlay(o.handle(), enable, co)
     end
 
     -- 重载设置覆盖使能
@@ -120,7 +120,7 @@ return function (o,args)
 
     -- 设置描边
     local function set_outline(enable, co)
-        g.set_outline(o.handle(), enable, co)
+        M.set_outline(o.handle(), enable, co)
     end
 
     -- 重载设置描边使能
@@ -140,9 +140,9 @@ return function (o,args)
     end)
 
     -- 缩放
-    ---@param scale_x? number X轴缩放
-    ---@param scale_y? number Y轴缩放
-    ---@param scale_z? number Z轴缩放
+    ---@param scale_x? number 参数说明
+    ---@param scale_y? number 参数说明
+    ---@param scale_z? number 参数说明
     local function set_scale(scale_x, scale_y, scale_z)
         scale_x = scale_x or 1
         scale_y = scale_y or scale_x or 1
@@ -155,7 +155,7 @@ return function (o,args)
         local real_scale_y = scale_y * (model.scale_y or model_scale)
         local real_scale_z = scale_z * (model.scale_z or model_scale)
 
-        g.set_scale(o.handle(), real_scale_x, real_scale_y, real_scale_z)
+        M.set_scale(o.handle(), real_scale_x, real_scale_y, real_scale_z)
     end
 
     -- 重载设置缩放
@@ -180,14 +180,14 @@ return function (o,args)
 
     -- 重载设置动画速度
     o.animation_speed.on_change.add(function(speed)
-        g.set_animation_speed(o.handle(), speed)
+        M.set_animation_speed(o.handle(), speed)
     end)
 
     -- 设置动画
     ---@param animation animation 动画
-    ---@param speed number? 速度
+    ---@param speed number? 参数说明
     o.play_animation = function (animation, speed)
-        g.play_animation(o.handle(), animation.name, speed, animation.start_time, animation.end_time, animation.loop, animation.reset_on_end)
+        M.play_animation(o.handle(), animation.name, speed, animation.start_time, animation.end_time, animation.loop, animation.reset_on_end)
     end
 
     -- 设置附加动画

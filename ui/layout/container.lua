@@ -1,42 +1,42 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.ui
-local g = require "..base"
+local M = require "..base"
 
 ---@alias ui.container.mode
----| 'single' 鍙樉绀轰紭鍏堢骇鏈€楂樼殑涓€涓帶浠?---| 'stack' 鍏ㄩ儴鎺т欢閮藉彲瑙侊紝鎸夌収椤哄簭/甯冨眬鎺掑紑
----| 'toggle' 妲戒綅鍐呭彲浠ュ垏鎹㈠綋鍓嶆縺娲荤殑鎺т欢
----| 'overlay' 鎵€鏈夋帶浠堕兘鏄剧ず锛屼絾鎸夊眰绾у彔鏀?
+---| 'single'
+---| 'toggle'
+---| 'overlay'
 ---@alias ui.container.layout.type
----| "horizontal"  -- 姘村钩鎺掑垪
----| "vertical"    -- 鍨傜洿鎺掑垪
----| "grid"        -- 缃戞牸鎺掑垪
+---| "horizontal"
+---| "vertical"
+---| "grid"
 
 ---@alias ui.container.layout.flow
----| "top_to_bottom"  -- 浠庝笂鍒颁笅
----| "bottom_to_top"  -- 浠庝笅鍒颁笂
----| "left_to_right"  -- 浠庡乏鍒板彸
----| "right_to_left"  -- 浠庡彸鍒板乏
+---| "top_to_bottom"
+---| "bottom_to_top"
+---| "left_to_right"
+---| "right_to_left"
 
 ---@alias ui.container.layout.grid_wrap
----| "row"  -- 琛屼紭鍏?---| "column"  -- 鍒椾紭鍏?
+---| "row"
 ---@class ui.container.layout.options
----@field type? ui.container.layout.type 褰撳墠浣跨敤鐨勫竷灞€绫诲瀷锛坔orizontal / vertical / grid锛?---@field flow? ui.container.layout.flow 鎺掑垪鏂瑰悜锛坔orizontal/vertical 鏃剁敓鏁堬級
----@field reverse? boolean 鏄惁鍙嶅悜鎺掑垪锛堢瓑浠蜂簬 flow 鐨勫揩鎹风敤娉曪級
----@field spacing? number 鎺т欢涔嬮棿鐨勯棿璺?---@field padding? number 澶栬竟璺?---@field grid_columns? integer 缃戞牸鍒楁暟
----@field grid_rows? integer 缃戞牸琛屾暟
----@field grid_wrap? ui.container.layout.grid_wrap 缃戞牸鎹㈣鏂瑰紡锛堣浼樺厛 / 鍒椾紭鍏堬級
----@field grid_spacing? {x:number, y:number} 缃戞牸妯旱闂磋窛
+---@field type? ui.container.layout.type 布局排列类型
+---@field reverse? boolean 是否反向排列
+---@field spacing? number 子控件间距
+---@field grid_rows? integer 网格行数
+---@field grid_wrap? ui.container.layout.grid_wrap 网格换行方向
+---@field grid_spacing? {x:number, y:number} 网格横纵间距
 
 ---@class ui.container.options: ui.options
----@field mode? ui.container.mode 妯″紡
----@field layout? ui.container.layout.options 甯冨眬
+---@field mode? ui.container.mode 容器显示模式
+---@field layout? ui.container.layout.options 容器布局配置
 
--- 瀹瑰櫒
----@param args? ui.container.options
+-- 容器
+---@param args? ui.container.options 容器配置
 ---@param ... ui.container.options
 ---@return ui.container
-g.container = function(args,...)
+M.container = function(args,...)
     args = args or {}
     args = table.merge(args, ...)
     args.mode = args.mode or "single"
@@ -52,10 +52,10 @@ g.container = function(args,...)
     args.layout.grid_spacing = args.layout.grid_spacing or {x = 0, y = 0}
 
     ---@class ui.container: ui.void
-    ---@field layout ui.container.layout 甯冨眬
-    local o = g.void(args)
+    ---@field layout ui.container.layout 布局状态
+    local o = M.void(args)
 
-    ---@type hook.add<ui> 鎺т欢
+    ---@type reactive.add<ui>
     o.widgets = o.factory.add({
         ---@param a ui
         ---@param b ui
@@ -65,53 +65,55 @@ g.container = function(args,...)
         end,
     })
 
-    ---@type hook.set<ui.container.mode> 妯″紡
+    ---@type lib.reactive.ref 容器显示模式
     o.mode = o.factory.set(args.mode)
 
-    ---@class ui.container.layout 甯冨眬
+    ---@class ui.container.layout 布局状态
     o.layout = {}
 
-    ---@type hook.set<ui.container.layout.type> 甯冨眬绫诲瀷
+    ---@type lib.reactive.ref 布局排列类型
     o.layout.type = o.factory.set(args.layout.type)
 
-    ---@type hook.set<ui.container.layout.flow> 鎺掑垪鏂瑰悜
+    ---@type lib.reactive.ref
     o.layout.flow = o.factory.set(args.layout.flow)
 
-    ---@type hook.set<boolean> 鏄惁鍙嶅悜鎺掑垪
+    ---@type lib.reactive.ref
     o.layout.reverse = o.factory.set(args.layout.reverse)
 
-    ---@type hook.set<number> 鎺т欢涔嬮棿鐨勯棿璺?
+    ---@type lib.reactive.ref
     o.layout.spacing = o.factory.set(args.layout.spacing)
 
-    ---@type hook.set<number> 澶栬竟璺?
+    ---@type lib.reactive.ref
     o.layout.padding = o.factory.set(args.layout.padding)
 
-    ---@type hook.set<integer> 缃戞牸鍒楁暟
+    ---@type lib.reactive.ref
     o.layout.grid_columns = o.factory.set(args.layout.grid_columns)
     
-    ---@type hook.set<integer> 缃戞牸琛屾暟
+    ---@type lib.reactive.ref 网格行数
     o.layout.grid_rows = o.factory.set(args.layout.grid_rows)
 
-    ---@type hook.set<ui.container.layout.grid_wrap> 缃戞牸鎹㈣鏂瑰紡
+    ---@type lib.reactive.ref
     o.layout.grid_wrap = o.factory.set(args.layout.grid_wrap)
 
-    ---@type hook.set<{x:number, y:number}> 缃戞牸妯旱闂磋窛
+    ---@type lib.reactive.ref
     o.layout.grid_spacing = o.factory.set(args.layout.grid_spacing)
 
-    -- 娣诲姞涓嬬骇
+    -- 添加子控件
     ---@param ui ui
     o.add_child = function (ui)
+        if ui.parent and ui.parent() ~= o then
+            ui.parent.set(o)
+        end
         o.widgets.add(ui)
     end
 
-    -- 鎸夊垪琛ㄩ『搴忔坊鍔犱笅绾?    ---@param uis ui[]
     o.add_children = function (uis)
         for _, ui in ipairs(uis) do
            o.add_child(ui) 
         end
     end
 
-    ---@type hook.computed<ui?> 浼樺厛绾ф渶楂樼殑鎺т欢
+    ---@type reactive.computed<ui?>
     local primary_widget = o.factory.computed(function()
         ---@type list<ui>
         local widgets = o.widgets()
@@ -121,17 +123,15 @@ g.container = function(args,...)
         return widgets.first()
     end)
 
-    ---@type hook.once_event 娓呴櫎鍒锋柊浜嬩欢 
+    ---@type reactive.once_event
     local once_clear_refresh = o.factory.once_event()
 
-    -- 寰楀埌single瑙嗚澶у皬
     local function get_single_visual_size()
         ---@type ui
         local ui = primary_widget()
         return ui.visual_size()
     end
 
-    -- 寰楀埌stack瑙嗚澶у皬
     local function get_stack_visual_size()
         ---@type list<ui>
         local widgets = o.widgets()
@@ -139,9 +139,9 @@ g.container = function(args,...)
         local type = o.layout.type()
         
         if type == "horizontal" then
-            ---@type number 鏈€澶ч珮搴?
+            ---@type number
             local max_height = 0
-            ---@type number 瀹藉害鎬诲拰
+            ---@type number
             local width_sum = 0
             widgets.for_each(
                 ---@param widget ui
@@ -155,9 +155,9 @@ g.container = function(args,...)
             )
             return width_sum, max_height
         elseif type == "vertical" then
-            ---@type number 鏈€澶у搴?
+            ---@type number
             local max_width = 0
-            ---@type number 楂樺害鎬诲拰
+            ---@type number
             local height_sum = 0
             widgets.for_each(
                 ---@param widget ui
@@ -175,7 +175,6 @@ g.container = function(args,...)
         end
     end
 
-    -- 璁剧疆鍍忕礌澶у皬
     o.pixel_size.compute(function()
         ---@type ui.container.mode
         local mode = o.mode()
@@ -193,7 +192,7 @@ g.container = function(args,...)
         end
     end)
     
-    --- single甯冨眬
+    --- 单控件布局
     local function layout_single()
         ---@type ui
         local ui = primary_widget()
@@ -202,21 +201,20 @@ g.container = function(args,...)
         if ui == nil then
             return
         end
-        -- 鍙樉绀轰竴涓?
         widgets.for_each(
             ---@param widget ui
             function(widget)
                 if widget == ui then
                     return
                 end
-                once_clear_refresh(widget.hide_lock.acquire()) -- 鑾峰彇闅愯棌閿?
+                once_clear_refresh(widget.hide_lock.acquire()) -- 获取隐藏锁
             end
         )
 
         ui.anchor_center(o)
     end
 
-    --- stack甯冨眬
+    --- 堆叠布局
     local function layout_stack()
         ---@type list<ui>
         local widgets = o.widgets()
@@ -294,7 +292,6 @@ g.container = function(args,...)
         )
     end
 
-    --- 鍒锋柊甯冨眬
     local function refresh_layout()
         ---@type ui.container.mode
         local mode = o.mode()
@@ -307,18 +304,15 @@ g.container = function(args,...)
         end
     end
 
-    -- 閲嶈浇娣诲姞鎺т欢
     o.widgets.on_add.add(
         ---@param widget ui
         function(widget)
-            -- 娣诲姞涓嬬骇
+            -- 添加子控件
             o.children.add(widget)
             o.factory.capture("", widget)
 
-            -- 瑙﹀彂娓呴櫎鍒锋柊浜嬩欢
             once_clear_refresh()
 
-            -- 鍒锋柊甯冨眬
             refresh_layout()
         end
     )
@@ -326,4 +320,4 @@ g.container = function(args,...)
     return o
 end
 
-return g
+return M

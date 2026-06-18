@@ -10,25 +10,25 @@ local create_machine = require "framework.state_machine.machine"
 ---| "destroyed"
 
 ---@class framework.state_machine.state.options
----@field name? string 状态名称，用于 debug 和路径
----@field machine? framework.state_machine.machine 所属状态机；不传时自动创建
----@field parent? framework.state_machine.state 父状态；树形嵌套时使用
----@field owner? any 归属对象；创建新状态机时写入 machine.owner
----@field data? table 业务自定义数据
----@field auto_start? boolean 加入父级或状态机后是否自动启动
----@field on_run? fun(context:framework.state_machine.context) 兼容旧 state.create 的运行入口
----@field on_entry? fun(state:framework.state_machine.state, context?:any) 进入状态动作
----@field on_update? fun(state:framework.state_machine.state, dt:number, context?:any) 每帧更新动作
----@field on_event? fun(state:framework.state_machine.state, event_name:string, ...:any) 收到事件动作
----@field on_exit? fun(state:framework.state_machine.state, reason?:string) 正常退出动作
----@field on_interrupt? fun(state:framework.state_machine.state, reason?:string, passive?:boolean) 打断动作
----@field on_destroy? fun(state:framework.state_machine.state, reason?:string) 销毁动作
+---@field name? string 字段说明
+---@field machine? framework.state_machine.machine 字段说明
+---@field parent? framework.state_machine.state 字段说明
+---@field owner? any 字段说明
+---@field data? table 字段说明
+---@field auto_start? boolean 字段说明
+---@field on_run? fun(context:framework.state_machine.context) 字段说明
+---@field on_entry? fun(state:framework.state_machine.state, 字段说明
+---@field on_update? fun(state:framework.state_machine.state, 字段说明
+---@field on_event? fun(state:framework.state_machine.state, 字段说明
+---@field on_exit? fun(state:framework.state_machine.state, 字段说明
+---@field on_interrupt? fun(state:framework.state_machine.state, 字段说明
+---@field on_destroy? fun(state:framework.state_machine.state, 字段说明
 
 ---@class framework.state_machine.transition
 ---@field target framework.state_machine.state
----@field event? string 触发事件；nil 表示状态 done 后的完成迁移
----@field guard? fun(state:framework.state_machine.state, ...:any):boolean 迁移守卫条件
----@field action? fun(state:framework.state_machine.state, target:framework.state_machine.state, ...:any) 迁移动作
+---@field event? string 字段说明
+---@field guard? fun(state:framework.state_machine.state, 字段说明
+---@field action? fun(state:framework.state_machine.state, 字段说明
 
 ---@class framework.state_machine.context
 ---@field machine framework.state_machine.machine 所属状态机
@@ -36,26 +36,26 @@ local create_machine = require "framework.state_machine.machine"
 ---@field state framework.state_machine.state 当前状态
 ---@field data table 当前状态业务数据
 ---@field once_done fun() 标记当前状态完成
----@field done fun(reason?:string) 标记当前状态完成
+---@field done fun(reason?:string) 字段说明
 
 ---@class framework.state_machine.timer
 ---@field remaining number
 ---@field action fun(state:framework.state_machine.state)
----@field repeat_interval? number
+---@field repeat_interval? number 字段说明
 ---@field active boolean
 
 ---@class framework.state_machine.state
 ---@field type string 类型标记
 ---@field name string 状态名
 ---@field machine framework.state_machine.machine 所属状态机
----@field parent? framework.state_machine.state 父状态
----@field previous? framework.state_machine.state 前级状态
+---@field parent? framework.state_machine.state 字段说明
+---@field previous? framework.state_machine.state 字段说明
 ---@field children framework.state_machine.state[] 子状态
 ---@field data table 业务数据
 ---@field on_started lib.callback.event 启动事件
 ---@field on_done lib.callback.event 完成事件
 ---@field on_interrupted lib.callback.event 打断事件
----@field on_destroyed lib.callback.event 销毁事件
+---@field on_destroyed lib.callback.event 字段说明
 ---@field on_child_added lib.callback.event 子状态加入事件
 local State = {}
 State.__index = State
@@ -69,7 +69,7 @@ local function is_state(value)
     return type(value) == "table" and value.type == "state_machine.state"
 end
 
----@param args? framework.state_machine.state.options
+---@param args? framework.state_machine.state.options 参数说明
 ---@return framework.state_machine.state
 local function create_state(args)
     args = args or {}
@@ -172,7 +172,7 @@ function State:get_path()
     return self.parent:get_path() .. "/" .. self.name
 end
 
----@param context? any
+---@param context? any 参数说明
 ---@return framework.state_machine.state
 function State:start(context)
     if self._destroyed or self._status == "running" then
@@ -185,7 +185,7 @@ function State:start(context)
 end
 
 ---@param dt number
----@param context? any
+---@param context? any 参数说明
 ---@return framework.state_machine.state
 function State:update(dt, context)
     assert(type(dt) == "number", "dt must be number")
@@ -211,7 +211,7 @@ function State:update(dt, context)
     return self
 end
 
----@param reason? string
+---@param reason? string 参数说明
 ---@return framework.state_machine.state
 function State:done(reason)
     if self._destroyed or self._status == "done" or self._status == "interrupted" then
@@ -226,8 +226,8 @@ function State:done(reason)
     return self
 end
 
----@param reason? string
----@param passive? boolean
+---@param reason? string 参数说明
+---@param passive? boolean 参数说明
 ---@return framework.state_machine.state
 function State:interrupt(reason, passive)
     if self._destroyed or self._status == "interrupted" or self._status == "done" then
@@ -249,7 +249,7 @@ function State:interrupt(reason, passive)
     return self
 end
 
----@param reason? string
+---@param reason? string 参数说明
 ---@return framework.state_machine.state
 function State:destroy(reason)
     if self._destroyed then
@@ -293,7 +293,7 @@ function State:destroy(reason)
 end
 
 ---@param child_or_args framework.state_machine.state|framework.state_machine.state.options
----@param options? { auto_start?: boolean }
+---@param options? { 参数说明
 ---@return framework.state_machine.state
 function State:add_child(child_or_args, options)
     options = options or {}
@@ -370,7 +370,7 @@ function State:start_children()
 end
 
 ---@param target_or_args framework.state_machine.state|framework.state_machine.state.options
----@param options? { event?: string, guard?: fun(state:framework.state_machine.state, ...:any):boolean, action?: fun(state:framework.state_machine.state, target:framework.state_machine.state, ...:any) }
+---@param options? { 参数说明
 ---@return framework.state_machine.state
 function State:add_transition(target_or_args, options)
     options = options or {}
@@ -394,7 +394,7 @@ function State:add_transition(target_or_args, options)
 end
 
 ---@param target_or_args framework.state_machine.state|framework.state_machine.state.options
----@param options? { guard?: fun(state:framework.state_machine.state, ...:any):boolean, action?: fun(state:framework.state_machine.state, target:framework.state_machine.state, ...:any) }
+---@param options? { 参数说明
 ---@return framework.state_machine.state
 function State:transition_to(target_or_args, options)
     options = options or {}
@@ -420,7 +420,7 @@ end
 
 ---@param seconds number
 ---@param action fun(state:framework.state_machine.state)
----@param options? { repeat_interval?: number }
+---@param options? { 参数说明
 ---@return fun()
 function State:add_timer(seconds, action, options)
     assert(type(seconds) == "number" and seconds >= 0, "seconds must be non-negative number")
@@ -447,7 +447,7 @@ end
 
 ---@param event_name string
 ---@param action fun(state:framework.state_machine.state, ...:any)
----@param options? { once?: boolean, guard?: fun(state:framework.state_machine.state, ...:any):boolean }
+---@param options? { 参数说明
 ---@return fun()
 function State:on(event_name, action, options)
     assert(type(event_name) == "string", "event_name must be string")

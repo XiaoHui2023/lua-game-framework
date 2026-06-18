@@ -1,28 +1,28 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.ui
-local g = require "..base"
+local M = require "..base"
 
 ---@param args ui.options
 ---@param ... ui.options
----@return ui.progress 杩斿洖瀵硅薄
-g.progress = function(args,...)
+---@return ui.progress 进度 UI 对象
+M.progress = function(args,...)
     args = table.merge(args, ...)
-    args.image = args.image or g.DEFAULT_IMAGE
+    args.image = args.image or M.DEFAULT_IMAGE
     args.type = args.type or "progress_ring"
 
     ---@class ui.progress : ui
-    local o = g.create(args)
+    local o = M.create(args)
     
     return o
 end
 
-g.progress_ring = function(args)
+M.progress_ring = function(args)
     args.type = "progress_ring"
-    return g.progress(args)
+    return M.progress(args)
 end
 
-g.progress_bar = function(args)
+M.progress_bar = function(args)
     args.type = "progress_bar"
-    return g.progress(args)
+    return M.progress(args)
 end

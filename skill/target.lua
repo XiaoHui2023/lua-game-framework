@@ -1,12 +1,12 @@
 ---@class framework.skill
-local g = require ".base"
+local M = require ".base"
 local factory_model = require "lib.reactive".factory
 
 ---@class skill.target.options: factory.options
 
 ---@param args skill.target.options
 ---@return skill.target
-g.create_target = function (args)
+M.create_target = function (args)
     ---@class skill.target: factory
     local o = factory_model(args)
     o.set_class("skill.target")

@@ -1,24 +1,22 @@
 ---@class framework.lighting
-local g = {}
+local M = {}
 local factory = require("lib.reactive").factory
 ---@type lib.reactive
 local reactive = require "lib.reactive"
 
 ---@class framework.lighting.params
----@field name string 闂傤亞鏁搁柧鎯ф倳缁
+---@field name string 字段说明
 ---@field end_point
 ---@field start_height
 ---@field end_height
 
----閸掓稑缂撻梻顏嗘暩闁
 ---@param k framework.lighting.params
----@return lighting 闂傤亞鏁搁柧鎯ь嚠鐠
-g.new = function(k)
-    -- 鐟欙絽瀵
+---@return lighting 返回值
+M.new = function(k)
     local name = k.name
-    ---@type point 鐠ч
+    ---@type point
     local po = k.start_point
-    ---@type point 缂佸牏鍋
+    ---@type point
     local pt = k.end_point
     local ho = k.start_height or 0
     local ht = k.end_height or 0
@@ -26,13 +24,13 @@ g.new = function(k)
     ---@class lighting : reactive.factory
     local o = factory()
 
-    ---@type number 闂傤亞鏁搁柧鎯у綖閺
+    ---@type number
     o.handle = nil
 
-    ---@type reactive.set 璧风偣鍧愭爣
+    ---@type reactive.set
     o.start_point = o.factory.set(po)
 
-    ---@type reactive.set 缁堢偣鍧愭爣
+    ---@type reactive.set
     o.end_point = o.factory.set(pt)
 
     ---@type reactive.set 璧风偣楂樺害
@@ -44,4 +42,4 @@ g.new = function(k)
     return o
 end
 
-return g
+return M

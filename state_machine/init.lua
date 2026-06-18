@@ -2,8 +2,8 @@ local create_machine = require "framework.state_machine.machine"
 local create_state = require "framework.state_machine.state"
 
 ---@class framework.state_machine
----@field machine fun(args?:framework.state_machine.machine.options):framework.state_machine.machine 创建状态机
----@field state fun(args?:framework.state_machine.state.options):framework.state_machine.state 创建状态
+---@field machine fun(args?:framework.state_machine.machine.options):framework.state_machine.machine 字段说明
+---@field state fun(args?:framework.state_machine.state.options):framework.state_machine.state 字段说明
 local M = {}
 
 M.machine = create_machine
@@ -15,7 +15,7 @@ local templates = {}
 
 ---@param name string
 ---@param steps (framework.state_machine.state|framework.state_machine.state.options)[]
----@param args? framework.state_machine.machine.options
+---@param args? framework.state_machine.machine.options 参数说明
 ---@return framework.state_machine.state first
 ---@return framework.state_machine.state last
 function M.sequence(name, steps, args)
@@ -69,11 +69,11 @@ function M.get_generator_by_key(key)
 end
 
 ---@class framework.state_machine.tree_options: framework.state_machine.state.options
----@field key? string 模板 key；不传时创建普通状态
+---@field key? string 字段说明
 ---@alias framework.state_machine.tree (framework.state_machine.tree_options[]|framework.state_machine.tree[])
 
 ---@param tree framework.state_machine.tree
----@param parent? framework.state_machine.state
+---@param parent? framework.state_machine.state 参数说明
 ---@return framework.state_machine.state
 function M.build_tree(tree, parent)
     assert(type(tree) == "table", "tree must be table")
