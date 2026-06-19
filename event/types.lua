@@ -1,13 +1,13 @@
 ---@class event.input
----@field world_pos point
----@field window_pos point
----@field unit? unit 字段说明
----@field destructible? any 字段说明
----@field key? event.key 字段说明
----@field mouse? event.mouse 字段说明
+---@field world_pos point 鼠标所在世界坐标
+---@field window_pos point 鼠标所在窗口坐标
+---@field unit? unit 鼠标悬停单位
+---@field destructible? any 鼠标悬停可破坏物
+---@field key? event.key 触发事件的键盘按键
+---@field mouse? event.mouse 触发事件的鼠标按键
 
 ---@class event.input.sync: event.input
----@field player player
+---@field player player 同步事件来源玩家
 
 ---@alias event.mouse
 ---| "LEFT"
@@ -84,6 +84,8 @@
 ---| "PAGEDOWN"
 ---| "PRINTSCREEN"
 ---| "SCROLLLOCK"
+---| "INSERT"
+---| "DELETE"
 ---| "NUM0"
 ---| "NUM1"
 ---| "NUM2"

@@ -1,5 +1,7 @@
 ---@type framework.ui
-local M = require "framework.ui.base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
 ---@class ui.options
 ---@field dragable? boolean 是否允许拖拽
@@ -29,7 +31,7 @@ return function (o,args)
 
     local function bind_move()
         ---@param pos point
-        o.on_drag_end.add(M.ON_MOUSE_MOVE_ASYNC(function(api)
+        o.on_drag_end.add(apis.ON_MOUSE_MOVE_ASYNC(function(api)
             o.on_drag(api.position)
         end))
     end

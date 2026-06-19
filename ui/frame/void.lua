@@ -1,7 +1,7 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.ui
-local M = require "..base"
+local M = require "framework.ui"
 
 ---空节点
 ---@param args? ui.options 空节点创建参数

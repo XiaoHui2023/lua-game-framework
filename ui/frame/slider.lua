@@ -1,5 +1,5 @@
 ---@class framework.ui
-local M = require "..base"
+local M = require "framework.ui"
 ---@type jass
 local jass = require "jass"
 

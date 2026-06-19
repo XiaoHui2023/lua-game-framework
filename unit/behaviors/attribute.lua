@@ -1,5 +1,7 @@
 ---@type framework.unit
-local M = require "..base"
+local M = require "framework.unit"
+---@type framework.unit.apis
+local apis = require "..apis"
 
 ---@class unit.options
 ---@field move_speed? number 字段说明
@@ -29,17 +31,17 @@ return function (o,args)
 
     -- 重载设置移动速度
     o.move_speed.on_change.add(function(speed)
-        M.set_move_speed(o.handle(), speed)
+        apis.SET_MOVE_SPEED({ handle = o.handle(), speed = speed })
     end)
 
     -- 重载设置攻击速度
     o.attack_speed.on_change.add(function(speed)
         local real_speed = 1 / (speed * o.base_attack_speed())
-        M.set_attack_interval(o.handle(), real_speed)
+        apis.SET_ATTACK_INTERVAL({ handle = o.handle(), interval = real_speed })
     end)
 
     -- 重载设置攻击范围
     o.attack_range.on_change.add(function(range)
-        M.set_attack_range(o.handle(), range)
+        apis.SET_ATTACK_RANGE({ handle = o.handle(), range = range })
     end)
 end

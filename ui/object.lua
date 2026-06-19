@@ -1,13 +1,10 @@
 ---@class framework.ui
-local M = require ".base"
+local M = require "framework.ui"
 ---@type lib.reactive
 local reactive = require "lib.reactive"
 local factory = reactive.factory
 ---@type framework.ui.apis
 local apis = require ".apis"
-
----@type reactive.event
-M.ON_CREATE = apis.ON_CREATE
 
 ---@class ui.options : factory.options
 ---@field alpha? integer 透明度，范围 0 到 255
@@ -42,7 +39,12 @@ M.create = function(args)
     local parent_handle = args.parent and args.parent.handle() or args.layer
 
     ---@type lib.reactive.ref
-    o.handle = o.factory.set(M.new(args.type, parent_handle))
+    local create_api = apis.CREATE({
+        type = args.type,
+        parent_handle = parent_handle,
+    })
+    assert(create_api.handle ~= nil, "framework.ui.create requires runtime backend")
+    o.handle = o.factory.set(create_api.handle)
 
     ---@type ui.type UI 类型
     o.type = args.type
@@ -79,7 +81,7 @@ M.create = function(args)
 
     o.delete.add(
         function()
-            M.delete(o.handle())
+            apis.DELETE({ handle = o.handle() })
         end
     )
 
@@ -92,7 +94,7 @@ M.create = function(args)
     -- 注册事件
     o.factory.register_hook_fields()
 
-    M.ON_CREATE({ ui = o })
+    apis.ON_CREATE({ ui = o })
 
     return o
 end

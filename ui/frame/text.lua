@@ -8,7 +8,9 @@ local table = require "lib.tablex"
 ---@field DEFAULT_TEXT_ALIGN ui.position 默认文本排列位置
 ---@field TEXT_GET_TEXT_PIXEL_SIZE_WIDTH_SCALE number 文本宽度估算缩放系数
 ---@field TEXT_GET_TEXT_PIXEL_SIZE_HEIGHT_SCALE number 文本高度估算缩放系数
-local M = require "..base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "..apis"
 ---@type framework.event
 local event = require "framework.event"
 
@@ -60,13 +62,13 @@ M.text = function(args, ...)
     ---@type lib.reactive.ref
     o.align = o.factory.set(args.align)
     o.align.on_change.add(function(align)
-        M.set_text_alignment(o.handle(), align)
+        apis.SET_TEXT_ALIGNMENT({ handle = o.handle(), pos = align })
     end)
 
     ---@type lib.reactive.ref
     o.outline = o.factory.set(args.outline)
     o.outline.on_change.add(function(outline)
-        M.set_text_outline(o.handle(), outline)
+        apis.SET_TEXT_OUTLINE({ handle = o.handle(), outline = outline })
     end)
 
     ---@type reactive.computed <ui.text.render_result>
@@ -137,7 +139,7 @@ M.text = function(args, ...)
 
     -- 应用文本渲染结果
     render_text_clamped.on_change.add(function(render_result)
-        M.set_text(o.handle(), render_result.text)
+        apis.SET_TEXT({ handle = o.handle(), text = render_result.text })
         o.visual_size.compute(function()
             return render_result.width, render_result.height
         end)
@@ -150,7 +152,8 @@ M.text = function(args, ...)
         return math.floor(font_size * 1000) / 1000
     end)
     o.font_size.on_change.add(function(font_size)
-        local pixel_size = M.set_font_size(o.handle(),font_size)
+        local api = apis.SET_FONT_SIZE({ handle = o.handle(), size = font_size })
+        local pixel_size = api.value or font_size
         o.font_pixel_size.set(pixel_size)
     end)
 

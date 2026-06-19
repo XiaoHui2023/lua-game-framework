@@ -1,7 +1,9 @@
 ---@type lib.metatablex
 local metatable = require "lib.metatablex"
 ---@class framework.sound
-local M = require ".base"
+local M = require "framework.sound"
+---@type framework.sound.apis
+local apis = require ".apis"
 ---@type framework.timer
 local Timer = require "framework.timer"
 
@@ -26,17 +28,19 @@ local function play(sound)
     end
 
     if LAST_HANDLE == sound then
-        M.stop(LAST_HANDLE)
+        apis.STOP({ handle = LAST_HANDLE })
     end
 
-    local handle = M.play(sound)
+    local api = apis.PLAY({ sound = sound })
+    assert(api.handle ~= nil, "framework.sound.define requires runtime backend")
+    local handle = api.handle
 
     -- 璁板綍瀵硅薄
     LAST_HANDLE = handle
 
     return function()
         if MAP_COOLDOWN[sound] ~= nil then
-            M.stop(handle)
+            apis.STOP({ handle = handle })
             MAP_COOLDOWN[sound] = nil
         end
     end

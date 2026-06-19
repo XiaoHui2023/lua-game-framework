@@ -1,5 +1,5 @@
 ---@class framework.skill
-local M = require ".base"
+local M = require "framework.skill"
 
 ---@class skill.passive.options: skill.options
 

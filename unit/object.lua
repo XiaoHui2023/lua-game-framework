@@ -1,15 +1,12 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.unit
-local M = require ".base"
+local M = require "framework.unit"
 local factory = require "lib.reactive".factory
 ---@type lib.reactive
 local reactive = require "lib.reactive"
 ---@type framework.unit.apis
 local apis = require ".apis"
-
----@type reactive.event
-M.ON_CREATE = apis.ON_CREATE
 
 ---@class unit.options: reactive.factory.options
 ---@field position
@@ -46,7 +43,14 @@ M.create = function(args,...)
     ---@type reactive.set
     o.faction = o.factory.set(args.faction)
     ---@type reactive.set
-    o.handle = o.factory.set(M.new(args.key, args.position, args.player, args.facing))
+    local create_api = apis.CREATE_HANDLE({
+        key = args.key,
+        position = args.position,
+        player = args.player,
+        facing = args.facing,
+    })
+    assert(create_api.handle ~= nil, "framework.unit.create requires runtime backend")
+    o.handle = o.factory.set(create_api.handle)
 
     M.HANDLE_TO_OBJECT[o.handle()] = o
     o.delete.add(function()
@@ -54,12 +58,12 @@ M.create = function(args,...)
     end)
 
     o.delete.add(function()
-        M.remove(o.handle())
+        apis.REMOVE({ handle = o.handle() })
     end)
 
     require ".behaviors"(o, args)
 
-    M.ON_CREATE({ unit = o })
+    apis.ON_CREATE({ unit = o })
 
     return o
 end

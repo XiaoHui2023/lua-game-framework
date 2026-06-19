@@ -1,13 +1,10 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.projectile
-local M = require ".base"
+local M = require "framework.projectile"
 local factory = require "lib.reactive".factory
 ---@type framework.projectile.apis
 local apis = require ".apis"
-
-M.ON_CREATE = apis.ON_CREATE
-M.ON_DESTROY = apis.ON_DESTROY
 
 ---@class projectile.options: lib.reactive.factory.options
 ---@field effect? any 字段说明
@@ -39,14 +36,16 @@ M.create = function(args, ...)
 
     o.effect = o.factory.set(args.effect)
     o.owner = o.factory.set(args.owner)
-    o.effect_handle = o.factory.set(M.new(
-        args.effect,
-        args.position,
-        args.facing,
-        args.scale,
-        args.height,
-        args.duration
-    ))
+    local create_api = apis.CREATE_EFFECT({
+        effect = args.effect,
+        position = args.position,
+        facing = args.facing,
+        scale = args.scale,
+        height = args.height,
+        duration = args.duration,
+    })
+    assert(create_api.handle ~= nil, "framework.projectile.create requires runtime backend")
+    o.effect_handle = o.factory.set(create_api.handle)
     o.destroy = function()
         o.delete()
     end
@@ -54,7 +53,7 @@ M.create = function(args, ...)
     M.HANDLE_TO_OBJECT[o.effect_handle()] = o
 
     o.delete.add(function()
-        M.ON_DESTROY({ projectile = o })
+        apis.ON_DESTROY({ projectile = o })
     end)
 
     o.delete.add(function()
@@ -62,12 +61,12 @@ M.create = function(args, ...)
     end)
 
     o.delete.add(function()
-        M.remove(o.effect_handle())
+        apis.REMOVE({ handle = o.effect_handle() })
     end)
 
     require ".behaviors"(o, args)
 
-    M.ON_CREATE({ projectile = o })
+    apis.ON_CREATE({ projectile = o })
 
     return o
 end

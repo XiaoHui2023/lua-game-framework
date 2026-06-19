@@ -1,5 +1,7 @@
 ---@type framework.unit
-local M = require "..base"
+local M = require "framework.unit"
+---@type framework.unit.apis
+local apis = require "..apis"
 
 ---@class unit.options
 ---@field model? model 字段说明
@@ -68,12 +70,12 @@ return function (o,args)
         return model or o.model()
     end)
     o.model.on_change.add(function(model)
-        M.replace_model(o.handle(), model.key)
+        apis.REPLACE_MODEL({ handle = o.handle(), key = model.key })
     end)
 
     -- 设置颜色
     local function set_color(enable, co, alpha)
-        M.set_color(o.handle(), enable, co, alpha)
+        apis.SET_COLOR({ handle = o.handle(), enable = enable, color = co, alpha = alpha })
     end
     
     -- 重载设置颜色使能
@@ -99,7 +101,7 @@ return function (o,args)
 
     -- 设置覆盖
     local function set_overlay(enable, co)
-        M.set_overlay(o.handle(), enable, co)
+        apis.SET_OVERLAY({ handle = o.handle(), enable = enable, color = co })
     end
 
     -- 重载设置覆盖使能
@@ -120,7 +122,7 @@ return function (o,args)
 
     -- 设置描边
     local function set_outline(enable, co)
-        M.set_outline(o.handle(), enable, co)
+        apis.SET_OUTLINE({ handle = o.handle(), enable = enable, color = co })
     end
 
     -- 重载设置描边使能
@@ -155,7 +157,12 @@ return function (o,args)
         local real_scale_y = scale_y * (model.scale_y or model_scale)
         local real_scale_z = scale_z * (model.scale_z or model_scale)
 
-        M.set_scale(o.handle(), real_scale_x, real_scale_y, real_scale_z)
+        apis.SET_SCALE({
+            handle = o.handle(),
+            scale_x = real_scale_x,
+            scale_y = real_scale_y,
+            scale_z = real_scale_z,
+        })
     end
 
     -- 重载设置缩放
@@ -180,14 +187,22 @@ return function (o,args)
 
     -- 重载设置动画速度
     o.animation_speed.on_change.add(function(speed)
-        M.set_animation_speed(o.handle(), speed)
+        apis.SET_ANIMATION_SPEED({ handle = o.handle(), speed = speed })
     end)
 
     -- 设置动画
     ---@param animation animation 动画
     ---@param speed number? 参数说明
     o.play_animation = function (animation, speed)
-        M.play_animation(o.handle(), animation.name, speed, animation.start_time, animation.end_time, animation.loop, animation.reset_on_end)
+        apis.PLAY_ANIMATION({
+            handle = o.handle(),
+            name = animation.name,
+            speed = speed,
+            start_time = animation.start_time,
+            end_time = animation.end_time,
+            loop = animation.loop,
+            reset_on_end = animation.reset_on_end,
+        })
     end
 
     -- 设置附加动画

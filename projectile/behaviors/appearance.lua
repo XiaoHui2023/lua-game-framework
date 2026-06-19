@@ -1,5 +1,7 @@
 ---@type framework.projectile
-local projectile = require "..base"
+local projectile = require "framework.projectile"
+---@type framework.projectile.apis
+local apis = require "..apis"
 
 ---@class projectile.options
 ---@field scale? number 字段说明
@@ -29,7 +31,12 @@ return function(o, args)
     o.visible = o.factory.set(args.visible)
 
     local function set_scale(scale_x, scale_y, scale_z)
-        projectile.set_scale(o.effect_handle(), scale_x, scale_y, scale_z)
+        apis.SET_SCALE({
+            handle = o.effect_handle(),
+            scale_x = scale_x,
+            scale_y = scale_y,
+            scale_z = scale_z,
+        })
     end
 
     o.scale.on_change.add(function(scale)
@@ -51,10 +58,10 @@ return function(o, args)
     end)
 
     o.animation_speed.on_change.add(function(speed)
-        projectile.set_animation_speed(o.effect_handle(), speed)
+        apis.SET_ANIMATION_SPEED({ handle = o.effect_handle(), speed = speed })
     end)
 
     o.visible.on_change.add(function(visible)
-        projectile.set_visible(o.effect_handle(), visible)
+        apis.SET_VISIBLE({ handle = o.effect_handle(), visible = visible })
     end)
 end

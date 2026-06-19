@@ -1,8 +1,10 @@
 ---@type framework.ui
-local M = require "framework.ui.base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
----@param o ui
-return function (o)
+---@param o ui 需要挂接通用响应逻辑的 UI 对象
+return function(o)
     -- 透明度
     o.alpha.wrap_set(function(al)
         al = al > 255 and 255 or al
@@ -11,7 +13,7 @@ return function (o)
     end)
     o.alpha.on_change.add(function(al, old_al)
         -- 设置
-        M.set_alpha(o.handle(), al)
+        apis.SET_ALPHA({ handle = o.handle(), alpha = al })
 
         -- 下级也设置透明度
         o.children().for_each(function(child)
@@ -24,7 +26,7 @@ return function (o)
         if image == "" or image == 0 or image == nil then
             return
         end
-        M.set_image(o, image)
+        apis.SET_IMAGE({ ui = o, image = image })
     end)
 
     -- 进度
@@ -32,12 +34,12 @@ return function (o)
         if o.type ~= "progress_ring" and o.type ~= "progress_bar" then
             return
         end
-        M.set_progress(o, progress)
+        apis.SET_PROGRESS({ ui = o, progress = progress })
     end)
 
     -- 旋转
     o.rotation.on_change.add(function(rotation)
-        M.set_rotation(o, rotation)
+        apis.SET_ROTATION({ ui = o, rotation = rotation })
     end)
 
     -- 颜色
@@ -45,6 +47,6 @@ return function (o)
         if not color then
             return
         end
-        M.set_image_color(o, color)
+        apis.SET_IMAGE_COLOR({ ui = o, color = color })
     end)
 end

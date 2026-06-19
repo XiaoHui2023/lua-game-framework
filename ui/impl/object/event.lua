@@ -1,5 +1,7 @@
 ---@class framework.ui
-local M = require "framework.ui.base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@type lib.reactive
@@ -37,6 +39,20 @@ local function create_event_registry(keys)
     end
 
     return registry
+end
+
+---@param handle ui.handle
+---@param event string
+---@param func fun()
+---@return fun()
+local function register_mouse_event(handle, event, func)
+    local api = apis.ON_MOUSE_EVENT({
+        handle = handle,
+        event = event,
+        func = func,
+    })
+    return api.remove_func or function()
+    end
 end
 
 ---@class ui.options
@@ -105,7 +121,7 @@ return function (o,args)
     o.on_click = o.factory.event()
 
     -- 注册事件
-    o.delete.add(M.on_mouse_focus(o.handle(), function()
+    o.delete.add(register_mouse_event(o.handle(), "鼠标-移入", function()
         if not o.focusable() then
             return
         end
@@ -115,7 +131,7 @@ return function (o,args)
 
         o.on_focus()
     end))
-    o.delete.add(M.on_mouse_blur(o.handle(), function()
+    o.delete.add(register_mouse_event(o.handle(), "鼠标-移出", function()
         if not o.focusable() then
             return
         end
@@ -125,7 +141,7 @@ return function (o,args)
 
         o.on_blur()
     end))
-    o.delete.add(M.on_mouse_left_down(o.handle(), function()
+    o.delete.add(register_mouse_event(o.handle(), "左键-按下", function()
         if not o.clickable() then
             return
         end
@@ -135,7 +151,7 @@ return function (o,args)
 
         o.on_mouse_left_down()
     end))
-    o.delete.add(M.on_mouse_left_up(o.handle(), function()
+    o.delete.add(register_mouse_event(o.handle(), "左键-抬起", function()
         if not o.clickable() then
             return
         end
@@ -145,7 +161,7 @@ return function (o,args)
 
         o.on_mouse_left_up()
     end))
-    o.delete.add(M.on_mouse_right_down(o.handle(), function()
+    o.delete.add(register_mouse_event(o.handle(), "右键-按下", function()
         if not o.clickable() then
             return
         end
@@ -155,7 +171,7 @@ return function (o,args)
 
         o.on_mouse_right_down()
     end))
-    o.delete.add(M.on_mouse_right_up(o.handle(), function()
+    o.delete.add(register_mouse_event(o.handle(), "右键-抬起", function()
         if not o.clickable() then
             return
         end

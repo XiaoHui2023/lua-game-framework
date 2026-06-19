@@ -1,7 +1,7 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.ui
-local M = require "..base"
+local M = require "framework.ui"
 
 ---@alias ui.container.mode
 ---| 'single'
@@ -126,13 +126,13 @@ M.container = function(args,...)
     ---@type reactive.once_event
     local once_clear_refresh = o.factory.once_event()
 
-    local function get_single_visual_size()
+    local function get_single_pixel_size()
         ---@type ui
         local ui = primary_widget()
-        return ui.visual_size()
+        return ui.scaled_pixel_size()
     end
 
-    local function get_stack_visual_size()
+    local function get_stack_pixel_size()
         ---@type list<ui>
         local widgets = o.widgets()
         ---@type ui.container.layout.type
@@ -146,7 +146,7 @@ M.container = function(args,...)
             widgets.for_each(
                 ---@param widget ui
                 function(widget)
-                    local width,height = widget.visual_size()
+                    local width,height = widget.scaled_pixel_size()
                     if height > max_height then
                         max_height = height
                     end
@@ -162,7 +162,7 @@ M.container = function(args,...)
             widgets.for_each(
                 ---@param widget ui
                 function(widget)
-                    local width,height = widget.visual_size()
+                    local width,height = widget.scaled_pixel_size()
                     if width > max_width then
                         max_width = width
                     end
@@ -184,9 +184,9 @@ M.container = function(args,...)
             return 0,0
         end
         if mode == "single" then
-            return get_single_visual_size()
+            return get_single_pixel_size()
         elseif mode == "stack" then
-            return get_stack_visual_size()
+            return get_stack_pixel_size()
         else
             error("not implemented")
         end

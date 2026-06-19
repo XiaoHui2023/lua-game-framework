@@ -8,9 +8,9 @@ local Player = require "framework.player"
 local player_apis = Player.apis
 
 ---@class player
----@field key_bindings reactive.collection<event.key_binding> 字段说明
+---@field key_bindings reactive.collection<event.key_binding> 玩家已注册的按键绑定集合
 
----@param player player
+---@param player player 需要初始化按键绑定集合的玩家
 local function setup_key_bindings(player)
     if player.key_bindings ~= nil then
         return
@@ -29,16 +29,16 @@ end
 
 ---@class event.key_binding.options
 ---@field player player 绑定所属玩家。
----@field name string 字段说明
----@field category? string 字段说明
----@field key event.key 字段说明
----@field on_press_async? fun(input:event.input) 字段说明
----@field on_release_async? fun(input:event.input) 字段说明
----@field on_press_sync? fun(input:event.input.sync) 字段说明
----@field on_release_sync? fun(input:event.input.sync) 字段说明
+---@field name string 绑定名称
+---@field category? string 绑定分类；省略时使用空字符串
+---@field key event.key 触发绑定的键盘按键
+---@field on_press_async? fun(input:event.input) 本地异步按下回调；省略时为空函数
+---@field on_release_async? fun(input:event.input) 本地异步抬起回调；省略时为空函数
+---@field on_press_sync? fun(input:event.input.sync) 同步按下回调；省略时为空函数
+---@field on_release_sync? fun(input:event.input.sync) 同步抬起回调；省略时为空函数
 
----@param args event.key_binding.options
----@return event.key_binding
+---@param args event.key_binding.options 按键绑定配置
+---@return event.key_binding 已创建并挂到玩家集合中的按键绑定
 event.key_binding = function(args)
     args.category = args.category or ""
     args.on_press_async = args.on_press_async or function() end

@@ -1,7 +1,7 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.ui
-local M = require "..base"
+local M = require "framework.ui"
 
 ---@param args ui.options
 ---@param ... ui.options

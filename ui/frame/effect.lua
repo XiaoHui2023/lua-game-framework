@@ -1,5 +1,7 @@
 ---@class framework.ui
-local M = require "..base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "..apis"
 
 
 ---@class ui.effect.options : ui.options
@@ -26,7 +28,12 @@ M.effect = function(args)
     -- 播放特效
     ---@param speed? number 播放速度，未填时使用引擎默认速度
     o.play = function(speed)
-        M.play_effect(o.handle(), o.model(), o.loop(),speed)
+        apis.PLAY_EFFECT({
+            handle = o.handle(),
+            effect = o.model(),
+            is_loop = o.loop(),
+            speed = speed,
+        })
     end
 
     return o

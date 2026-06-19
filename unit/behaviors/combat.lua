@@ -1,9 +1,9 @@
 ---@type framework.unit
-local M = require "..base"
----@type framework.event
-local event = require "framework.event"
+local M = require "framework.unit"
+---@type framework.event.apis
+local event_apis = require "framework.event.apis"
 
-event.ON_UNIT_DAMAGE_TAKEN(function (api)
+event_apis.ON_UNIT_DAMAGE_TAKEN(function (api)
     local target = M.HANDLE_TO_OBJECT[api.target_handle]
     local source = M.HANDLE_TO_OBJECT[api.source_handle]
     if source and source.on_attack_release then

@@ -1,5 +1,7 @@
 ---@type framework.ui
-local M = require "framework.ui.base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 ---@type framework.event
 local event = require "framework.event"
 
@@ -63,7 +65,10 @@ return function (o,args)
     o.height_scale_factor = o.factory.set(args.height_scale_factor)
 
     ---@type lib.reactive.ref 窗口大小<number,number>
-    o.window_size = o.factory.set(M.get_window_width(), M.get_window_height())
+    local window_size_api = apis.GET_WINDOW_SIZE({})
+    assert(window_size_api.width ~= nil, "framework.ui.size requires runtime backend width")
+    assert(window_size_api.height ~= nil, "framework.ui.size requires runtime backend height")
+    o.window_size = o.factory.set(window_size_api.width, window_size_api.height)
 
     ---@type lib.reactive.ref 尺寸模式<ui.size_mode>
     o.size_mode = o.factory.set(args.size_mode)
@@ -156,11 +161,11 @@ return function (o,args)
 
     -- 应用大小
     o.actual_size.on_change.add(function(width,height,...)
-        M.set_size(o, width, height)
+        apis.SET_SIZE({ ui = o, width = width, height = height })
     end)
 
     -- 绑定窗口大小改变事件
-    o.delete.add(M.ON_WINDOW_SIZE_CHANGE(function(api)
+    o.delete.add(apis.ON_WINDOW_SIZE_CHANGE(function(api)
         o.window_size.set(api.width, api.height)
     end))
 

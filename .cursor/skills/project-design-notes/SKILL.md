@@ -24,6 +24,7 @@ Lua 游戏通用框架：在宿主环境（如 Y3 地图脚本）上提供可复
 - 用户向文档分工：根 `README.md` 写框架定位与加载方式；各子模块 `README.md` 写该模块用法；设计口径不写进源码长注释。
 - Agent 三件套（预加载、设计笔记、changelog）放在 `.cursor/skills/`；通用规范在 `~/.cursor/skills/`。
 - 子模块文件按职责命名，禁止新增泛名 `base.lua`、`config.lua`、`api.lua`：`init.lua` 承载模块公开门面、枚举、非 callback 契约和加载顺序；`state.lua` 承载模块级可变状态，且只能使用普通 Lua 值，不能用 reactive ref/event/semaphore；`settings.lua` 承载框架默认值和可覆盖开关；`types.lua` 承载较大的 EmmyLua 类型声明；`apis.lua` 仅承载 callback.api 声明；`impl/` 放引擎无关 callback handler；引擎外部能力由 `runtime/framework/*` 注册 callback 实现。
+- 发现历史 `base.lua` 被当作模块共享表时，必须迁移为 `init.lua` 创建总表 `M` 并组装子模块；类型声明放 `types.lua`，模块内共享可变值放 `state.lua`，稳定默认值和可覆盖常量放 `settings.lua`，callback 契约放 `apis.lua`。子模块需要扩展总表时 require 公开模块名并依赖 `init.lua` 预先写入 `package.loaded[...] = M`，不得继续新增或传播 `.base` 依赖。
 
 ## 备忘与待定
 
@@ -33,7 +34,7 @@ Lua 游戏通用框架：在宿主环境（如 Y3 地图脚本）上提供可复
 - 外部业务应显式调用 `module.apis`、读取 `module.state`、使用 `module.settings`；不要为了少写参数在框架入口增加 `reset`、`scroll`、`set_*` 这类语法糖门面。
 - `apis.lua` 的模块字段类型写成 `callback.api`；回调 payload 单独声明为 `---@class <module>.api.<Name>: callback.instance`，handler 参数用该 payload 类型标注。
 - `apis.lua` 与 `settings.lua` 的公开 `---@field` 必须在类型后写中文语义说明；callback payload 字段要说明用途、单位和可选性，禁止只写类型。
-- `impl` 代码很少时使用单文件 `impl.lua`；只有实现拆成多份时才使用 `impl/` 目录和 `impl/init.lua` 聚合。
+- `impl` 统一使用 `impl/` 目录和 `impl/init.lua` 聚合；禁止继续新增或保留顶层 `impl.lua`。
 
 - Runtime dependency injection rule: host/engine callable capabilities for `framework/*` must be declared in `framework/<module>/apis.lua` and implemented by `runtime/framework/<module>.lua` registering `module.apis` handlers. Runtime code must not replace framework facade functions. One-off runtime handlers are registered inline, and each registration has a short Chinese responsibility comment.
 

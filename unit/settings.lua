@@ -26,7 +26,7 @@
 ---@field DEFAULT_SCALE_X number 字段说明
 ---@field DEFAULT_SCALE_Y number 字段说明
 ---@field DEFAULT_SCALE_Z number 字段说明
-local M = require ".base"
+local M = require "framework.unit"
 ---@type lib.colorlib
 local color = require "lib.color"
 

@@ -1,5 +1,7 @@
 ---@class framework.ui
-local M = require "..base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "..apis"
 
 
 ---@class ui.model.options : ui.options
@@ -24,7 +26,7 @@ M.model = function(args)
             end
 
             -- 应用
-            M.set_model(o.handle(), model)
+            apis.SET_MODEL({ handle = o.handle(), model = model })
         end
     )
 
@@ -33,7 +35,12 @@ M.model = function(args)
     ---@param is_loop? boolean 是否循环播放动画
     ---@param speed? number 播放速度，未填时使用引擎默认速度
     o.play = function(anima, is_loop,speed)
-        M.play_anima(o.handle(), anima, is_loop,speed)
+        apis.PLAY_ANIMA({
+            handle = o.handle(),
+            anima = anima,
+            is_loop = is_loop,
+            speed = speed,
+        })
     end
 
     return o

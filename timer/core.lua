@@ -1,5 +1,7 @@
 ---@class framework.timer
-local M = require ".base"
+local M = require "framework.timer"
+---@type framework.timer.apis
+local apis = require ".apis"
 ---@type lib.debugx
 local debugx = require "lib.debugx"
 
@@ -59,26 +61,30 @@ local function add_center_timer(interval, func)
     end
 end
 
-M.create(CENTER_TIMER_INTERVAL, function()
-    M.COUNT = M.COUNT + CENTER_TIMER_INTERVAL
+local center_timer_api = apis.CREATE({
+    interval = CENTER_TIMER_INTERVAL,
+    func = function()
+        M.COUNT = M.COUNT + CENTER_TIMER_INTERVAL
 
-    local index = 1
-    while index <= #CENTER_TIMER_LIST do
-        local task = CENTER_TIMER_LIST[index]
-        task.time_remain = task.time_remain - CENTER_TIMER_INTERVAL
-        if task.time_remain <= 0 then
-            task.time_remain = task.interval_time
-            xpcall(function()
-                task.run(task.interval_time)
-            end, function(err)
-                debugx.error(err)
-            end)
+        local index = 1
+        while index <= #CENTER_TIMER_LIST do
+            local task = CENTER_TIMER_LIST[index]
+            task.time_remain = task.time_remain - CENTER_TIMER_INTERVAL
+            if task.time_remain <= 0 then
+                task.time_remain = task.interval_time
+                xpcall(function()
+                    task.run(task.interval_time)
+                end, function(err)
+                    debugx.error(err)
+                end)
+            end
+            if CENTER_TIMER_LIST[index] == task then
+                index = index + 1
+            end
         end
-        if CENTER_TIMER_LIST[index] == task then
-            index = index + 1
-        end
-    end
-end)
+    end,
+})
+assert(center_timer_api.cancel ~= nil, "framework.timer.core requires runtime backend")
 
 
 ---@overload fun(func: timer.loop.func): function

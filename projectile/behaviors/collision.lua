@@ -1,5 +1,5 @@
 ---@type framework.projectile
-local projectile = require "..base"
+local projectile = require "framework.projectile"
 
 local function distance(a, b)
     local dx = a.x - b.x

@@ -4,7 +4,7 @@ local table = require "lib.tablex"
 ---@field DEFAULT_SLOT_IMAGE_IMAGE any 默认槽位图标图片
 ---@field DEFAULT_SLOT_PROGRESS_IMAGE any 默认槽位进度图片
 ---@field DEFAULT_SLOT_BACKGROUND_IMAGE any 默认槽位背景图片
-local M = require "..base"
+local M = require "framework.ui"
 
 ---@class ui.slot.progress.options: ui.options
 ---@field enable? boolean 是否创建进度子控件
@@ -50,6 +50,10 @@ M.slot = function(args, ...)
     args.progress.size = args.progress.size or 1
     args.text.enable = args.text.enable or false
     args.text.size = args.text.size or 1
+    args.background.show = (args.background.show == nil) and true or args.background.show
+    args.progress.show = (args.progress.show == nil) and true or args.progress.show
+    args.image.show = (args.image.show == nil) and true or args.image.show
+    args.text.show = (args.text.show == nil) and true or args.text.show
 
     ---@class ui.slot : ui.void
     ---@field progress? ui.progress 进度子控件

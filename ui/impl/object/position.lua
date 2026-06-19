@@ -1,7 +1,9 @@
 ---@type lib.metatablex
 local metatable = require "lib.metatablex"
 ---@type framework.ui
-local M = require "framework.ui.base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
 ---@param o ui
 ---@param args ui.options
@@ -19,7 +21,7 @@ return function (o,args)
 
     -- 应用位置
     o.pixel_position.on_change.add(function(position)
-        M.set_position(o, position.x, position.y)
+        apis.SET_POSITION({ ui = o, x = position.x, y = position.y })
     end)
 
     o.pixel_position.wrap_set(function(position)

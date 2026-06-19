@@ -1,7 +1,7 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.terrain
-local M = require ".base"
+local M = require "framework.terrain"
 local list = require "lib.list"
 
 ---@param t number

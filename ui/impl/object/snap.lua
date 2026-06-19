@@ -1,5 +1,5 @@
 ---@type framework.ui
-local M = require "framework.ui.base"
+local M = require "framework.ui"
 ---@type mathx.geometry
 local geometry = require "mathx.geometry"
 

@@ -1,5 +1,5 @@
 ---@class framework.skill
-local M = require ".base"
+local M = require "framework.skill"
 
 ---@type framework.skill.apis
 local apis = require ".apis"
@@ -28,10 +28,6 @@ local apis = require ".apis"
 ---@field points? point[] 字段说明
 ---@field payload? table 字段说明
 ---@field engine_event? any 字段说明
-
-M.REQUEST_CAST = apis.REQUEST_CAST
-M.BEFORE_CAST = apis.BEFORE_CAST
-M.AFTER_CAST = apis.AFTER_CAST
 
 ---@param request? skill.cast_request 参数说明
 ---@param default_kind skill.input_kind
@@ -140,7 +136,7 @@ M.create_active = function(args)
     o.request_cast = function(request)
         request = normalize_request(request, o.input_kind())
         request.caster = request.caster or o.context().unit
-        M.REQUEST_CAST({
+        apis.REQUEST_CAST({
             skill = o,
             request = request,
         })
@@ -161,7 +157,7 @@ M.create_active = function(args)
 
         request = o.request_cast(request)
 
-        local before = M.BEFORE_CAST({
+        local before = apis.BEFORE_CAST({
             skill = o,
             request = request,
             cancelled = false,
@@ -183,7 +179,7 @@ M.create_active = function(args)
         o.on_cast(request, result)
         o.start_cooldown()
 
-        M.AFTER_CAST({
+        apis.AFTER_CAST({
             skill = o,
             request = request,
             result = result,

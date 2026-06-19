@@ -1,5 +1,7 @@
 ---@type framework.ui
-local M = require "framework.ui.base"
+local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 ---@type framework.event
 local event = require "framework.event"
 
@@ -9,7 +11,7 @@ local event = require "framework.event"
 ---@param o ui
 ---@param args ui.options
 return function (o,args)
-    args.show = (args.show == nil) and true or args.show
+    args.show = (args.show == nil) and false or args.show
 
     ---@class ui
     o = o
@@ -47,7 +49,7 @@ return function (o,args)
     -- 应用可见性
     o.visible.on_change.add(
         function(on)
-            M.set_visible(o.handle(), on)
+            apis.SET_VISIBLE({ handle = o.handle(), visible = on })
         end
     )
 

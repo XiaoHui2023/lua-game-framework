@@ -1,5 +1,7 @@
 ---@class framework.unit
-local M = require "..base"
+local M = require "framework.unit"
+---@type framework.unit.apis
+local apis = require "..apis"
 local list = require "lib.list"
 
 ---@param o unit
@@ -87,6 +89,6 @@ return function (o,args)
     ---@param player? player 参数说明
     o.select = function(player)
         player = player or o.player()
-        M.select(o.handle(), player.handle())
+        apis.SELECT({ handle = o.handle(), player = player.handle() })
     end
 end

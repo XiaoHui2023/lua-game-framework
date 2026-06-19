@@ -1,7 +1,13 @@
----@type framework.game
-local M = require ".base"
+---@class framework.game
+---@field apis framework.game.apis
+local M = {}
+package.loaded[...] = M
+---@type framework.game.apis
+local apis = require ".apis"
 
-require ".config"
+M.apis = apis
+
+require ".settings"
 require ".impl"
 
 return M

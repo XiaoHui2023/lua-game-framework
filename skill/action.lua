@@ -1,7 +1,7 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.skill
-local M = require ".base"
+local M = require "framework.skill"
 local factory_model = require "lib.reactive".factory
 local Stat = require ".stat"
 ---@type lib.reactive
@@ -19,9 +19,6 @@ local apis = require ".apis"
 ---@field kind skill.stat.kind 绉嶇被
 ---@field unit skill.stat.unit 字段说明
 ---@field value number 字段说明
----@type reactive.event
-M.ON_CREATE_ACTION = apis.ON_CREATE_ACTION
-
 ---@param args skill.action.options
 ---@return skill.action
 M.create_action = function(args)
@@ -69,7 +66,7 @@ M.create_action = function(args)
         o[stat_def.name] = stat
     end
 
-    M.ON_CREATE_ACTION({
+    apis.ON_CREATE_ACTION({
         action = o,
         options = args,
     })

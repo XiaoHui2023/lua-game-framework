@@ -1,7 +1,9 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@class framework.terrain
-local M = require ".base"
+local M = require "framework.terrain"
+---@type framework.terrain.apis
+local apis = require ".apis"
 
 ---@param painter terrain.painter 参数说明
 ---@param center_position point 参数说明
@@ -38,7 +40,7 @@ end
 ---@param size number 参数说明
 local function render_terrain_map(map,size)
     for position, terrain_id in table.sorted_pairs(map) do
-        M.set_texture(position, terrain_id,size)
+        apis.SET_TEXTURE({ position = position, texture = terrain_id, range = size })
     end
 end
 

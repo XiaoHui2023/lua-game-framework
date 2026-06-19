@@ -1,7 +1,7 @@
 ---@type lib.metatablex
 local metatable = require "lib.metatablex"
 ---@class framework.motion
-local M = require "framework.motion.base"
+local M = require "framework.motion"
 ---@type lib.reactive
 local reactive = require "lib.reactive"
 

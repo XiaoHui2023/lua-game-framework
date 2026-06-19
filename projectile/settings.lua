@@ -1,4 +1,4 @@
 ---@class framework.projectile
-local M = require ".base"
+local M = require "framework.projectile"
 
 return M

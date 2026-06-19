@@ -1,5 +1,7 @@
 ---@type framework.projectile
-local projectile = require "..base"
+local projectile = require "framework.projectile"
+---@type framework.projectile.apis
+local apis = require "..apis"
 
 ---@class projectile.options
 ---@field position? point 字段说明
@@ -22,15 +24,15 @@ return function(o, args)
     end)
 
     o.position.on_change.add(function(position)
-        projectile.set_position(o.effect_handle(), position)
+        apis.SET_POSITION({ handle = o.effect_handle(), position = position })
     end)
 
     o.facing.on_change.add(function(facing)
-        projectile.set_facing(o.effect_handle(), facing)
+        apis.SET_FACING({ handle = o.effect_handle(), facing = facing })
     end)
 
     o.height.on_change.add(function(height)
-        projectile.set_height(o.effect_handle(), height)
+        apis.SET_HEIGHT({ handle = o.effect_handle(), height = height })
     end)
 
     o.teleport = function(position)

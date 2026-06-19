@@ -1,5 +1,5 @@
 ---@class framework.faction
-local M = require ".base"
+local M = require "framework.faction"
 local list = require "lib.list"
 local factory = require("lib.reactive").factory
 

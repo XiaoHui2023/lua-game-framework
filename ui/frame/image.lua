@@ -2,7 +2,7 @@
 local table = require "lib.tablex"
 ---@class framework.ui
 ---@field DEFAULT_IMAGE any 默认图片资源
-local M = require "..base"
+local M = require "framework.ui"
 
 -- image
 M.DEFAULT_IMAGE = nil

@@ -1,5 +1,5 @@
 ---@class framework.unit
-local M = require "..base"
+local M = require "framework.unit"
 
 ---@param o unit
 ---@param args unit.options
