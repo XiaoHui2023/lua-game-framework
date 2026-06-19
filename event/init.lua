@@ -7,9 +7,9 @@ package.loaded[...] = M
 local apis = require ".apis"
 
 M.apis = apis
+M.settings = require ".settings"
 
 require ".types"
-require ".settings"
 require ".impl"
 
 return M

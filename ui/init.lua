@@ -12,6 +12,7 @@ local M = {}
 package.loaded[...] = M
 
 M.apis = apis
+M.settings = require ".settings"
 
 ---@type table<ui.handle, ui>
 M.HANDLE_TO_OBJECT = {}

@@ -12,10 +12,10 @@ local apis = require "..apis"
 ---@param o unit
 ---@param args unit.options
 return function (o,args)
-    args.move_speed = args.move_speed or M.DEFAULT_MOVE_SPEED
-    args.base_attack_speed = args.base_attack_speed or M.DEFAULT_BASE_ATTACK_SPEED
-    args.attack_speed = args.attack_speed or M.DEFAULT_ATTACK_SPEED
-    args.attack_range = args.attack_range or M.DEFAULT_ATTACK_RANGE
+    args.move_speed = args.move_speed or M.settings.DEFAULT_MOVE_SPEED
+    args.base_attack_speed = args.base_attack_speed or M.settings.DEFAULT_BASE_ATTACK_SPEED
+    args.attack_speed = args.attack_speed or M.settings.DEFAULT_ATTACK_SPEED
+    args.attack_range = args.attack_range or M.settings.DEFAULT_ATTACK_RANGE
     
     ---@class unit
     o = o

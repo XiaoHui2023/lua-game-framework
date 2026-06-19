@@ -14,13 +14,13 @@ local apis = require "..apis"
 ---@param o projectile
 ---@param args projectile.options
 return function(o, args)
-    args.scale = args.scale or projectile.DEFAULT_SCALE
+    args.scale = args.scale or projectile.settings.DEFAULT_SCALE
     args.scale_x = args.scale_x or args.scale
     args.scale_y = args.scale_y or args.scale
     args.scale_z = args.scale_z or args.scale
-    args.animation_speed = args.animation_speed or projectile.DEFAULT_ANIMATION_SPEED
+    args.animation_speed = args.animation_speed or projectile.settings.DEFAULT_ANIMATION_SPEED
     if args.visible == nil then
-        args.visible = projectile.DEFAULT_VISIBLE
+        args.visible = projectile.settings.DEFAULT_VISIBLE
     end
 
     o.scale = o.factory.set(args.scale)

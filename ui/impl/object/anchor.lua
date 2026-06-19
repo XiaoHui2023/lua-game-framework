@@ -345,10 +345,12 @@ return function (o,args)
     ---@param y_offset number 纵偏移（百分比）
     ---@return number x 横坐标
     ---@return number y 纵坐标
-    local function compute_offset(x,y,x_offset,y_offset)
-        local window_width, window_height = o.window_size()
-        x = x + x_offset*window_width
-        y = y + y_offset*window_height
+    local function compute_offset(x,y,x_offset,y_offset,basis_width,basis_height)
+        if basis_width == nil or basis_height == nil then
+            basis_width, basis_height = o.window_size()
+        end
+        x = x + x_offset*basis_width
+        y = y + y_offset*basis_height
         return x,y
     end
 
@@ -374,7 +376,7 @@ return function (o,args)
         -- 计算自身的方位
         x,y = compute_self_position(position,x,y)
         -- 计算偏移（百分比）
-        x,y = compute_offset(x,y,anchor.x,anchor.y)
+        x,y = compute_offset(x,y,anchor.x,anchor.y,target_width,target_height)
         
         return {x=x, y=y}
     end
@@ -390,7 +392,8 @@ return function (o,args)
         x,y = compute_self_position(anchor.point,x,y)
 
         -- 计算偏移（百分比）
-        x,y = compute_offset(x,y,anchor.x,anchor.y)
+        local window_width, window_height = o.window_size()
+        x,y = compute_offset(x,y,anchor.x,anchor.y,window_width,window_height)
 
         return {x=x, y=y}
     end
@@ -430,8 +433,8 @@ return function (o,args)
 
         anchor.x = anchor.x >= -1 and anchor.x <= 1 and anchor.x or 0
         anchor.y = anchor.y >= -1 and anchor.y <= 1 and anchor.y or 0
-        anchor.x = math.floor(anchor.x * 1000) / 1000
-        anchor.y = math.floor(anchor.y * 1000) / 1000
+        anchor.x = math.floor(anchor.x * 1000000) / 1000000
+        anchor.y = math.floor(anchor.y * 1000000) / 1000000
 
         return anchor
     end)

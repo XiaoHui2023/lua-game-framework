@@ -8,6 +8,7 @@ package.loaded[...] = M
 ---@type framework.unit.apis
 local apis = require ".apis"
 M.apis = apis
+M.settings = require ".settings"
 
 ---@type table<unit.handle, unit> 单位对象映射表
 M.HANDLE_TO_OBJECT = {}
@@ -19,9 +20,6 @@ M.MOVE_TYPE = {
     NIL = "NIL", -- 无
 }
 
----@class framework.unit
-require ".settings"
-require ".impl"
 require ".object"
 
 return M

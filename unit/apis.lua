@@ -4,8 +4,9 @@ local M = {}
 ---@type lib.callback
 local callback = require "lib.callback"
 
----@class unit.Created
+---@class unit.Created: lib.callback.instance
 ---@field unit unit 已创建的单位对象
+---@type lib.callback.api
 M.ON_CREATE = callback.api({ name = "unit.ON_CREATE" })
 
 M.CREATE_HANDLE = callback.api({ name = "unit.CREATE_HANDLE" })

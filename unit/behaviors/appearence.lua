@@ -21,19 +21,19 @@ local apis = require "..apis"
 ---@param o unit
 ---@param args unit.options
 return function (o,args)
-    args.model = args.model or M.DEFAULT_MODEL
-    args.color_enable = args.color_enable or M.DEFAULT_COLOR_ENABLE
-    args.color = args.color or M.DEFAULT_COLOR
-    args.overlay_enable = args.overlay_enable or M.DEFAULT_OVERLAY_ENABLE
-    args.overlay = args.overlay or M.DEFAULT_OVERLAY
-    args.outline_enable = args.outline_enable or M.DEFAULT_OUTLINE_ENABLE
-    args.outline = args.outline or M.DEFAULT_OUTLINE
-    args.alpha = args.alpha or M.DEFAULT_ALPHA
-    args.animation_speed = args.animation_speed or M.DEFAULT_ANIMATION_SPEED
-    args.scale = args.scale or M.DEFAULT_SCALE
-    args.scale_x = args.scale_x or args.scale or M.DEFAULT_SCALE_X
-    args.scale_y = args.scale_y or args.scale or M.DEFAULT_SCALE_Y
-    args.scale_z = args.scale_z or args.scale or M.DEFAULT_SCALE_Z
+    args.model = args.model or M.settings.DEFAULT_MODEL
+    args.color_enable = args.color_enable or M.settings.DEFAULT_COLOR_ENABLE
+    args.color = args.color or M.settings.DEFAULT_COLOR
+    args.overlay_enable = args.overlay_enable or M.settings.DEFAULT_OVERLAY_ENABLE
+    args.overlay = args.overlay or M.settings.DEFAULT_OVERLAY
+    args.outline_enable = args.outline_enable or M.settings.DEFAULT_OUTLINE_ENABLE
+    args.outline = args.outline or M.settings.DEFAULT_OUTLINE
+    args.alpha = args.alpha or M.settings.DEFAULT_ALPHA
+    args.animation_speed = args.animation_speed or M.settings.DEFAULT_ANIMATION_SPEED
+    args.scale = args.scale or M.settings.DEFAULT_SCALE
+    args.scale_x = args.scale_x or args.scale or M.settings.DEFAULT_SCALE_X
+    args.scale_y = args.scale_y or args.scale or M.settings.DEFAULT_SCALE_Y
+    args.scale_z = args.scale_z or args.scale or M.settings.DEFAULT_SCALE_Z
 
     ---@class unit
     o = o

@@ -1,1 +1,0 @@
--- 预留框架内聚合入口；Y3 特效句柄操作由 runtime/framework/visual_effect.lua 注入。

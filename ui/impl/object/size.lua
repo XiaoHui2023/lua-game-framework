@@ -32,6 +32,17 @@ return function (o,args)
     ---@class ui
     o = o
 
+    o.is_content_sized = false
+
+    local function get_size_basis()
+        ---@type ui
+        local parent = o.parent()
+        if parent and not parent.is_content_sized and parent.pixel_size then
+            return parent.pixel_size()
+        end
+        return o.window_size()
+    end
+
     ---@type reactive.computed 百分比大小<number,number>（直接设置的参数）
     o.relative_size = o.factory.computed(function()
         return args.width, args.height
@@ -40,9 +51,9 @@ return function (o,args)
     ---@type reactive.computed 像素大小<number,number>（衍生出的值）
     o.pixel_size = o.factory.computed(function()
         local width_percent, height_percent = o.relative_size()
-        local window_width, window_height = o.window_size()
-        local pixel_width = window_width * width_percent
-        local pixel_height = window_height * height_percent
+        local basis_width, basis_height = get_size_basis()
+        local pixel_width = basis_width * width_percent
+        local pixel_height = basis_height * height_percent
         -- 尺寸模式
         local size_ratio = o.size_ratio()
         if size_ratio > 1 then
@@ -78,7 +89,7 @@ return function (o,args)
         ---@type ui.size_mode
         local size_mode = o.size_mode()
         if size_mode == "fill" then
-            local width,height = o.window_size()
+            local width,height = get_size_basis()
             return width / height
         elseif size_mode == "contain" then
             return 1

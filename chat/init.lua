@@ -40,7 +40,7 @@ local function normalize_content(content)
 end
 
 local function trim_history()
-    local limit = M.MESSAGE_LIMIT
+    local limit = M.settings.MESSAGE_LIMIT
     if not limit or limit < 1 then
         return
     end
@@ -118,7 +118,7 @@ M.get_messages = function()
     return M.MESSAGE_HISTORY
 end
 
-require ".settings"
+M.settings = require ".settings"
 require ".impl"
 
 return M

@@ -36,7 +36,7 @@ M.create = function(args)
     args.default_stance = args.default_stance or "neutral"
     assert_stance(args.default_stance)
 
-    ---@class faction : factory
+    ---@class faction : lib.reactive.factory
     ---@field name hook.set faction name.
     ---@field default_stance hook.set default stance to other factions.
     ---@field stance hook.set stance map keyed by target faction.

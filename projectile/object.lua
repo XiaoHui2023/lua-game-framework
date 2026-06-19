@@ -20,14 +20,14 @@ local apis = require ".apis"
 M.create = function(args, ...)
     args = table.merge(args, ...)
     args = args or {}
-    args.name = args.name or M.DEFAULT_NAME
-    args.effect = args.effect or M.DEFAULT_EFFECT
+    args.name = args.name or M.settings.DEFAULT_NAME
+    args.effect = args.effect or M.settings.DEFAULT_EFFECT
     args.owner = args.owner
-    args.position = args.position or M.DEFAULT_POSITION
-    args.facing = args.facing or M.DEFAULT_FACING
-    args.height = args.height or M.DEFAULT_HEIGHT
-    args.scale = args.scale or M.DEFAULT_SCALE
-    args.duration = args.duration or M.DEFAULT_DURATION
+    args.position = args.position or M.settings.DEFAULT_POSITION
+    args.facing = args.facing or M.settings.DEFAULT_FACING
+    args.height = args.height or M.settings.DEFAULT_HEIGHT
+    args.scale = args.scale or M.settings.DEFAULT_SCALE
+    args.duration = args.duration or M.settings.DEFAULT_DURATION
     assert(args.effect ~= nil, "projectile.create requires effect")
 
     ---@class projectile: lib.reactive.factory

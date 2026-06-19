@@ -78,6 +78,5 @@ M.register = function()
 end
 
 require ".apis"
-require ".impl"
 
 return M

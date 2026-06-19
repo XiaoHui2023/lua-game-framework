@@ -2,12 +2,12 @@
 local M = require "framework.skill"
 local factory_model = require "lib.reactive".factory
 
----@class skill.trigger.options: factory.options
+---@class skill.trigger.options: lib.reactive.factory.options
 
 ---@param args skill.trigger.options
 ---@return skill.trigger
 M.create_trigger = function (args)
-    ---@class skill.trigger: factory
+    ---@class skill.trigger: lib.reactive.factory
     local o = factory_model(args)
     o.set_class("skill.trigger")
 

@@ -9,7 +9,7 @@ local reactive = require "lib.reactive"
 ---@type framework.skill.apis
 local apis = require ".apis"
 
----@class skill.action.options: factory.options
+---@class skill.action.options: lib.reactive.factory.options
 ---@field stat_defs skill.stat.definition[] 字段说明
 ---@field on_run fun(skill.action):nil 运行事件
 ---@field target_key skill.target.key 目标
@@ -24,7 +24,7 @@ local apis = require ".apis"
 M.create_action = function(args)
     args.stat_defs = args.stat_defs or {}
 
-    ---@class skill.action: factory
+    ---@class skill.action: lib.reactive.factory
     local o = factory_model(args)
     o.set_class("skill.action")
 

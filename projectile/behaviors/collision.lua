@@ -13,7 +13,7 @@ end
 ---@param o projectile
 ---@param args projectile.options
 return function(o, args)
-    args.collision_radius = args.collision_radius or projectile.DEFAULT_COLLISION_RADIUS
+    args.collision_radius = args.collision_radius or projectile.settings.DEFAULT_COLLISION_RADIUS
 
     o.collision_radius = o.factory.set(args.collision_radius)
 

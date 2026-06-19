@@ -30,9 +30,9 @@ end)
 return function (o,args)
     ---@class unit
     o = o
-    args.health = args.health or M.DEFAULT_HEALTH
-    args.max_health = args.max_health or M.DEFAULT_MAX_HEALTH
-    args.damage = args.damage or M.DEFAULT_DAMAGE
+    args.health = args.health or M.settings.DEFAULT_HEALTH
+    args.max_health = args.max_health or M.settings.DEFAULT_MAX_HEALTH
+    args.damage = args.damage or M.settings.DEFAULT_DAMAGE
 
     ---@type hook.set<number>
     o.health = o.factory.set(args.health)

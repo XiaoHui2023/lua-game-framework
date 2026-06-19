@@ -1,1 +1,0 @@
--- Reserved for framework-level projectile implementations.

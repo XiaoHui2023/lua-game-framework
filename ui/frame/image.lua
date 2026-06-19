@@ -5,14 +5,12 @@ local table = require "lib.tablex"
 local M = require "framework.ui"
 
 -- image
-M.DEFAULT_IMAGE = nil
-
 ---@param args ui.options
 ---@param ... ui.options
 ---@return ui.image 图片 UI 对象
 M.image = function(args,...)
     args = table.merge(args or {}, ...)
-    args.image = args.image or M.DEFAULT_IMAGE
+    args.image = args.image or M.settings.DEFAULT_IMAGE
     args.type = args.type or "image"
 
     ---@class ui.image : ui

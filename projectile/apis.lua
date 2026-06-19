@@ -13,15 +13,17 @@ local M = {}
 ---@type lib.callback
 local callback = require "lib.callback"
 
----@class projectile.Created
+---@class projectile.Created: lib.callback.instance
 ---@field projectile projectile
+---@type lib.callback.api
 M.ON_CREATE = callback.api({ name = "projectile.ON_CREATE" })
 
----@class projectile.Destroyed
+---@class projectile.Destroyed: lib.callback.instance
 ---@field projectile projectile
+---@type lib.callback.api
 M.ON_DESTROY = callback.api({ name = "projectile.ON_DESTROY" })
 
----@class projectile.api.CreateEffect
+---@class projectile.api.CreateEffect: lib.callback.instance
 ---@field effect any 特效资源
 ---@field position point 创建位置
 ---@field facing number? 朝向角度
@@ -29,42 +31,50 @@ M.ON_DESTROY = callback.api({ name = "projectile.ON_DESTROY" })
 ---@field height number? 离地高度
 ---@field duration number? 持续时间
 ---@field handle projectile.effect_handle? 运行时写回的特效句柄
+---@type lib.callback.api
 M.CREATE_EFFECT = callback.api({ name = "projectile.CREATE_EFFECT" })
 
----@class projectile.api.Handle
+---@class projectile.api.Handle: lib.callback.instance
 ---@field handle projectile.effect_handle 特效句柄
+---@type lib.callback.api
 M.REMOVE = callback.api({ name = "projectile.REMOVE" })
 
----@class projectile.api.SetPosition
+---@class projectile.api.SetPosition: lib.callback.instance
 ---@field handle projectile.effect_handle 特效句柄
 ---@field position point 世界坐标
+---@type lib.callback.api
 M.SET_POSITION = callback.api({ name = "projectile.SET_POSITION" })
 
----@class projectile.api.SetFacing
+---@class projectile.api.SetFacing: lib.callback.instance
 ---@field handle projectile.effect_handle 特效句柄
 ---@field facing number 朝向角度
+---@type lib.callback.api
 M.SET_FACING = callback.api({ name = "projectile.SET_FACING" })
 
----@class projectile.api.SetHeight
+---@class projectile.api.SetHeight: lib.callback.instance
 ---@field handle projectile.effect_handle 特效句柄
 ---@field height number 离地高度
+---@type lib.callback.api
 M.SET_HEIGHT = callback.api({ name = "projectile.SET_HEIGHT" })
 
----@class projectile.api.SetScale
+---@class projectile.api.SetScale: lib.callback.instance
 ---@field handle projectile.effect_handle 特效句柄
 ---@field scale_x number X 轴缩放
 ---@field scale_y number? Y 轴缩放
 ---@field scale_z number? Z 轴缩放
+---@type lib.callback.api
 M.SET_SCALE = callback.api({ name = "projectile.SET_SCALE" })
 
----@class projectile.api.SetAnimationSpeed
+---@class projectile.api.SetAnimationSpeed: lib.callback.instance
 ---@field handle projectile.effect_handle 特效句柄
 ---@field speed number 动画速度
+---@type lib.callback.api
 M.SET_ANIMATION_SPEED = callback.api({ name = "projectile.SET_ANIMATION_SPEED" })
 
----@class projectile.api.SetVisible
+---@class projectile.api.SetVisible: lib.callback.instance
 ---@field handle projectile.effect_handle 特效句柄
 ---@field visible boolean 是否可见
+---@type lib.callback.api
 M.SET_VISIBLE = callback.api({ name = "projectile.SET_VISIBLE" })
 
 return M

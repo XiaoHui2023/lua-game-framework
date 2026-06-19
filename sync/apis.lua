@@ -6,14 +6,16 @@ local M = {}
 ---@type lib.callback
 local callback = require "lib.callback"
 
----@class sync.api.Send
+---@class sync.api.Send: lib.callback.instance
 ---@field head string 消息头
 ---@field data table 消息数据
+---@type lib.callback.api
 M.SEND = callback.api({ name = "sync.SEND" })
 
----@class sync.api.Listen
+---@class sync.api.Listen: lib.callback.instance
 ---@field head string 消息头
 ---@field callback fun(player:player, data:table) 收到消息后的回调
+---@type lib.callback.api
 M.LISTEN = callback.api({ name = "sync.LISTEN" })
 
 return M

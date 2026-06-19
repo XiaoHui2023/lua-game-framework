@@ -6,7 +6,7 @@ local factory = reactive.factory
 ---@type framework.ui.apis
 local apis = require ".apis"
 
----@class ui.options : factory.options
+---@class ui.options : lib.reactive.factory.options
 ---@field alpha? integer 透明度，范围 0 到 255
 ---@field layer? ui.handle 所属 UI 层
 ---@field parent? ui 父级 UI
@@ -28,7 +28,7 @@ M.create = function(args)
     args.progress = args.progress or 1
     args.rotation = args.rotation or 0
 
-    ---@class ui : factory
+    ---@class ui : lib.reactive.factory
     local o = factory(args)
 
     o.set_class("ui")

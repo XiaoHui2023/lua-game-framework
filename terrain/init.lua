@@ -1,6 +1,6 @@
 ---@class framework.terrain
 ---@field apis framework.terrain.apis 地形 callback API 表
----@field COLLISION_SIZE number 碰撞大小（宽高）
+---@field settings framework.terrain.settings 地形默认设置
 local M = {}
 package.loaded[...] = M
 
@@ -15,9 +15,8 @@ package.loaded[...] = M
 local apis = require ".apis"
 
 M.apis = apis
+M.settings = require ".settings"
 
-require ".settings"
-require ".impl"
 require ".painter"
 require ".render"
 

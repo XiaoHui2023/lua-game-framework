@@ -5,11 +5,13 @@ local M = {}
 ---@type lib.callback
 local callback = require "lib.callback"
 
----@class game.Alert
+---@class game.Alert: lib.callback.instance
 ---@field content string 系统提示文本
+---@type lib.callback.api
 M.ON_ALERT = callback.api({ name = "game.ON_ALERT" })
 
----@class game.api.EndGame
+---@class game.api.EndGame: lib.callback.instance
+---@type lib.callback.api
 M.END_GAME = callback.api({ name = "game.END_GAME" })
 
 return M

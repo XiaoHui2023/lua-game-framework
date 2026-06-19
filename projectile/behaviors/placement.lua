@@ -11,9 +11,9 @@ local apis = require "..apis"
 ---@param o projectile
 ---@param args projectile.options
 return function(o, args)
-    args.position = args.position or projectile.DEFAULT_POSITION
-    args.facing = args.facing or projectile.DEFAULT_FACING
-    args.height = args.height or projectile.DEFAULT_HEIGHT
+    args.position = args.position or projectile.settings.DEFAULT_POSITION
+    args.facing = args.facing or projectile.settings.DEFAULT_FACING
+    args.height = args.height or projectile.settings.DEFAULT_HEIGHT
 
     o.position = o.factory.set(args.position)
     o.facing = o.factory.set(args.facing)

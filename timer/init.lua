@@ -14,7 +14,6 @@ local apis = require ".apis"
 
 M.apis = apis
 
-require ".impl"
 require ".core"
 
 return M

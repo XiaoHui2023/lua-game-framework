@@ -14,8 +14,8 @@ local jass = require "jass"
 ---@return ui.editbox 输入框 UI 对象
 M.editbox = function(args)
     args = args or {}
-    if M.DEFAULT_EDITBOX_FRAME then
-        args.label = args.label or M.DEFAULT_EDITBOX_FRAME()
+    if M.settings.DEFAULT_EDITBOX_FRAME then
+        args.label = args.label or M.settings.DEFAULT_EDITBOX_FRAME()
     end
     args.type = args.type or "input"
     args.width = args.width or 0.2

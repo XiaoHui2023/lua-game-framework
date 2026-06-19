@@ -15,7 +15,7 @@ local reactive = require "lib.reactive"
 ---@field run fun(context
 ---@class skill.stat.value_result
 ---@field value number 字段说明
----@class skill.stat.options: reactive.factory.options
+---@class skill.stat.options: lib.reactive.factory.options
 ---@field kind string 字段说明
 ---@param get_base_value fun():number
 ---@param owner_factory reactive.factory

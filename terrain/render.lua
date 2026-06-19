@@ -50,7 +50,7 @@ end
 ---@param radius number 参数说明
 ---@param size? number 参数说明
 M.render_circle_stage = function(terrain_group, max_count, center_position, radius, size)
-    size = size or M.UNIT_SIZE
+    size = size or M.settings.UNIT_SIZE
 
     local painter = M.create_painter(terrain_group, max_count)
 

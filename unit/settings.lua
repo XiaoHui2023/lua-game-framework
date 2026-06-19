@@ -1,32 +1,32 @@
----@class framework.unit
----@field DEFAULT_POSITION point 默认出生点
----@field DEFAULT_FACING number 默认出生朝向
----@field DEFAULT_KEY any 字段说明
----@field DEFAULT_MOVE_SPEED number 字段说明
----@field DEFAULT_BASE_ATTACK_SPEED number 字段说明
----@field DEFAULT_ATTACK_SPEED number 字段说明
----@field DEFAULT_ATTACK_RANGE number 字段说明
----@field DEFAULT_TURN_SPEED number 字段说明
----@field DEFAULT_MODEL model 字段说明
----@field DEFAULT_PLAYER player 字段说明
----@field DEFAULT_HEALTH number 字段说明
----@field DEFAULT_MAX_HEALTH number 字段说明
----@field DEFAULT_DAMAGE number 字段说明
----@field DEFAULT_FACTION faction 字段说明
----@field DEFAULT_COLOR_ENABLE boolean 字段说明
----@field DEFAULT_COLOR color 字段说明
----@field DEFAULT_OVERLAY_ENABLE boolean 字段说明
----@field DEFAULT_OVERLAY color 字段说明
----@field DEFAULT_OUTLINE_ENABLE boolean 字段说明
----@field DEFAULT_OUTLINE color 字段说明
----@field DEFAULT_ALPHA number 字段说明
----@field DEFAULT_ANIMATION_SPEED number 字段说明
----@field DEFAULT_HEIGHT number 字段说明
----@field DEFAULT_SCALE number 字段说明
----@field DEFAULT_SCALE_X number 字段说明
----@field DEFAULT_SCALE_Y number 字段说明
----@field DEFAULT_SCALE_Z number 字段说明
-local M = require "framework.unit"
+---@class framework.unit.settings
+---@field DEFAULT_POSITION point ?????
+---@field DEFAULT_FACING number ??????
+---@field DEFAULT_KEY any ????????
+---@field DEFAULT_MOVE_SPEED number ??????
+---@field DEFAULT_BASE_ATTACK_SPEED number ????????
+---@field DEFAULT_ATTACK_SPEED number ????????
+---@field DEFAULT_ATTACK_RANGE number ??????
+---@field DEFAULT_TURN_SPEED number ??????
+---@field DEFAULT_MODEL model ??????
+---@field DEFAULT_PLAYER player ??????
+---@field DEFAULT_HEALTH number ???????
+---@field DEFAULT_MAX_HEALTH number ???????
+---@field DEFAULT_DAMAGE number ??????
+---@field DEFAULT_FACTION faction ????
+---@field DEFAULT_COLOR_ENABLE boolean ????????
+---@field DEFAULT_COLOR color ??????
+---@field DEFAULT_OVERLAY_ENABLE boolean ?????????
+---@field DEFAULT_OVERLAY color ?????
+---@field DEFAULT_OUTLINE_ENABLE boolean ????????
+---@field DEFAULT_OUTLINE color ??????
+---@field DEFAULT_ALPHA number ?????
+---@field DEFAULT_ANIMATION_SPEED number ??????
+---@field DEFAULT_HEIGHT number ??????
+---@field DEFAULT_SCALE number ??????
+---@field DEFAULT_SCALE_X number ?? X ???
+---@field DEFAULT_SCALE_Y number ?? Y ???
+---@field DEFAULT_SCALE_Z number ?? Z ???
+local M = {}
 ---@type lib.colorlib
 local color = require "lib.color"
 

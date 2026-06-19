@@ -10,8 +10,8 @@ local apis = require "..apis"
 ---@param o unit
 ---@param args unit.options
 return function (o,args)
-    args.turn_speed = args.turn_speed or M.DEFAULT_TURN_SPEED
-    args.height = args.height or M.DEFAULT_HEIGHT
+    args.turn_speed = args.turn_speed or M.settings.DEFAULT_TURN_SPEED
+    args.height = args.height or M.settings.DEFAULT_HEIGHT
 
     ---@class unit
     o = o

@@ -18,10 +18,10 @@ M.slider = function(args)
     args.width = args.width or 0.139
     args.percent = args.percent or 1
     if args.label == nil then
-        if args.direction == M.SLIDER_VERTICAL and M.DEFAULT_SLIDER_Y_FRAME then
-            args.label = M.DEFAULT_SLIDER_Y_FRAME()
-        elseif M.DEFAULT_SLIDER_X_FRAME then
-            args.label = M.DEFAULT_SLIDER_X_FRAME()
+        if args.direction == M.SLIDER_VERTICAL and M.settings.DEFAULT_SLIDER_Y_FRAME then
+            args.label = M.settings.DEFAULT_SLIDER_Y_FRAME()
+        elseif M.settings.DEFAULT_SLIDER_X_FRAME then
+            args.label = M.settings.DEFAULT_SLIDER_X_FRAME()
         end
     end
     args.type = args.type or "slider"

@@ -8,7 +8,7 @@ local reactive = require "lib.reactive"
 ---@type framework.unit.apis
 local apis = require ".apis"
 
----@class unit.options: reactive.factory.options
+---@class unit.options: lib.reactive.factory.options
 ---@field position
 ---@field facing
 ---@field key
@@ -22,11 +22,11 @@ M.create = function(args,...)
     args = table.merge(args, ...)
     -- 姒涙
     args = args or {}
-    args.key = args.key or M.DEFAULT_KEY
-    args.player = args.player or M.DEFAULT_PLAYER
-    args.faction = args.faction or M.DEFAULT_FACTION
-    args.position = args.position or M.DEFAULT_POSITION
-    args.facing = args.facing or M.DEFAULT_FACING
+    args.key = args.key or M.settings.DEFAULT_KEY
+    args.player = args.player or M.settings.DEFAULT_PLAYER
+    args.faction = args.faction or M.settings.DEFAULT_FACTION
+    args.position = args.position or M.settings.DEFAULT_POSITION
+    args.facing = args.facing or M.settings.DEFAULT_FACING
 
     ---@class unit: reactive.factory
     local o = factory(args)

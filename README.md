@@ -71,9 +71,10 @@ Inside a framework domain module:
 init.lua            public module facade and same-directory load order
 state.lua           module-level mutable state; plain Lua values only
 types.lua           EmmyLua-only payload/object type declarations when they would crowd init.lua
-settings.lua        framework default values and overridable knobs
+settings.lua        framework default values and overridable knobs; returned as module.settings
 apis.lua            callback.api declarations owned by this framework module
-impl/               engine-independent callback handler registrations
+impl.lua            small engine-independent callback handler registrations
+impl/               larger engine-independent callback handler registrations split by responsibility
 factory/create file domain object construction API, named by responsibility
 ```
 
@@ -82,9 +83,13 @@ by responsibility instead: use `init.lua` for the facade/contract and load order
 `state.lua` for module-level mutable state, `settings.lua` for defaults, `types.lua` for
 large annotation-only type blocks, and `apis.lua` only for callback API
 declarations. Module-level state must be plain Lua data, not reactive refs,
-events, or semaphores. Framework modules expose stable callback APIs from
-`apis.lua` through their module facade, and load engine-independent `impl/`
-handlers exactly once from `init.lua`. Engine-specific bindings live under
+events, or semaphores. `settings.lua` returns a dedicated settings table, and
+`init.lua` exposes it as `M.settings`; defaults should not be written directly
+onto the facade. Framework modules expose stable callback APIs from
+`apis.lua` through their module facade, and load engine-independent handlers
+exactly once from `init.lua` only when they exist. Use `impl.lua` for a small
+handler set, split to `impl/` when the implementation grows, and do not keep an
+empty `impl/` placeholder. Engine-specific bindings live under
 `runtime/framework/`; framework API declarations do not require
 `framework.engine` or other runtime adapters. External engine capabilities are
 also callback APIs: declare them in `framework/*/apis.lua`, implement them in

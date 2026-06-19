@@ -28,6 +28,4 @@ local M = {
 ---@field follow_scale? boolean 字段说明
 ---@field detach? boolean 字段说明
 
-require ".impl"
-
 return M

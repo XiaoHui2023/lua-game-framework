@@ -53,6 +53,7 @@ M.container = function(args, ...)
 
     ---@class ui.container: ui.void
     local o = M.void(args)
+    o.is_content_sized = true
 
     ---@type reactive.add<ui>
     o.widgets = o.factory.add({
@@ -222,17 +223,27 @@ M.container = function(args, ...)
         ui.anchor_center(o)
     end
 
-    local function stack_offset(point, layout_type, has_previous)
+    local function stack_offset(point, layout_type, has_previous, relative_ui)
         local spacing = o.layout.spacing()
         local padding = o.layout.padding()
         local distance = has_previous and spacing or padding
         if distance == 0 then
             return 0, 0
         end
+        local window_width, window_height = o.window_size()
+        local target_width, target_height = relative_ui.visual_size()
         if layout_type == "horizontal" then
-            return point == "left_center" and distance or -distance, 0
+            if target_width == 0 then
+                return 0, 0
+            end
+            local x = distance * window_width / target_width
+            return point == "left_center" and x or -x, 0
         elseif layout_type == "vertical" then
-            return 0, point == "top_center" and -distance or distance
+            if target_height == 0 then
+                return 0, 0
+            end
+            local y = distance * window_height / target_height
+            return 0, point == "top_center" and -y or y
         end
         return 0, 0
     end
@@ -300,7 +311,7 @@ M.container = function(args, ...)
                 relative_ui = o
             end
 
-            local x, y = stack_offset(point, layout_type, last ~= nil)
+            local x, y = stack_offset(point, layout_type, last ~= nil, relative_ui)
             widget.anchor.set({
                 point = point,
                 relative_point = relative_point,

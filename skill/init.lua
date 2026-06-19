@@ -29,7 +29,7 @@ local Stat = require ".stat"
 ---| 'cooldown'
 ---| 'duration'
 
----@class skill.options: factory.options
+---@class skill.options: lib.reactive.factory.options
 ---@field name? string 字段说明
 ---@field description? string 字段说明
 ---@field context? skill.context 字段说明
@@ -57,7 +57,7 @@ M.new = function(args)
     args = args or {}
     args.context = args.context or {}
 
-    ---@class skill: factory
+    ---@class skill: lib.reactive.factory
     local o = factory_model(args)
     o.set_class("skill")
 

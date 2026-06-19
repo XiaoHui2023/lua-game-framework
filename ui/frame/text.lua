@@ -14,12 +14,6 @@ local apis = require "..apis"
 ---@type framework.event
 local event = require "framework.event"
 
-M.DEFAULT_TEXT_FONT = nil
-M.DEFAULT_TEXT_FONT_SIZE = 0.14
-M.DEFAULT_TEXT_ALIGN = "center"
-M.TEXT_GET_TEXT_PIXEL_SIZE_WIDTH_SCALE = 1.8
-M.TEXT_GET_TEXT_PIXEL_SIZE_HEIGHT_SCALE = 3.4
-
 ---@class ui.options
 ---@field text? string 初始显示文本
 ---@field font_size? number 字体大小比例
@@ -37,10 +31,10 @@ M.text = function(args, ...)
     args = args or {}
     args = table.merge(args, ...)
     args.text = args.text or ""
-    args.font_size = args.font_size or M.DEFAULT_TEXT_FONT_SIZE
-    args.align = args.align or M.DEFAULT_TEXT_ALIGN
+    args.font_size = args.font_size or M.settings.DEFAULT_TEXT_FONT_SIZE
+    args.align = args.align or M.settings.DEFAULT_TEXT_ALIGN
     args.type = args.type or "text"
-    args.font = args.font or M.DEFAULT_TEXT_FONT
+    args.font = args.font or M.settings.DEFAULT_TEXT_FONT
     args.size = args.size or 1
     args.size_mode = args.size_mode or "contain"
 

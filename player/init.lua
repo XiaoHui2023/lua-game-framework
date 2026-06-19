@@ -8,6 +8,7 @@ package.loaded[...] = M
 ---@type framework.player.apis
 local apis = require ".apis"
 M.apis = apis
+M.settings = require ".settings"
 M.ID_TO_OBJECT = {}
 
 ---@enum player.controller 控制者
@@ -90,7 +91,6 @@ M.get = function(id)
     return M.ID_TO_OBJECT[id]
 end
 
-require ".settings"
 require ".impl"
 
 return M

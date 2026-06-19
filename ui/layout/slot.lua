@@ -25,10 +25,6 @@ local M = require "framework.ui"
 ---@field text? ui.slot.text.options 文本子控件配置
 
 -- slot
-M.DEFAULT_SLOT_IMAGE_IMAGE = nil
-M.DEFAULT_SLOT_PROGRESS_IMAGE = nil
-M.DEFAULT_SLOT_BACKGROUND_IMAGE = nil
-
 ---@param args? ui.slot.options 槽位配置
 ---@param ... ui.slot.options
 ---@return ui.slot 槽位 UI 对象
@@ -40,13 +36,13 @@ M.slot = function(args, ...)
     args.background = args.background or {}
     args.text = args.text or {}
     args.image.enable = args.image.enable or false
-    args.image.image = args.image.image or M.DEFAULT_SLOT_IMAGE_IMAGE
+    args.image.image = args.image.image or M.settings.DEFAULT_SLOT_IMAGE_IMAGE
     args.image.size = args.image.size or 1
     args.background.enable = args.background.enable or false
-    args.background.image = args.background.image or M.DEFAULT_SLOT_BACKGROUND_IMAGE
+    args.background.image = args.background.image or M.settings.DEFAULT_SLOT_BACKGROUND_IMAGE
     args.background.size = args.background.size or 1
     args.progress.enable = args.progress.enable or false
-    args.progress.image = args.progress.image or M.DEFAULT_SLOT_PROGRESS_IMAGE
+    args.progress.image = args.progress.image or M.settings.DEFAULT_SLOT_PROGRESS_IMAGE
     args.progress.size = args.progress.size or 1
     args.text.enable = args.text.enable or false
     args.text.size = args.text.size or 1
@@ -59,6 +55,7 @@ M.slot = function(args, ...)
     ---@field progress? ui.progress 进度子控件
     ---@field image? ui.image 图标子控件
     local o = M.void(args)
+    o.is_content_sized = true
 
     if args.background.enable then
         ---@type ui.image
