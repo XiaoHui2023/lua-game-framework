@@ -29,11 +29,20 @@ return function (o,args)
     ---@type lib.reactive.ref 当前是否拖拽
     o.is_dragging = o.factory.set(false)
 
+    local unbind_move = nil
+
+    local function clear_move()
+        if unbind_move then
+            unbind_move()
+            unbind_move = nil
+        end
+    end
+
     local function bind_move()
-        ---@param pos point
-        o.on_drag_end.add(apis.ON_MOUSE_MOVE_ASYNC(function(api)
+        clear_move()
+        unbind_move = apis.ON_MOUSE_MOVE_ASYNC(function(api)
             o.on_drag(api.position)
-        end))
+        end)
     end
 
     -- 按下绑定拖拽
@@ -63,7 +72,10 @@ return function (o,args)
             end
 
             o.is_dragging.set(false)
+            clear_move()
             o.on_drag_end()
         end
     )
+
+    o.delete.add(clear_move)
 end

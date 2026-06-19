@@ -12,6 +12,7 @@ local apis = require "..apis"
 ---@param args ui.effect.options
 ---@return ui.effect 特效 UI 对象
 M.effect = function(args)
+    args = args or {}
     args.model = args.model or nil
     args.loop = args.loop or false
     args.type = args.type or "effect"

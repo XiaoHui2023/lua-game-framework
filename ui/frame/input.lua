@@ -13,7 +13,11 @@ local jass = require "jass"
 ---@param args framework.ui.editbox.options
 ---@return ui.editbox 输入框 UI 对象
 M.editbox = function(args)
-    args.label = args.label or M.DEFAULT_EDITBOX_FRAME()
+    args = args or {}
+    if M.DEFAULT_EDITBOX_FRAME then
+        args.label = args.label or M.DEFAULT_EDITBOX_FRAME()
+    end
+    args.type = args.type or "input"
     args.width = args.width or 0.2
     args.height = args.height or 0.04
     args.length_limit = args.length_limit or 8
@@ -31,6 +35,9 @@ M.editbox = function(args)
 
     ---@type lib.reactive.ref
     o.content = o.factory.set(args.content)
+
+    ---@type lib.reactive.ref
+    o.length_limit = o.factory.set(args.length_limit)
 
     o.factory.interval(
         function()

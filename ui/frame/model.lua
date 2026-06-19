@@ -11,6 +11,7 @@ local apis = require "..apis"
 ---@param args ui.model.options
 ---@return ui.model 模型 UI 对象
 M.model = function(args)
+    args = args or {}
     args.model = args.model or nil
     args.type = args.type or "model"
 

@@ -6,6 +6,7 @@ local M = require "framework.ui"
 ---@param args ui.button.options
 ---@return ui.button 按钮 UI 对象
 M.button = function(args)
+    args = args or {}
     args.type = args.type or "button"
 
     ---@class ui.button : ui

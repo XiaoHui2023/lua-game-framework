@@ -74,13 +74,73 @@ M.create = function(args)
     o.children = o.factory.add({
         prevent_duplicate = true,
     })
+    local child_removers = {}
+
+    ---@param child ui
+    o.attach_child = function(child)
+        if not child_removers[child] then
+            child_removers[child] = o.children.add(child)
+        end
+    end
+
+    ---@param child ui
+    o.detach_child = function(child)
+        local remove_child = child_removers[child]
+        if remove_child then
+            remove_child()
+            child_removers[child] = nil
+        end
+    end
+
+    ---@param parent ui?
+    o.set_parent = function(parent)
+        local old_parent = o.parent()
+        if old_parent == parent then
+            return
+        end
+
+        if old_parent and old_parent.remove_child then
+            old_parent.remove_child(o)
+        elseif old_parent and old_parent.detach_child then
+            old_parent.detach_child(o)
+        end
+
+        o.parent.set(parent)
+        apis.SET_PARENT({
+            ui = o,
+            parent_handle = parent and parent.handle() or o.layer,
+        })
+
+        if parent then
+            if parent.attach_child then
+                parent.attach_child(o)
+            else
+                parent.children.add(o)
+            end
+        end
+    end
 
     if args.parent then
-        args.parent.children.add(o)
+        if args.parent.attach_child then
+            args.parent.attach_child(o)
+        else
+            args.parent.children.add(o)
+        end
+    end
+
+    local function detach_from_parent()
+        local parent = o.parent()
+        if parent and parent.remove_child then
+            parent.remove_child(o)
+        elseif parent and parent.detach_child then
+            parent.detach_child(o)
+        end
+        o.parent.set(nil)
     end
 
     o.delete.add(
         function()
+            detach_from_parent()
             apis.DELETE({ handle = o.handle() })
         end
     )

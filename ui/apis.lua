@@ -20,6 +20,7 @@
 ---@field SET_TEXT_ALIGNMENT lib.callback.api 设置文本排列方式
 ---@field SET_POSITION lib.callback.api 设置 UI 位置
 ---@field SET_ANCHOR lib.callback.api 设置 UI 锚点
+---@field SET_PARENT lib.callback.api 设置 UI 父控件
 ---@field SET_PROGRESS lib.callback.api 设置 UI 进度值
 ---@field SET_ROTATION lib.callback.api 设置 UI 旋转角度
 local M = {}
@@ -150,6 +151,11 @@ M.SET_POSITION = callback.api({ name = "ui.SET_POSITION" })
 ---@field x number
 ---@field y number
 M.SET_ANCHOR = callback.api({ name = "ui.SET_ANCHOR" })
+
+---@class ui.api.SetParent
+---@field ui ui
+---@field parent_handle ui.handle?
+M.SET_PARENT = callback.api({ name = "ui.SET_PARENT" })
 
 ---@class ui.api.SetProgress
 ---@field ui ui

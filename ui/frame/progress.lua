@@ -7,7 +7,7 @@ local M = require "framework.ui"
 ---@param ... ui.options
 ---@return ui.progress 进度 UI 对象
 M.progress = function(args,...)
-    args = table.merge(args, ...)
+    args = table.merge(args or {}, ...)
     args.image = args.image or M.DEFAULT_IMAGE
     args.type = args.type or "progress_ring"
 
@@ -18,11 +18,13 @@ M.progress = function(args,...)
 end
 
 M.progress_ring = function(args)
+    args = args or {}
     args.type = "progress_ring"
     return M.progress(args)
 end
 
 M.progress_bar = function(args)
+    args = args or {}
     args.type = "progress_bar"
     return M.progress(args)
 end
