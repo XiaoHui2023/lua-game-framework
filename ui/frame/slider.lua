@@ -1,55 +1,54 @@
----@class framework.ui
-local M = require "framework.ui"
+---@type framework.ui
+local ui_model = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 ---@type jass
 local jass = require "jass"
 
-M.SLIDER_VERTICAL = "SliderVertical"
-M.SLIDER_HORIZONTAL = "SliderHorizontal"
+local SLIDER_VERTICAL = "SliderVertical"
+local SLIDER_HORIZONTAL = "SliderHorizontal"
 
----@class framework.ui.slider.options : ui.options
----@field direction string
----@field percent number
-
----@param args? framework.ui.slider.options
----@return ui.slider
-M.slider = function(args)
-    args = args or {}
-    args.direction = args.direction or M.SLIDER_HORIZONTAL
+apis.CREATE_SLIDER(function(api)
+    local args = api.options or {}
+    args.direction = args.direction or SLIDER_HORIZONTAL
     args.width = args.width or 0.139
     args.percent = args.percent or 1
     if args.label == nil then
-        if args.direction == M.SLIDER_VERTICAL and M.settings.DEFAULT_SLIDER_Y_FRAME then
-            args.label = M.settings.DEFAULT_SLIDER_Y_FRAME()
-        elseif M.settings.DEFAULT_SLIDER_X_FRAME then
-            args.label = M.settings.DEFAULT_SLIDER_X_FRAME()
+        if args.direction == SLIDER_VERTICAL and ui_model.settings.DEFAULT_SLIDER_Y_FRAME then
+            args.label = ui_model.settings.DEFAULT_SLIDER_Y_FRAME()
+        elseif ui_model.settings.DEFAULT_SLIDER_X_FRAME then
+            args.label = ui_model.settings.DEFAULT_SLIDER_X_FRAME()
         end
     end
     args.type = args.type or "slider"
 
-    ---@class ui.slider : ui
-    local o = M.create(args)
+    local create_api = apis.CREATE_OBJECT({ options = args })
+    assert(create_api.ui ~= nil, "framework.ui.CREATE_SLIDER requires CREATE_OBJECT result")
+    local ui = create_api.ui
 
-    o.direction = o.factory.set(args.direction)
-    o.percent = o.factory.set(args.percent)
-    o.on_percent_change = o.factory.event()
+    ui.factory.direction.set(args.direction)
+    ui.factory.percent.set(args.percent)
+    ui.factory.on_percent_change.event()
 
     local function filter_percent(percent)
-        if o.direction() == M.SLIDER_VERTICAL then
+        if ui.direction() == SLIDER_VERTICAL then
             return 1 - percent
         end
         return percent
     end
 
-    jass.dzapi.frame_set_value(o.handle(), o.percent())
+    jass.dzapi.frame_set_value(ui.handle(), ui.percent())
 
-    o.factory.interval(function()
-        local old_percent = o.percent()
-        local new_percent = filter_percent(jass.dzapi.frame_get_value(o.handle()))
+    ui.factory.interval(function()
+        local old_percent = ui.percent()
+        local new_percent = filter_percent(jass.dzapi.frame_get_value(ui.handle()))
         if old_percent ~= new_percent then
-            o.percent.set(new_percent)
-            o.on_percent_change(new_percent, old_percent)
+            ui.percent.set(new_percent)
+            ui.on_percent_change(new_percent, old_percent)
         end
     end)
 
-    return o
-end
+    api.ui = ui
+end)
+
+return true

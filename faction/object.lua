@@ -25,10 +25,10 @@ local function copy_stance_map(stance_by_faction)
 end
 
 ---@class faction.options
----@field name string? 字段说明
----@field default_stance faction.stance? 字段说明
+---@field name string? 阵营名称
+---@field default_stance faction.stance? 默认阵营关系
 
----@param args? faction.options 参数说明
+---@param args? faction.options 阵营配置
 ---@return faction
 M.create = function(args)
     args = args or {}
@@ -48,10 +48,10 @@ M.create = function(args)
     o.delete.mount(M.POOL_OBJECT.add(o))
 
     ---@type hook.set<faction.stance>
-    o.default_stance = o.factory.set(args.default_stance)
+    o.factory.default_stance.set(args.default_stance)
 
     ---@type hook.set<table<faction, faction.stance>>
-    o.stance = o.factory.set({})
+    o.factory.stance.set({})
 
     ---@param fac faction target faction.
     ---@return faction.stance stance current stance.

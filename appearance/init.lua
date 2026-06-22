@@ -26,7 +26,7 @@ M.KIND = {
     TURN_FOOT = "turn.foot",
 }
 
----@param args? table 参数说明
+---@param args? table 表现数据配置
 ---@return framework.appearance.data
 function M.data(args)
     args = args or {}

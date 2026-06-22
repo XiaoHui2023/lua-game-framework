@@ -1,30 +1,32 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
----@class framework.ui
-local M = require "framework.ui"
+---@type framework.ui
+local ui_model = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
----@param args ui.options
----@param ... ui.options
----@return ui.progress 进度 UI 对象
-M.progress = function(args,...)
-    args = table.merge(args or {}, ...)
-    args.image = args.image or M.settings.DEFAULT_IMAGE
+apis.CREATE_PROGRESS(function(api)
+    local args = table.merge(api.options or {}, api.options_extra)
+    args.image = args.image or ui_model.settings.DEFAULT_IMAGE
     args.type = args.type or "progress_ring"
 
-    ---@class ui.progress : ui
-    local o = M.create(args)
-    
-    return o
-end
+    local create_api = apis.CREATE_OBJECT({ options = args })
+    assert(create_api.ui ~= nil, "framework.ui.CREATE_PROGRESS requires CREATE_OBJECT result")
+    api.ui = create_api.ui
+end)
 
-M.progress_ring = function(args)
-    args = args or {}
+apis.CREATE_PROGRESS_RING(function(api)
+    local args = api.options or {}
     args.type = "progress_ring"
-    return M.progress(args)
-end
+    local create_api = apis.CREATE_PROGRESS({ options = args })
+    api.ui = create_api.ui
+end)
 
-M.progress_bar = function(args)
-    args = args or {}
+apis.CREATE_PROGRESS_BAR(function(api)
+    local args = api.options or {}
     args.type = "progress_bar"
-    return M.progress(args)
-end
+    local create_api = apis.CREATE_PROGRESS({ options = args })
+    api.ui = create_api.ui
+end)
+
+return true

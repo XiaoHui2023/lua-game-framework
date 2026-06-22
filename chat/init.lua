@@ -1,32 +1,31 @@
 ---@class framework.chat
----@field submit_input fun(player:player, 字段说明
----@field send fun(player:player, 字段说明
----@field push fun(args:framework.chat.message.options): 字段说明
+---@field submit_input fun(player:player, content:string, channel?:string) 提交玩家聊天输入
+---@field send fun(player:player, content:string, channel?:string) 发送玩家聊天消息
+---@field push fun(args:framework.chat.message.options): message? 写入一条聊天消息
 ---@field clear fun() 清空聊天历史并广播变更
 ---@field get_messages fun():list<message> 读取当前聊天历史列表
 local M = {}
 package.loaded[...] = M
----@type fun(tb?:
 local list = require "lib.list"
 ---@type framework.chat.apis
 local apis = require ".apis"
 
 ---@class message
----@field player? player 字段说明
+---@field player? player 消息所属玩家
 ---@field content string 消息正文
 ---@field channel string 消息频道
----@field sender_name? string 字段说明
----@field sender_color? color 字段说明
+---@field sender_name? string 显示用发送者名称
+---@field sender_color? lib.color|table 显示用发送者颜色
 
 ---@type list<message>
 M.MESSAGE_HISTORY = list()
 
 ---@class framework.chat.message.options
----@field player? player 字段说明
+---@field player? player 消息所属玩家
 ---@field content string 消息正文
----@field channel? string 字段说明
----@field sender_name? string 字段说明
----@field sender_color? color 字段说明
+---@field channel? string 消息频道，省略时使用默认频道
+---@field sender_name? string 显示用发送者名称
+---@field sender_color? lib.color|table 显示用发送者颜色
 
 local function normalize_content(content)
     if content == nil then
@@ -56,7 +55,7 @@ end
 
 ---@param player player
 ---@param content string
----@param channel? string 参数说明
+---@param channel? string 消息频道
 M.submit_input = function(player, content, channel)
     apis.ON_INPUT({
         player = player,
@@ -66,7 +65,7 @@ M.submit_input = function(player, content, channel)
 end
 
 ---@param args framework.chat.message.options
----@return message? 返回值
+---@return message? message 成功写入的消息，空内容返回 nil
 M.push = function(args)
     args = args or {}
 
@@ -95,8 +94,8 @@ end
 
 ---@param player player
 ---@param content string
----@param channel? string 参数说明
----@return message? 返回值
+---@param channel? string 消息频道，省略时使用默认频道
+---@return message? message 成功写入的消息，空内容返回 nil
 M.send = function(player, content, channel)
     return M.push({
         player = player,

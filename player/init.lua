@@ -30,8 +30,8 @@ M.STATE = {
 ---     if player.async(id) then
 ---         return
 ---     end
----@param id? number 参数说明
----@return boolean 目标玩家返回值为false，其他为true
+---@param id? number 玩家 ID，省略时使用当前玩家
+---@return boolean is_local 目标玩家是否为本地玩家
 M.async = function(id)
     if id == nil then
         return false

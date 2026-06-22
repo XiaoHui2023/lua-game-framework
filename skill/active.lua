@@ -5,11 +5,11 @@ local M = require "framework.skill"
 local apis = require ".apis"
 
 ---@class skill.active.options: skill.options
----@field cooldown? number 字段说明
----@field max_cooldown? number 字段说明
----@field input_kind? skill.input_kind 字段说明
----@field active_effects? skill.active_effect[] 字段说明
----@field on_cast? fun(skill:skill.active, 字段说明
+---@field cooldown? number 当前冷却时间
+---@field max_cooldown? number 最大冷却时间
+---@field input_kind? skill.input_kind 主动技能输入类型
+---@field active_effects? skill.active_effect[] 主动效果列表
+---@field on_cast? fun(skill:skill.active, request:skill.cast_request):any 主动释放回调
 
 ---@alias skill.input_kind
 ---| "none"
@@ -19,17 +19,16 @@ local apis = require ".apis"
 ---| "multi_click" 多次点击输入
 ---| "gesture" 轨迹或画图形输入
 ---| "custom" 业务自定义输入
-
 ---@class skill.cast_request
----@field kind? skill.input_kind 字段说明
----@field caster? unit 字段说明
----@field target_unit? unit 字段说明
----@field target_point? point 字段说明
----@field points? point[] 字段说明
----@field payload? table 字段说明
----@field engine_event? any 字段说明
+---@field kind? skill.input_kind 本次释放请求的输入类型
+---@field caster? unit 释放者单位
+---@field target_unit? unit 目标单位
+---@field target_point? point 目标位置
+---@field points? point[] 多点输入位置列表
+---@field payload? table 业务自定义数据
+---@field engine_event? any 底层引擎事件对象
 
----@param request? skill.cast_request 参数说明
+---@param request? skill.cast_request 释放请求，省略时创建默认请求
 ---@param default_kind skill.input_kind
 ---@return skill.cast_request
 local function normalize_request(request, default_kind)
@@ -38,7 +37,7 @@ local function normalize_request(request, default_kind)
     return request
 end
 
----@param args? skill.active.options 参数说明
+---@param args? skill.active.options 主动技能配置
 ---@return skill.active
 M.create_active = function(args)
     args = args or {}
@@ -51,10 +50,10 @@ M.create_active = function(args)
     o.set_class("skill.active")
 
     ---@type hook.set<number>
-    o.cooldown = o.factory.set(args.cooldown)
+    o.factory.cooldown.set(args.cooldown)
 
     ---@type hook.set<skill.input_kind>
-    o.input_kind = o.factory.set(args.input_kind)
+    o.factory.input_kind.set(args.input_kind)
 
     ---@type skill.stat
     o.max_cooldown = o.create_stat({
@@ -64,19 +63,19 @@ M.create_active = function(args)
     })
 
     ---@type hook.add<skill.active_effect>
-    o.active_effects = o.factory.add()
+    o.factory.active_effects.add()
 
     ---@type hook.semaphore
-    o.lock = o.factory.semaphore()
+    o.factory.lock.semaphore()
 
     ---@type hook.event
-    o.on_cast = o.factory.event()
+    o.factory.on_cast.event()
 
     ---@type hook.event
-    o.on_cooldown_ready = o.factory.event()
+    o.factory.on_cooldown_ready.event()
 
     ---@type hook.event
-    o.on_cooldown_start = o.factory.event()
+    o.factory.on_cooldown_start.event()
 
     o.active_effects.wrap_add(function(effect)
         if type(effect.on_attach) == "function" then
@@ -106,7 +105,7 @@ M.create_active = function(args)
         return o.cooldown() <= 0
     end
 
-    ---@param value? number 参数说明
+    ---@param value? number 指定冷却时间，省略时使用最大冷却
     o.start_cooldown = function(value)
         o.cooldown.set(value or o.get_max_cooldown())
     end
@@ -115,8 +114,8 @@ M.create_active = function(args)
         o.cooldown.set(0)
     end
 
-    ---@param delta number 参数说明
-    ---@return boolean 返回值
+    ---@param delta number 本帧经过的时间
+    ---@return boolean success 是否更新了冷却
     o.reduce_cooldown = function(delta)
         if delta <= 0 then
             return false
@@ -125,13 +124,13 @@ M.create_active = function(args)
         return true
     end
 
-    ---@param delta number 参数说明
-    ---@return boolean 是否更新了冷却
+    ---@param delta number 本帧经过的时间
+    ---@return boolean success 是否更新了冷却
     o.tick_cooldown = function(delta)
         return o.reduce_cooldown(delta)
     end
 
-    ---@param request? skill.cast_request 参数说明
+    ---@param request? skill.cast_request 释放请求
     ---@return skill.cast_request
     o.request_cast = function(request)
         request = normalize_request(request, o.input_kind())
@@ -143,9 +142,9 @@ M.create_active = function(args)
         return request
     end
 
-    ---@param request? skill.cast_request 参数说明
-    ---@return boolean success 是否释放成功
-    ---@return any result 主动效果或 on_cast 返回值
+    ---@param request? skill.cast_request 释放请求
+    ---@return boolean success 是否更新了冷却
+    ---@return any result 主动效果或 on_cast 结果
     o.cast = function(request)
         if o.lock.is_acquired() then
             return false, "locked"
@@ -202,8 +201,6 @@ M.create_active = function(args)
             o.on_cooldown_ready()
         end
     end)
-
-    o.factory.register_hook_fields()
 
     return o
 end

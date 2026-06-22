@@ -16,8 +16,8 @@ local MAP_COOLDOWN = {}
 ---@type number
 local COOLDOWN_INTERVAL = 0.1
 
----@param sound any 参数说明
----@return fun() 返回值
+---@param sound any 声音句柄
+---@return fun() cleanup 停止声音并释放绑定的清理函数
 local function play(sound)
     assert(sound ~= nil, "handle is nil")
 
@@ -47,8 +47,8 @@ local function play(sound)
 end
 
 ---瀹氫箟澹伴煶
----@param sound any|table<any> 参数说明
----@return sound 返回值
+---@param sound any|table<any> 声音句柄或声音配置表
+---@return sound sound 声音对象
 M.define = function(sound)
     local sound_list
     if type(sound) == "table" then
@@ -69,7 +69,7 @@ M.define = function(sound)
 
     assert(o.length > 0, "sound_list is empty")
 
-    ---@return fun() 返回值
+    ---@return fun() cleanup 停止播放的清理函数
     o.play = function()
         local sound
         if o.length == 1 then

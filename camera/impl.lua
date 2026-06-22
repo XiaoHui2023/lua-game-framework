@@ -1,10 +1,10 @@
 -- 注册镜头 API 处理器，同步框架内镜头状态。
 ---@type framework.camera.apis
-local apis = require "..apis"
+local apis = require ".apis"
 ---@type framework.camera.state
-local state = require "..state"
+local state = require ".state"
 ---@type framework.camera.settings
-local settings = require "..settings"
+local settings = require ".settings"
 
 ---@param api framework.camera.api.SetDistance
 local function on_set_distance(api)

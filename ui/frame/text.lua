@@ -5,31 +5,31 @@ local table = require "lib.tablex"
 ---@class framework.ui
 ---@field DEFAULT_TEXT_FONT any 默认文本字体资源
 ---@field DEFAULT_TEXT_FONT_SIZE number 默认字体大小比例
----@field DEFAULT_TEXT_ALIGN ui.position 默认文本排列位置
+---@field DEFAULT_TEXT_ALIGN framework.ui.position 默认文本排列位置
 ---@field TEXT_GET_TEXT_PIXEL_SIZE_WIDTH_SCALE number 文本宽度估算缩放系数
 ---@field TEXT_GET_TEXT_PIXEL_SIZE_HEIGHT_SCALE number 文本高度估算缩放系数
 local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "..apis"
----@type framework.event
-local event = require "framework.event"
 
----@class ui.options
+---@class framework.ui.options
 ---@field text? string 初始显示文本
 ---@field font_size? number 字体大小比例
 ---@field font? any 字体资源
 
----@class ui.text.render_result
+---@class framework.ui.text.render_result
 ---@field text string 实际渲染文本
 ---@field width number 文本像素宽度
 ---@field height number 文本像素高度
 
----@param args? ui.options 文本创建参数
----@param ... ui.options
----@return ui.text 文本 UI 对象
-M.text = function(args, ...)
+---@param args? framework.ui.options 文本创建参数
+---@param ... framework.ui.options 需要合并的额外创建参数
+---@return framework.ui.text 文本 UI 对象
+apis.CREATE_TEXT(function(api)
+    local options_extra = api.options_extra
+    local args = api.options
     args = args or {}
-    args = table.merge(args, ...)
+    args = table.merge(args, options_extra)
     args.text = args.text or ""
     args.font_size = args.font_size or M.settings.DEFAULT_TEXT_FONT_SIZE
     args.align = args.align or M.settings.DEFAULT_TEXT_ALIGN
@@ -38,36 +38,38 @@ M.text = function(args, ...)
     args.size = args.size or 1
     args.size_mode = args.size_mode or "contain"
 
-    ---@class ui.text : ui
-    local o = M.create(args)
+    ---@class framework.ui.text : framework.ui
+    local create_api = apis.CREATE_OBJECT({ options = args })
+    assert(create_api.ui ~= nil, "framework.ui.CREATE_TEXT requires CREATE_OBJECT result")
+    local o = create_api.ui
 
     ---@type lib.reactive.ref 字体资源
-    o.font = o.factory.set(args.font)
+    o.factory.font.set(args.font)
 
     ---@type lib.reactive.ref
-    o.font_pixel_size = o.factory.set(0)
+    o.factory.font_pixel_size.set(0)
 
     ---@type lib.reactive.ref 字体大小比例
-    o.font_size = o.factory.set(args.font_size)
+    o.factory.font_size.set(args.font_size)
 
     ---@type lib.reactive.ref
-    o.text = o.factory.set(args.text)
+    o.factory.text.set(args.text)
 
     ---@type lib.reactive.ref
-    o.align = o.factory.set(args.align)
+    o.factory.align.set(args.align)
     o.align.on_change.add(function(align)
         apis.SET_TEXT_ALIGNMENT({ handle = o.handle(), pos = align })
     end)
 
     ---@type lib.reactive.ref
-    o.outline = o.factory.set(args.outline)
+    o.factory.outline.set(args.outline)
     o.outline.on_change.add(function(outline)
         apis.SET_TEXT_OUTLINE({ handle = o.handle(), outline = outline })
     end)
 
-    ---@type reactive.computed <ui.text.render_result>
+    ---@type reactive.computed <framework.ui.text.render_result>
     local render_text_clamped = o.factory.computed(function()
-        local pixel_width = o.pixel_size()
+        local pixel_width = o.total_scaled_pixel_size()
         local text, width, height = string.adapt(o.text(),o.font_pixel_size(),pixel_width)
 
         return {
@@ -77,7 +79,7 @@ M.text = function(args, ...)
         }
     end)
 
-    ---@type reactive.computed <ui.text.render_result>
+    ---@type reactive.computed <framework.ui.text.render_result>
     local render_text_unlimited = o.factory.computed(function()
         local text, width, height = string.adapt(o.text(),o.font_pixel_size())
         return {
@@ -88,7 +90,7 @@ M.text = function(args, ...)
     end)
 
     ---@type reactive.computed
-    o.text_relative_size_clamped = o.factory.computed(function()
+    o.factory.text_relative_size_clamped.computed(function()
         local pixel_width, pixel_height = o.text_pixel_size_clamped()
         local window_width, window_height = o.window_size()
         local width_percent = pixel_width / window_width
@@ -103,14 +105,14 @@ M.text = function(args, ...)
     end)
 
     ---@type reactive.computed
-    o.text_pixel_size_clamped = o.factory.computed(function()
-        ---@type ui.text.render_result
+    o.factory.text_pixel_size_clamped.computed(function()
+        ---@type framework.ui.text.render_result
         local render_result = render_text_clamped()
         return render_result.width, render_result.height
     end)
 
     ---@type reactive.computed
-    o.text_relative_size_unlimited = o.factory.computed(function()
+    o.factory.text_relative_size_unlimited.computed(function()
         local pixel_width, pixel_height = o.text_pixel_size_unlimited()
         local window_width, window_height = o.window_size()
         local width_percent = pixel_width / window_width
@@ -125,8 +127,8 @@ M.text = function(args, ...)
     end)
 
     ---@type reactive.computed
-    o.text_pixel_size_unlimited = o.factory.computed(function()
-        ---@type ui.text.render_result
+    o.factory.text_pixel_size_unlimited.computed(function()
+        ---@type framework.ui.text.render_result
         local render_result = render_text_unlimited()
         return render_result.width, render_result.height
     end)
@@ -135,7 +137,8 @@ M.text = function(args, ...)
     render_text_clamped.on_change.add(function(render_result)
         apis.SET_TEXT({ handle = o.handle(), text = render_result.text })
         o.visual_size.compute(function()
-            return render_result.width, render_result.height
+            local scale = M.settings.UI_APPLICATION_SIZE_SCALE
+            return render_result.width * scale, render_result.height * scale
         end)
     end)
 
@@ -158,5 +161,5 @@ M.text = function(args, ...)
     o.text_relative_size_clamped.auto_update()
     o.text_relative_size_unlimited.auto_update()
 
-    return o
-end
+    api.ui = o
+end)

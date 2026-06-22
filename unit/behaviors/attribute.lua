@@ -4,10 +4,10 @@ local M = require "framework.unit"
 local apis = require "..apis"
 
 ---@class unit.options
----@field move_speed? number 字段说明
----@field base_attack_speed? number 字段说明
----@field attack_speed? number 字段说明
----@field attack_range? number 字段说明
+---@field move_speed? number 移动速度
+---@field base_attack_speed? number 基础攻击速度
+---@field attack_speed? number 攻击速度倍率
+---@field attack_range? number 攻击范围
 
 ---@param o unit
 ---@param args unit.options
@@ -21,13 +21,13 @@ return function (o,args)
     o = o
 
     ---@type hook.set 移动速度
-    o.move_speed = o.factory.set(args.move_speed)
+    o.factory.move_speed.set(args.move_speed)
     ---@type hook.set 基础攻击速度
-    o.base_attack_speed = o.factory.set(args.base_attack_speed)
+    o.factory.base_attack_speed.set(args.base_attack_speed)
     ---@type hook.set 攻击速度
-    o.attack_speed = o.factory.set(args.attack_speed)
+    o.factory.attack_speed.set(args.attack_speed)
     ---@type hook.set 攻击范围
-    o.attack_range = o.factory.set(args.attack_range)
+    o.factory.attack_range.set(args.attack_range)
 
     -- 重载设置移动速度
     o.move_speed.on_change.add(function(speed)

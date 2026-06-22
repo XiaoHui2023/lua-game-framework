@@ -24,14 +24,14 @@ M.REQUEST_CAST = callback.api({ name = "skill.REQUEST_CAST" })
 ---@field skill skill.active 即将释放的主动技能
 ---@field request skill.cast_request 本次释放携带的输入请求
 ---@field cancelled boolean 是否取消本次释放，处理器可修改
----@field reason? string 字段说明
+---@field reason? string 取消释放时使用的原因
 ---@type lib.callback.api
 M.BEFORE_CAST = callback.api({ name = "skill.BEFORE_CAST" })
 
 ---@class skill.api.AfterCast: lib.callback.instance
 ---@field skill skill.active 已释放的主动技能
 ---@field request skill.cast_request 本次释放携带的输入请求
----@field result any 可选，技能释放逻辑返回值
+---@field result any 技能释放逻辑结果
 ---@type lib.callback.api
 M.AFTER_CAST = callback.api({ name = "skill.AFTER_CAST" })
 

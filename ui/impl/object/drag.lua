@@ -3,31 +3,28 @@ local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
----@class ui.options
----@field dragable? boolean 是否允许拖拽
-
----@param o ui
----@param args ui.options
+---@param o framework.ui 要装配拖拽能力的 UI 对象
+---@param args framework.ui.options UI 创建参数
 return function (o,args)
     args.dragable = args.dragable or false
 
-    ---@class ui
+    ---@class framework.ui
     o = o
 
     ---@type lib.reactive.ref 是否可以拖拽
-    o.draggable = o.factory.set(args.dragable)
+    o.factory.draggable.set(args.dragable)
 
     ---@type reactive.event 拖拽开始事件
-    o.on_drag_start = o.factory.event()
+    o.factory.on_drag_start.event()
 
-    ---@type reactive.event 拖拽事件（百分比位置: point）
-    o.on_drag = o.factory.event()
+    ---@type reactive.event 拖拽中事件，参数为窗口百分比位置
+    o.factory.on_drag.event()
 
     ---@type reactive.event 拖拽结束事件
-    o.on_drag_end = o.factory.event()
+    o.factory.on_drag_end.event()
 
     ---@type lib.reactive.ref 当前是否拖拽
-    o.is_dragging = o.factory.set(false)
+    o.factory.is_dragging.set(false)
 
     local unbind_move = nil
 
@@ -48,11 +45,11 @@ return function (o,args)
     -- 按下绑定拖拽
     o.on_mouse_left_down.add(
         function()
-            -- 是否开启使能
+            -- 未开启拖拽时跳过。
             if not o.draggable() then
                 return
             end
-            -- 需要可见
+            -- 不可见时跳过拖拽。
             if not o.visible() then
                 return
             end    

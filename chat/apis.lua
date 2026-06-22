@@ -9,7 +9,7 @@ local callback = require "lib.callback"
 ---@class framework.chat.api.Input: lib.callback.instance
 ---@field player player 输入聊天内容的玩家
 ---@field content string 玩家输入的聊天文本
----@field channel? string 字段说明
+---@field channel? string 输入所属聊天频道
 ---@type lib.callback.api
 M.ON_INPUT = callback.api({ name = "chat.ON_INPUT" })
 

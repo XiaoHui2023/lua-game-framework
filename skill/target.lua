@@ -11,11 +11,11 @@ M.create_target = function (args)
     local o = factory_model(args)
     o.set_class("skill.target")
 
-    ---@type hook.computed 上下文<skill.context>
-    o.context = o.factory.computed()
+    ---@type hook.computed<skill.context> 上下文
+    o.factory.context.computed()
 
-    ---@type hook.computed 组<list>
-    o.group = o.factory.computed(function ()
+    ---@type hook.computed<list> 目标组
+    o.factory.group.computed(function ()
         error("not implemented")
     end)
 

@@ -5,11 +5,11 @@ local M = require "framework.terrain"
 ---@type framework.terrain.apis
 local apis = require ".apis"
 
----@param painter terrain.painter 参数说明
----@param center_position point 参数说明
----@param radius number 参数说明
----@param step number 参数说明
----@return terrain.map 返回值
+---@param painter terrain.painter 地形绘制器
+---@param center_position point 绘制区域中心点
+---@param radius number 绘制区域半径
+---@param step number 采样步长
+---@return terrain.map map 生成的地形映射
 local function calculate_terrain_map(painter, center_position, radius, step)
     local center_x,center_y = center_position.x,center_position.y
     ---@type terrain.map
@@ -36,19 +36,19 @@ local function calculate_terrain_map(painter, center_position, radius, step)
     return map
 end
 
----@param map terrain.map 参数说明
----@param size number 参数说明
+---@param map terrain.map 地形映射
+---@param size number 地形块尺寸
 local function render_terrain_map(map,size)
     for position, terrain_id in table.sorted_pairs(map) do
         apis.SET_TEXTURE({ position = position, texture = terrain_id, range = size })
     end
 end
 
----@param terrain_group terrain.group 参数说明
----@param max_count integer 参数说明
----@param center_position point 参数说明
----@param radius number 参数说明
----@param size? number 参数说明
+---@param terrain_group terrain.group 地形组
+---@param max_count integer 最大生成数量
+---@param center_position point 生成区域中心点
+---@param radius number 生成区域半径
+---@param size? number 地形块尺寸
 M.render_circle_stage = function(terrain_group, max_count, center_position, radius, size)
     size = size or M.settings.UNIT_SIZE
 

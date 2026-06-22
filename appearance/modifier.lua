@@ -12,29 +12,29 @@ local function assert_optional_function(value, name)
 end
 
 ---@class framework.appearance.modifier.options
----@field name? string 字段说明
----@field kind? string 字段说明
----@field enabled? boolean 字段说明
----@field priority? integer 字段说明
----@field exclusive? boolean 字段说明
----@field replace_previous? boolean 字段说明
----@field interrupt_previous? boolean 字段说明
----@field interrupts_previous? boolean 字段说明
----@field reset_before_start? boolean 字段说明
----@field reset_on_interrupt? boolean 字段说明
----@field reset_on_finish? boolean 字段说明
----@field duration? number 字段说明
----@field once? boolean 字段说明
----@field value? any 字段说明
----@field apply? fun(data:framework.appearance.data, 字段说明
----@field modify? fun(data:framework.appearance.data, 字段说明
----@field tick? fun(data:framework.appearance.data, 字段说明
----@field should_run? fun(data:framework.appearance.data, 字段说明
----@field should_finish? fun(data:framework.appearance.data,result:framework.appearance.result,modifier:framework.appearance.modifier):boolean 字段说明
----@field on_finish? fun(result:framework.appearance.result, 字段说明
----@field on_interrupt? fun(reason:string, 字段说明
+---@field name? string 修正器名称
+---@field kind? string 被修正的表现类型
+---@field enabled? boolean 是否启用
+---@field priority? integer 执行优先级，数值越小越先执行
+---@field exclusive? boolean 是否独占同类表现
+---@field replace_previous? boolean 是否替换已有同类修正器
+---@field interrupt_previous? boolean 是否中断已有同类修正器
+---@field interrupts_previous? boolean 是否中断已有同类修正器的兼容字段
+---@field reset_before_start? boolean 启动前是否重置同类表现
+---@field reset_on_interrupt? boolean 被中断时是否重置同类表现
+---@field reset_on_finish? boolean 完成时是否重置同类表现
+---@field duration? number 持续时间
+---@field once? boolean 是否只执行一次
+---@field value? any 修正值
+---@field apply? fun(data:framework.appearance.data, modifier:framework.appearance.modifier):nil 应用表现修正
+---@field modify? fun(data:framework.appearance.data, modifier:framework.appearance.modifier):nil apply 的兼容字段
+---@field tick? fun(data:framework.appearance.data, modifier:framework.appearance.modifier):nil 每帧修正回调
+---@field should_run? fun(data:framework.appearance.data, modifier:framework.appearance.modifier):boolean 是否允许运行
+---@field should_finish? fun(data:framework.appearance.data,result:framework.appearance.result,modifier:framework.appearance.modifier):boolean 是否完成
+---@field on_finish? fun(result:framework.appearance.result, modifier:framework.appearance.modifier):nil 完成回调
+---@field on_interrupt? fun(reason:string, modifier:framework.appearance.modifier):nil 中断回调
 
----@param args? framework.appearance.modifier.options 参数说明
+---@param args? framework.appearance.modifier.options 表现修正器配置
 ---@return framework.appearance.modifier
 function M.modifier(args)
     args = args or {}
@@ -154,7 +154,7 @@ function M.modifier(args)
         end
     end
 
-    ---@param reason? string 参数说明
+    ---@param reason? string 完成原因
     function o.interrupt(reason)
         if o.finished or o.interrupted then
             return

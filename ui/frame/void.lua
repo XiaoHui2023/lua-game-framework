@@ -1,22 +1,20 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
----@class framework.ui
-local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
----空节点
----@param args? ui.options 空节点创建参数
----@param ... ui.options
----@return ui.void 空节点 UI 对象
-M.void = function(args,...)
-    args = args or {}
-    args = table.merge(args, ...)
+apis.CREATE_VOID(function(api)
+    local args = table.merge(api.options or {}, api.options_extra)
     args.type = args.type or "void"
 
-    ---@class ui.void : ui
-    local o = M.create(args)
+    local create_api = apis.CREATE_OBJECT({ options = args })
+    assert(create_api.ui ~= nil, "framework.ui.CREATE_VOID requires CREATE_OBJECT result")
+    local ui = create_api.ui
 
-    ---@type reactive.event<ui>
-    o.on_children_layout_change = o.factory.event()
+    ---@type reactive.event<framework.ui>
+    ui.factory.on_children_layout_change.event()
 
-    return o
-end
+    api.ui = ui
+end)
+
+return true

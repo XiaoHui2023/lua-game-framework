@@ -5,31 +5,41 @@ local table = require "lib.tablex"
 ---@field DEFAULT_SLOT_PROGRESS_IMAGE any 默认槽位进度图片
 ---@field DEFAULT_SLOT_BACKGROUND_IMAGE any 默认槽位背景图片
 local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
----@class ui.slot.progress.options: ui.options
+local function create_anchor(options)
+    local api = apis.CREATE_ANCHOR({
+        anchor = options,
+    })
+    assert(api.anchor ~= nil, "framework.ui.slot requires CREATE_ANCHOR result")
+    return api.anchor
+end
+
+---@class framework.ui.slot.progress.options: framework.ui.options
 ---@field enable? boolean 是否创建进度子控件
 
----@class ui.slot.image.options: ui.options
+---@class framework.ui.slot.image.options: framework.ui.options
 ---@field enable? boolean 是否创建图标子控件
 
----@class ui.slot.background.options: ui.options
+---@class framework.ui.slot.background.options: framework.ui.options
 ---@field enable? boolean 是否创建背景子控件
 
----@class ui.slot.text.options: ui.options
+---@class framework.ui.slot.text.options: framework.ui.options
 ---@field enable? boolean 是否创建文本子控件
 
----@class ui.slot.options: ui.options
----@field progress? ui.slot.progress.options 进度子控件配置
----@field image? ui.slot.image.options 图标子控件配置
----@field background? ui.slot.background.options 背景子控件配置
----@field text? ui.slot.text.options 文本子控件配置
+---@class framework.ui.slot.options: framework.ui.options
+---@field progress? framework.ui.slot.progress.options 进度子控件配置
+---@field image? framework.ui.slot.image.options 图标子控件配置
+---@field background? framework.ui.slot.background.options 背景子控件配置
+---@field text? framework.ui.slot.text.options 文本子控件配置
 
 -- slot
----@param args? ui.slot.options 槽位配置
----@param ... ui.slot.options
----@return ui.slot 槽位 UI 对象
-M.slot = function(args, ...)
-    args = table.deep_merge(args, ...)
+---@param args? framework.ui.slot.options 槽位配置
+---@param ... framework.ui.slot.options 需要合并的额外槽位参数
+---@return framework.ui.slot 槽位 UI 对象
+apis.CREATE_SLOT(function(api)
+    local args = table.deep_merge(api.options, api.options_extra)
     args = args or {}
     args.progress = args.progress or {}
     args.image = args.image or {}
@@ -51,60 +61,74 @@ M.slot = function(args, ...)
     args.image.show = (args.image.show == nil) and true or args.image.show
     args.text.show = (args.text.show == nil) and true or args.text.show
 
-    ---@class ui.slot : ui.void
-    ---@field progress? ui.progress 进度子控件
-    ---@field image? ui.image 图标子控件
-    local o = M.void(args)
+    ---@class framework.ui.slot : framework.ui.void
+    ---@field progress? framework.ui.progress 进度子控件
+    ---@field image? framework.ui.image 图标子控件
+    local void_api = apis.CREATE_VOID({ options = args })
+    assert(void_api.ui ~= nil, "framework.ui.CREATE_SLOT requires CREATE_VOID result")
+    local o = void_api.ui
     o.is_content_sized = true
 
     if args.background.enable then
-        ---@type ui.image
-        o.background = M.image(args.background, {
+        ---@type framework.ui.image
+        local image_api = apis.CREATE_IMAGE({
+            options = table.merge(args.background, {
             name = "background",
-            anchor = M.anchor({
+            anchor = create_anchor({
                 relative_ui = o,
             }),
             parent = o,
+            }),
         })
+        o.background = image_api.ui
     else
         o.background = nil
     end
 
     if args.progress.enable then
-        ---@type ui.progress
-        o.progress = M.progress(args.progress, {
+        ---@type framework.ui.progress
+        local progress_api = apis.CREATE_PROGRESS({
+            options = table.merge(args.progress, {
             name = "progress",
-            anchor = M.anchor({
+            anchor = create_anchor({
                 relative_ui = o
             }),
             parent = o,
+            }),
         })
+        o.progress = progress_api.ui
     else
         o.progress = nil
     end
 
     if args.image.enable then
-        ---@type ui.image
-        o.image = M.image(args.image, {
+        ---@type framework.ui.image
+        local image_api = apis.CREATE_IMAGE({
+            options = table.merge(args.image, {
             name = "image",
-            anchor = M.anchor({
+            anchor = create_anchor({
                 relative_ui = o,
             }),
             parent = o,
+            }),
         })
+        o.image = image_api.ui
     else
         o.image = nil
     end
 
     if args.text.enable then
-        ---@type ui.text
-        o.text = M.text(args.text, {
+        ---@type framework.ui.text
+        local text_api = apis.CREATE_TEXT({
+            options = table.merge(args.text, {
             name = "text",
-            anchor = M.anchor({
+            anchor = create_anchor({
                 relative_ui = o,
             }),
             parent = o,
+            }),
         })
+        o.text = text_api.ui
     else
         o.text = nil
     end
@@ -132,7 +156,7 @@ M.slot = function(args, ...)
         return max_width, max_height
     end)
 
-    return o
-end
+    api.ui = o
+end)
 
-return M
+return true

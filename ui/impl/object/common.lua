@@ -3,7 +3,7 @@ local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
----@param o ui 需要挂接通用响应逻辑的 UI 对象
+---@param o framework.ui 需要挂接通用响应逻辑的 UI 对象
 return function(o)
     -- 透明度
     o.alpha.wrap_set(function(al)

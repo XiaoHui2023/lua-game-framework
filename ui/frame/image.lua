@@ -1,20 +1,18 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
----@class framework.ui
----@field DEFAULT_IMAGE any 默认图片资源
-local M = require "framework.ui"
+---@type framework.ui
+local ui_model = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
--- image
----@param args ui.options
----@param ... ui.options
----@return ui.image 图片 UI 对象
-M.image = function(args,...)
-    args = table.merge(args or {}, ...)
-    args.image = args.image or M.settings.DEFAULT_IMAGE
+apis.CREATE_IMAGE(function(api)
+    local args = table.merge(api.options or {}, api.options_extra)
+    args.image = args.image or ui_model.settings.DEFAULT_IMAGE
     args.type = args.type or "image"
 
-    ---@class ui.image : ui
-    local o = M.create(args)
+    local create_api = apis.CREATE_OBJECT({ options = args })
+    assert(create_api.ui ~= nil, "framework.ui.CREATE_IMAGE requires CREATE_OBJECT result")
+    api.ui = create_api.ui
+end)
 
-    return o
-end
+return true

@@ -8,15 +8,17 @@ local reactive = require "lib.reactive"
 ---| "number"
 
 ---@class skill.stat.modifier
----@field callback fun(value:number, context
+---@field callback fun(value:number, context?:table):number 属性修正回调
 
 ---@class skill.stat.value_pipeline
----@field modifiers reactive.add 字段说明
----@field run fun(context
+---@field modifiers reactive.add 属性修正器集合
+---@field run fun(context?:table):skill.stat.value_result 执行属性计算
 ---@class skill.stat.value_result
----@field value number 字段说明
+---@field value number 属性计算结果
 ---@class skill.stat.options: lib.reactive.factory.options
----@field kind string 字段说明
+---@field kind string 属性类型
+---@field unit? skill.stat.unit 属性单位
+---@field value? number 属性基础值
 ---@param get_base_value fun():number
 ---@param owner_factory reactive.factory
 ---@return skill.stat.value_pipeline
@@ -53,23 +55,21 @@ return function(args)
     o.set_class("skill.stat")
 
     ---@type reactive.set<string>
-    o.kind = o.factory.set(args.kind)
+    o.factory.kind.set(args.kind)
 
     ---@type reactive.set<skill.stat.unit>
-    o.unit = o.factory.set(args.unit)
+    o.factory.unit.set(args.unit)
 
     ---@type reactive.set<number>
-    o.base_value = o.factory.set(args.value)
+    o.factory.base_value.set(args.value)
 
     ---@type skill.stat.value_pipeline
     o.value_pipeline = create_value_pipeline(o.base_value, o.factory)
 
     ---@type reactive.computed<number>
-    o.value = o.factory.computed(function()
+    o.factory.value.computed(function()
         return o.value_pipeline.run().value
     end)
-
-    o.factory.register_hook_fields()
 
     return o
 end

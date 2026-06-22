@@ -5,34 +5,31 @@ local apis = require "framework.ui.apis"
 ---@type framework.event
 local event = require "framework.event"
 
----@class ui.options
----@field show? boolean 初始是否显示
-
----@param o ui
----@param args ui.options
+---@param o framework.ui 要装配显隐能力的 UI 对象
+---@param args framework.ui.options UI 创建参数
 return function (o,args)
     args.show = (args.show == nil) and false or args.show
 
-    ---@class ui
+    ---@class framework.ui
     o = o
     
     ---@type reactive.semaphore
-    o.hide_lock = o.factory.semaphore()
+    o.factory.hide_lock.semaphore()
     
     ---@type reactive.semaphore
-    o.weak_show = o.factory.semaphore()
+    o.factory.weak_show.semaphore()
 
     ---@type lib.reactive.ref 基础显示<boolean>
-    o.show = o.factory.set(args.show)
+    o.factory.show.set(args.show)
 
-    ---@type reactive.computed 可见性
-    o.visible = o.factory.computed(function()
+    ---@type reactive.computed 可见状态
+    o.factory.visible.computed(function()
         if o.hide_lock.is_acquired() then
             return false
         end
 
-        -- 上级不可见
-        ---@type ui
+        -- 上级不可见时自身也不可见。
+        ---@type framework.ui
         local parent = o.parent()
         if parent and not parent.visible() then
             return false
@@ -46,7 +43,7 @@ return function (o,args)
         return o.show()
     end)
 
-    -- 应用可见性
+    -- 应用可见状态。
     o.visible.on_change.add(
         function(on)
             apis.SET_VISIBLE({ handle = o.handle(), visible = on })

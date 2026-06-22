@@ -1,44 +1,47 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
----@class framework.ui
 local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
----@alias ui.container.mode
+---@alias framework.ui.container.mode
 ---| 'single'
 ---| 'toggle'
 ---| 'overlay'
----@alias ui.container.layout.type
+---@alias framework.ui.container.layout.type
 ---| "horizontal"
 ---| "vertical"
 ---| "grid"
 
----@alias ui.container.layout.flow
+---@alias framework.ui.container.layout.flow
 ---| "top_to_bottom"
 ---| "bottom_to_top"
 ---| "left_to_right"
 ---| "right_to_left"
 
----@alias ui.container.layout.grid_wrap
+---@alias framework.ui.container.layout.grid_wrap
 ---| "row"
----@class ui.container.layout.options
----@field type? ui.container.layout.type
----@field reverse? boolean
----@field spacing? number
----@field padding? number
----@field grid_columns? integer
----@field grid_rows? integer
----@field grid_wrap? ui.container.layout.grid_wrap
+---@class framework.ui.container.layout.options
+---@field type? framework.ui.container.layout.type 布局类型
+---@field reverse? boolean 是否反向排列
+---@field spacing? number 子项间距比例
+---@field padding? number 容器内边距比例
+---@field grid_columns? integer 网格列数
+---@field grid_rows? integer 网格行数
+---@field grid_wrap? framework.ui.container.layout.grid_wrap 网格换行方向
 ---@field grid_spacing? {x:number, y:number}
 
----@class ui.container.options: ui.options
----@field mode? ui.container.mode
----@field layout? ui.container.layout.options
+---@class framework.ui.container.options: framework.ui.options
+---@field mode? framework.ui.container.mode 容器尺寸模式
+---@field layout? framework.ui.container.layout.options 布局配置
 
----@param args? ui.container.options
----@param ... ui.container.options
----@return ui.container
-M.container = function(args, ...)
-    args = table.merge(args or {}, ...)
+---@param args? framework.ui.container.options 容器创建参数
+---@param ... framework.ui.container.options 需要合并的额外容器参数
+---@return framework.ui.container container 容器 UI 对象
+apis.CREATE_CONTAINER(function(api)
+    local options_extra = api.options_extra
+    local args = api.options
+    args = table.merge(args or {}, options_extra)
     args.mode = args.mode or "single"
     args.layout = args.layout or {}
     args.layout.type = args.layout.type or "horizontal"
@@ -51,23 +54,25 @@ M.container = function(args, ...)
     args.layout.grid_wrap = args.layout.grid_wrap or "row"
     args.layout.grid_spacing = args.layout.grid_spacing or { x = 0, y = 0 }
 
-    ---@class ui.container: ui.void
-    local o = M.void(args)
+    ---@class framework.ui.container: framework.ui.void
+    local void_api = apis.CREATE_VOID({ options = args })
+    assert(void_api.ui ~= nil, "framework.ui.CREATE_CONTAINER requires CREATE_VOID result")
+    local o = void_api.ui
     o.is_content_sized = true
 
-    ---@type reactive.add<ui>
-    o.widgets = o.factory.add({
-        ---@param a ui
-        ---@param b ui
-        ---@return boolean
+    ---@type reactive.add<framework.ui>
+    o.factory.widgets.add({
+        ---@param a framework.ui 待排序的前一个子 UI
+        ---@param b framework.ui 待排序的后一个子 UI
+        ---@return boolean before a 是否排在 b 前面
         compare = function(a, b)
             return a.priority() < b.priority()
         end,
     })
 
-    o.mode = o.factory.set(args.mode)
+    o.factory.mode.set(args.mode)
 
-    ---@class ui.container.layout
+    ---@class framework.ui.container.layout
     o.layout = {}
     o.layout.type = o.factory.set(args.layout.type)
     o.layout.flow = o.factory.set(args.layout.flow)
@@ -89,7 +94,7 @@ M.container = function(args, ...)
         end
     end
 
-    ---@param ui ui
+    ---@param framework.ui framework.ui 需要加入布局的子 UI
     o.add_child = function(ui)
         if ui.parent and ui.parent() ~= o then
             if ui.set_parent then
@@ -103,14 +108,14 @@ M.container = function(args, ...)
         end
     end
 
-    ---@param uis ui[]
+    ---@param uis framework.ui[] 需要批量加入布局的子 UI 列表
     o.add_children = function(uis)
         for _, ui in ipairs(uis) do
             o.add_child(ui)
         end
     end
 
-    ---@param ui ui
+    ---@param framework.ui framework.ui 需要从布局移除的子 UI
     o.remove_child = function(ui)
         local remove_widget = widget_removers[ui]
         if remove_widget then
@@ -127,9 +132,9 @@ M.container = function(args, ...)
         end
     end
 
-    ---@type reactive.computed<ui?>
+    ---@type reactive.computed<framework.ui?>
     local primary_widget = o.factory.computed(function()
-        ---@type list<ui>
+        ---@type list<framework.ui>
         local widgets = o.widgets()
         if widgets.count == 0 then
             return nil
@@ -150,15 +155,15 @@ M.container = function(args, ...)
     end
 
     local function get_single_pixel_size()
-        ---@type ui
+        ---@type framework.ui
         local ui = primary_widget()
         return ui.scaled_pixel_size()
     end
 
     local function get_stack_pixel_size()
-        ---@type list<ui>
+        ---@type list<framework.ui>
         local widgets = o.widgets()
-        ---@type ui.container.layout.type
+        ---@type framework.ui.container.layout.type
         local layout_type = o.layout.type()
         local spacing = relative_layout_pixels()
         local count = widgets.count
@@ -189,9 +194,9 @@ M.container = function(args, ...)
     end
 
     o.pixel_size.compute(function()
-        ---@type ui.container.mode
+        ---@type framework.ui.container.mode
         local mode = o.mode()
-        ---@type list<ui>
+        ---@type list<framework.ui>
         local widgets = o.widgets()
         if widgets.count == 0 then
             return 0, 0
@@ -206,9 +211,9 @@ M.container = function(args, ...)
     end)
 
     local function layout_single()
-        ---@type ui
+        ---@type framework.ui
         local ui = primary_widget()
-        ---@type list<ui>
+        ---@type list<framework.ui>
         local widgets = o.widgets()
         clear_hidden_widget_locks()
         if ui == nil then
@@ -249,26 +254,26 @@ M.container = function(args, ...)
     end
 
     local function layout_stack()
-        ---@type list<ui>
+        ---@type list<framework.ui>
         local widgets = o.widgets()
         if widgets.count == 0 then
             return
         end
-        ---@type ui.container.layout.type
+        ---@type framework.ui.container.layout.type
         local layout_type = o.layout.type()
-        ---@type ui.container.layout.flow
+        ---@type framework.ui.container.layout.flow
         local flow = o.layout.flow()
         local reverse = o.layout.reverse()
-        ---@type ui
+        ---@type framework.ui
         local last
 
         clear_hidden_widget_locks()
         widgets.for_each(function(widget)
-            ---@type ui.position
+            ---@type framework.ui.position
             local point
-            ---@type ui.position
+            ---@type framework.ui.position
             local relative_point
-            ---@type ui
+            ---@type framework.ui
             local relative_ui
 
             if last then
@@ -324,7 +329,7 @@ M.container = function(args, ...)
     end
 
     local function refresh_layout()
-        ---@type ui.container.mode
+        ---@type framework.ui.container.mode
         local mode = o.mode()
         if mode == "single" then
             layout_single()
@@ -356,7 +361,7 @@ M.container = function(args, ...)
     o.layout.spacing.on_change.add(refresh_layout)
     o.layout.padding.on_change.add(refresh_layout)
 
-    return o
-end
+    api.ui = o
+end)
 
-return M
+return true

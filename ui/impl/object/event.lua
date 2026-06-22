@@ -7,10 +7,10 @@ local table = require "lib.tablex"
 ---@type lib.reactive
 local reactive = require "lib.reactive"
 
----@param keys string[]
----@return ui.event.registry
+---@param keys string[] 需要创建的事件名列表
+---@return framework.ui.event.registry registry 事件注册表
 local function create_event_registry(keys)
-    ---@class ui.event.registry
+    ---@class framework.ui.event.registry
     local registry = {}
 
     ---@type table<string, reactive.event>
@@ -27,7 +27,7 @@ local function create_event_registry(keys)
         return events[key].add(callback)
     end
 
-    ---@param obj reactive.factory
+    ---@param obj reactive.factory 需要挂接事件的响应式对象
     ---@param event_map table<string, reactive.event>
     function registry.register(obj, event_map)
         for key, trigger in table.sorted_pairs(event_map) do
@@ -41,10 +41,10 @@ local function create_event_registry(keys)
     return registry
 end
 
----@param handle ui.handle
----@param event string
----@param func fun()
----@return fun()
+---@param handle framework.ui.handle 鼠标事件所属控件句柄
+---@param event string 运行时鼠标事件名
+---@param func fun() 事件触发回调
+---@return fun remove 解绑函数
 local function register_mouse_event(handle, event, func)
     local api = apis.ON_MOUSE_EVENT({
         handle = handle,
@@ -55,11 +55,7 @@ local function register_mouse_event(handle, event, func)
     end
 end
 
----@class ui.options
----@field focusable
----@field clickable
-
----@alias ui.event.key
+---@alias framework.ui.event.key
 ---| "left_up"
 ---| "left_down"
 ---| "right_up"
@@ -68,9 +64,9 @@ end
 ---| "blur"
 ---| "click"
 
----@class ui.event.registry
----@field get fun(key:ui.event.key):reactive.event 按事件名获取响应式事件
----@field add fun(key:ui.event.key, callback:function):function 按事件名添加回调并返回删除函数
+---@class framework.ui.event.registry
+---@field get fun(key:framework.ui.event.key):reactive.event 按事件名获取响应式事件
+---@field add fun(key:framework.ui.event.key, callback:function):function 按事件名添加回调并返回删除函数
 M.event_registry = create_event_registry({
     "left_up",
     "left_down",
@@ -81,44 +77,44 @@ M.event_registry = create_event_registry({
     "click",
 })
 
----@param o ui
----@param args ui.options
+---@param o framework.ui 要装配鼠标事件能力的 UI 对象
+---@param args framework.ui.options UI 创建参数
 return function (o,args)
     args.focusable = args.focusable or false
     args.clickable = args.clickable or false
 
-    ---@class ui
+    ---@class framework.ui
     o = o
 
     ---@type lib.reactive.ref 鼠标焦点是否在UI上面
-    o.focusable = o.factory.set(args.focusable)
+    o.factory.focusable.set(args.focusable)
 
     ---@type lib.reactive.ref 是否可以点击
-    o.clickable = o.factory.set(args.clickable)
+    o.factory.clickable.set(args.clickable)
 
     ---@type reactive.event
-    o.on_mouse_left_up = o.factory.event()
+    o.factory.on_mouse_left_up.event()
 
     ---@type reactive.event
-    o.on_mouse_left_down = o.factory.event()
+    o.factory.on_mouse_left_down.event()
 
     ---@type reactive.event
-    o.on_mouse_right_up = o.factory.event()
+    o.factory.on_mouse_right_up.event()
 
     ---@type reactive.event
-    o.on_mouse_right_down = o.factory.event()
+    o.factory.on_mouse_right_down.event()
 
     ---@type reactive.event
-    o.on_focus = o.factory.event()
+    o.factory.on_focus.event()
 
     ---@type reactive.event
-    o.on_blur = o.factory.event()
+    o.factory.on_blur.event()
 
     ---@type lib.reactive.ref 当前是否聚焦
-    o.is_focused = o.factory.set(false)
+    o.factory.is_focused.set(false)
 
     ---@type reactive.event
-    o.on_click = o.factory.event()
+    o.factory.on_click.event()
 
     -- 注册事件
     o.delete.add(register_mouse_event(o.handle(), "鼠标-移入", function()

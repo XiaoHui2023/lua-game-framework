@@ -8,7 +8,7 @@ local debugx = require "lib.debugx"
 ---@class framework.timer.task
 ---@field interval_time number
 ---@field time_remain number
----@field run fun(interval_time?: 字段说明
+---@field run fun(interval_time?:number):nil 执行计时器回调
 ---@field is_running boolean
 
 ---@type framework.timer.task[]
@@ -90,8 +90,8 @@ assert(center_timer_api.cancel ~= nil, "framework.timer.core requires runtime ba
 ---@overload fun(func: timer.loop.func): function
 ---@overload fun(func: timer.loop.func, interval: number): function
 ---@overload fun(interval: number, func: timer.loop.func): function
----@param interval? number|timer.loop.func 参数说明
----@param func? timer.loop.func|number 参数说明
+---@param interval? number|timer.loop.func 循环间隔，传函数时表示省略间隔
+---@param func? timer.loop.func|number 循环回调，兼容与 interval 互换的调用形式
 ---@return fun()
 function M.loop(interval, func)
     local interval_time, callback = normalize_loop_args(interval, func)
@@ -102,7 +102,7 @@ end
 ---@overload fun(func: fun(), interval: number): function
 ---@overload fun(interval: number, func: fun()): function
 ---@param func fun()|number
----@param interval? number|fun() 参数说明
+---@param interval? number|fun() 循环间隔，传函数时表示省略间隔
 ---@return fun()
 function M.delay(func, interval)
     if type(interval) == "function" then

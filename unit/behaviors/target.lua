@@ -11,10 +11,10 @@ return function (o,args)
     o = o
 
     ---@type hook.add
-    o.target_groups = o.factory.add()
+    o.factory.target_groups.add()
 
     ---@type hook.computed
-    o.targets = o.factory.computed(function()
+    o.factory.targets.computed(function()
         ---@type list<unit>
         local us = list()
         ---@type list<list<unit>>
@@ -33,7 +33,7 @@ return function (o,args)
     end)
     
     ---@type hook.computed
-    o.friendly_targets = o.factory.computed(function()
+    o.factory.friendly_targets.computed(function()
         ---@type list<unit>
         local targets = o.targets()
 
@@ -51,7 +51,7 @@ return function (o,args)
     end)
     
     ---@type hook.computed
-    o.hostile_targets = o.factory.computed(function()
+    o.factory.hostile_targets.computed(function()
         ---@type list<unit>
         local targets = o.targets()
 
@@ -69,7 +69,7 @@ return function (o,args)
     end)
     
     ---@type hook.computed
-    o.neutral_targets = o.factory.computed(function()
+    o.factory.neutral_targets.computed(function()
         ---@type list<unit>
         local targets = o.targets()
 
@@ -86,7 +86,7 @@ return function (o,args)
         )
     end)
 
-    ---@param player? player 参数说明
+    ---@param player? player 执行选择操作的玩家，省略时使用单位所属玩家
     o.select = function(player)
         player = player or o.player()
         apis.SELECT({ handle = o.handle(), player = player.handle() })

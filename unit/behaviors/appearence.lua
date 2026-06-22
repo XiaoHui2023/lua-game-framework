@@ -4,19 +4,19 @@ local M = require "framework.unit"
 local apis = require "..apis"
 
 ---@class unit.options
----@field model? model 字段说明
----@field color_enable? boolean 字段说明
----@field color? color 字段说明
----@field overlay_enable? boolean 字段说明
----@field overlay color? 字段说明
----@field outline_enable? boolean 字段说明
----@field outline? color 字段说明
----@field alpha? number 字段说明
----@field animation_speed? number 字段说明
----@field scale? number 字段说明
----@field scale_x? number 字段说明
----@field scale_y? number 字段说明
----@field scale_z? number 字段说明
+---@field model? model 单位模型资源
+---@field color_enable? boolean 是否启用单位颜色
+---@field color? lib.color|table 单位颜色
+---@field overlay_enable? boolean 是否启用覆盖色
+---@field overlay? lib.color|table 覆盖色
+---@field outline_enable? boolean 是否启用描边色
+---@field outline? lib.color|table 描边色
+---@field alpha? number 透明度，范围 0 到 255
+---@field animation_speed? number 动画速度倍率
+---@field scale? number 整体缩放
+---@field scale_x? number X 轴缩放
+---@field scale_y? number Y 轴缩放
+---@field scale_z? number Z 轴缩放
 
 ---@param o unit
 ---@param args unit.options
@@ -39,31 +39,31 @@ return function (o,args)
     o = o
     
     ---@type hook.set 模型
-    o.model = o.factory.set(args.model)
+    o.factory.model.set(args.model)
     ---@type hook.set 透明度
-    o.alpha = o.factory.set(args.alpha)
+    o.factory.alpha.set(args.alpha)
     ---@type hook.set 动画速度
-    o.animation_speed = o.factory.set(args.animation_speed)
+    o.factory.animation_speed.set(args.animation_speed)
     ---@type hook.set 颜色使能
-    o.color_enable = o.factory.set(args.color_enable)
+    o.factory.color_enable.set(args.color_enable)
     ---@type hook.set 颜色
-    o.color = o.factory.set(args.color)
+    o.factory.color.set(args.color)
     ---@type hook.set 覆盖使能
-    o.overlay_enable = o.factory.set(args.overlay_enable)
+    o.factory.overlay_enable.set(args.overlay_enable)
     ---@type hook.set 覆盖
-    o.overlay = o.factory.set(args.overlay)
+    o.factory.overlay.set(args.overlay)
     ---@type hook.set 描边使能
-    o.outline_enable = o.factory.set(args.outline_enable)
+    o.factory.outline_enable.set(args.outline_enable)
     ---@type hook.set 描边
-    o.outline = o.factory.set(args.outline)
+    o.factory.outline.set(args.outline)
     ---@type hook.set 缩放
-    o.scale = o.factory.set(args.scale)
-    ---@type hook.set X轴缩放
-    o.scale_x = o.factory.set(args.scale_x)
-    ---@type hook.set Y轴缩放
-    o.scale_y = o.factory.set(args.scale_y)
-    ---@type hook.set Z轴缩放
-    o.scale_z = o.factory.set(args.scale_z)
+    o.factory.scale.set(args.scale)
+    ---@type hook.set X 轴缩放
+    o.factory.scale_x.set(args.scale_x)
+    ---@type hook.set Y 轴缩放
+    o.factory.scale_y.set(args.scale_y)
+    ---@type hook.set Z 轴缩放
+    o.factory.scale_z.set(args.scale_z)
 
     -- 重载设置模型
     o.model.wrap_set(function(model)
@@ -142,9 +142,9 @@ return function (o,args)
     end)
 
     -- 缩放
-    ---@param scale_x? number 参数说明
-    ---@param scale_y? number 参数说明
-    ---@param scale_z? number 参数说明
+    ---@param scale_x? number X 轴缩放
+    ---@param scale_y? number Y 轴缩放
+    ---@param scale_z? number Z 轴缩放
     local function set_scale(scale_x, scale_y, scale_z)
         scale_x = scale_x or 1
         scale_y = scale_y or scale_x or 1
@@ -170,17 +170,17 @@ return function (o,args)
         set_scale(scale, scale, scale)
     end)
 
-    -- 重载设置X轴缩放
+    -- 重载设置 X 轴缩放
     o.scale_x.on_change.add(function(scale_x)
         set_scale(scale_x, o.scale_y(), o.scale_z())
     end)
 
-    -- 重载设置Y轴缩放
+    -- 重载设置 Y 轴缩放
     o.scale_y.on_change.add(function(scale_y)
         set_scale(o.scale_x(), scale_y, o.scale_z())
     end)
 
-    -- 重载设置Z轴缩放
+    -- 重载设置 Z 轴缩放
     o.scale_z.on_change.add(function(scale_z)
         set_scale(o.scale_x(), o.scale_y(), scale_z)
     end)
@@ -192,7 +192,7 @@ return function (o,args)
 
     -- 设置动画
     ---@param animation animation 动画
-    ---@param speed number? 参数说明
+    ---@param speed number? 播放速度倍率
     o.play_animation = function (animation, speed)
         apis.PLAY_ANIMATION({
             handle = o.handle(),

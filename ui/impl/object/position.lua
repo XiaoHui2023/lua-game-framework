@@ -5,17 +5,17 @@ local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
----@param o ui
----@param args ui.options
+---@param o framework.ui 要装配位置能力的 UI 对象
+---@param args framework.ui.options UI 创建参数
 return function (o,args)
-    ---@class ui
+    ---@class framework.ui
     o = o
 
     ---@type lib.reactive.ref
-    o.relative_position = o.factory.set({x=0.5,y=0.5})
+    o.factory.relative_position.set({x=0.5,y=0.5})
 
     ---@type lib.reactive.ref
-    o.pixel_position = o.factory.set({x=0,y=0})
+    o.factory.pixel_position.set({x=0,y=0})
 
     local is_syncing_position = false
 

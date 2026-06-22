@@ -1,16 +1,13 @@
----@class framework.ui
-local M = require "framework.ui"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
----@class ui.button.options : ui.options
-
----@param args ui.button.options
----@return ui.button 按钮 UI 对象
-M.button = function(args)
-    args = args or {}
+apis.CREATE_BUTTON(function(api)
+    local args = api.options or {}
     args.type = args.type or "button"
 
-    ---@class ui.button : ui
-    local o = M.create(args)
+    local create_api = apis.CREATE_OBJECT({ options = args })
+    assert(create_api.ui ~= nil, "framework.ui.CREATE_BUTTON requires CREATE_OBJECT result")
+    api.ui = create_api.ui
+end)
 
-    return o
-end
+return true

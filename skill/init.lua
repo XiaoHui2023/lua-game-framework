@@ -6,18 +6,18 @@ local factory_model = require "lib.reactive".factory
 local Stat = require ".stat"
 
 ---@class skill.context
----@field unit? unit 字段说明
----@field owner? any 字段说明
----@field engine? table 字段说明
+---@field unit? unit 技能绑定的单位
+---@field owner? any 技能所属对象
+---@field engine? table 底层技能运行时对象
 
 ---@class skill.effect
----@field name? string 字段说明
----@field description? string 字段说明
----@field on_attach? fun(skill:skill):nil 字段说明
----@field on_detach? fun(skill:skill):nil 字段说明
+---@field name? string 效果名称
+---@field description? string 效果描述
+---@field on_attach? fun(skill:skill):nil 绑定到技能时触发
+---@field on_detach? fun(skill:skill):nil 从技能解绑时触发
 
 ---@class skill.active_effect: skill.effect
----@field on_cast? fun(skill:skill.active, 字段说明
+---@field on_cast? fun(skill:skill.active, request:skill.cast_request):any 主动释放时触发
 
 ---@alias skill.stat.kind
 ---| 'damage' 伤害
@@ -30,10 +30,10 @@ local Stat = require ".stat"
 ---| 'duration'
 
 ---@class skill.options: lib.reactive.factory.options
----@field name? string 字段说明
----@field description? string 字段说明
----@field context? skill.context 字段说明
----@field passive_effects? skill.effect[] 字段说明
+---@field name? string 技能显示名称
+---@field description? string 技能描述
+---@field context? skill.context 技能上下文
+---@field passive_effects? skill.effect[] 初始被动效果列表
 
 ---@param effect skill.effect
 ---@param skill skill
@@ -51,7 +51,7 @@ local function detach_effect(effect, skill)
     end
 end
 
----@param args? skill.options 参数说明
+---@param args? skill.options 技能配置
 ---@return skill
 M.new = function(args)
     args = args or {}
@@ -62,25 +62,25 @@ M.new = function(args)
     o.set_class("skill")
 
     ---@type hook.set<string>
-    o.display_name = o.factory.set(args.name or "")
+    o.factory.display_name.set(args.name or "")
 
     ---@type hook.set<string>
-    o.description = o.factory.set(args.description or "")
+    o.factory.description.set(args.description or "")
 
     ---@type hook.set<skill.context>
-    o.context = o.factory.set(args.context)
+    o.factory.context.set(args.context)
 
     ---@type hook.add<skill.stat>
-    o.stats = o.factory.add()
+    o.factory.stats.add()
 
     ---@type hook.add<skill.trigger>
-    o.triggers = o.factory.add()
+    o.factory.triggers.add()
 
     ---@type hook.add<skill.target>
-    o.targets = o.factory.add()
+    o.factory.targets.add()
 
     ---@type hook.add<skill.effect>
-    o.passive_effects = o.factory.add()
+    o.factory.passive_effects.add()
 
     o.passive_effects.wrap_add(function(effect)
         attach_effect(effect, o)
@@ -137,8 +137,6 @@ M.new = function(args)
     end
 
     o.dispose = o.destroy
-
-    o.factory.register_hook_fields()
 
     return o
 end

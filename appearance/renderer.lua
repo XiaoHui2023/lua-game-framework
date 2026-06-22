@@ -25,9 +25,9 @@ local function compare_modifier(a, b)
 end
 
 ---@class framework.appearance.renderer.options: lib.reactive.factory.options
----@field dt? number 字段说明
----@field apply_change? fun(args:framework.appearance.apply_change.args) 字段说明
----@field reset_kind? fun(args:framework.appearance.reset_kind.args) 字段说明
+---@field dt? number 每次渲染推进的时间步长
+---@field apply_change? fun(args:framework.appearance.apply_change.args):nil 应用表现变更回调
+---@field reset_kind? fun(args:framework.appearance.reset_kind.args):nil 重置指定表现类型回调
 
 ---@class framework.appearance.apply_change.args
 ---@field kind string
@@ -37,11 +37,11 @@ end
 ---@class framework.appearance.reset_kind.args
 ---@field reason string
 ---@field kind string
----@field modifier? framework.appearance.modifier 字段说明
----@field replacement? framework.appearance.modifier 字段说明
----@field result? framework.appearance.result 字段说明
+---@field modifier? framework.appearance.modifier 被重置的修正器
+---@field replacement? framework.appearance.modifier 替换它的新修正器
+---@field result? framework.appearance.result 当前渲染结果
 
----@param args? framework.appearance.renderer.options 参数说明
+---@param args? framework.appearance.renderer.options 表现渲染器配置
 ---@return framework.appearance.renderer
 function M.renderer(args)
     args = args or {}
@@ -56,7 +56,7 @@ function M.renderer(args)
     local o = reactive.factory(args)
     o.set_class("framework.appearance.renderer")
 
-    o.modifiers = o.factory.add({
+    o.factory.modifiers.add({
         name = "modifiers",
         compare = compare_modifier,
         prevent_duplicate = true,
@@ -64,20 +64,20 @@ function M.renderer(args)
     })
 
     o.dt = dt
-    o.on_update = o.factory.event({ name = "update" })
-    o.before_render = o.factory.event({ name = "before_render" })
-    o.after_resolve = o.factory.event({ name = "after_resolve" })
-    o.on_complete = o.factory.event({ name = "complete" })
-    o.on_interrupt = o.factory.event({ name = "interrupt" })
-    o.on_reset_kind = o.factory.event({ name = "reset_kind" })
-    o.on_apply_change = o.factory.event({ name = "apply_change" })
-    o.loop_scope = o.factory.delete({ name = "loop" })
+    o.factory.on_update.event({ name = "update" })
+    o.factory.before_render.event({ name = "before_render" })
+    o.factory.after_resolve.event({ name = "after_resolve" })
+    o.factory.on_complete.event({ name = "complete" })
+    o.factory.on_interrupt.event({ name = "interrupt" })
+    o.factory.on_reset_kind.event({ name = "reset_kind" })
+    o.factory.on_apply_change.event({ name = "apply_change" })
+    o.factory.loop_scope.delete({ name = "loop" })
 
     ---@param kind string
     ---@param reason string
-    ---@param modifier? framework.appearance.modifier 参数说明
-    ---@param replacement? framework.appearance.modifier 参数说明
-    ---@param result? framework.appearance.result 参数说明
+    ---@param modifier? framework.appearance.modifier 被重置的修正器
+    ---@param replacement? framework.appearance.modifier 替换它的新修正器
+    ---@param result? framework.appearance.result 当前渲染结果
     function o.reset_kind(kind, reason, modifier, replacement, result)
         local reset_args = {
             reason = reason,
@@ -94,7 +94,7 @@ function M.renderer(args)
 
     ---@param modifier framework.appearance.modifier
     ---@param reason string
-    ---@param replacement? framework.appearance.modifier 参数说明
+    ---@param replacement? framework.appearance.modifier 替换它的新修正器
     function o.interrupt_modifier(modifier, reason, replacement)
         if modifier.interrupted or modifier.finished then
             return
@@ -107,7 +107,7 @@ function M.renderer(args)
     end
 
     ---@param kind string
-    ---@param interrupt_args? { 参数说明
+    ---@param interrupt_args? { reason?:string, reset?:boolean, replacement?:framework.appearance.modifier } 中断配置
     function o.interrupt_kind(kind, interrupt_args)
         interrupt_args = interrupt_args or {}
         local reason = interrupt_args.reason or "interrupt_kind"
@@ -129,7 +129,7 @@ function M.renderer(args)
         end
     end
 
-    ---@param interrupt_args? { 参数说明
+    ---@param interrupt_args? { reason?:string, replacement?:framework.appearance.modifier } 中断配置
     function o.interrupt_all(interrupt_args)
         interrupt_args = interrupt_args or {}
         local reason = interrupt_args.reason or "interrupt_all"
@@ -169,7 +169,7 @@ function M.renderer(args)
         return remove
     end
 
-    ---@param args? framework.appearance.modifier.options 参数说明
+    ---@param args? framework.appearance.modifier.options 表现修正器配置
     ---@return framework.appearance.modifier
     function o.create_modifier(args)
         local modifier = M.modifier(args)
@@ -181,7 +181,7 @@ function M.renderer(args)
         o.modifiers.clear()
     end
 
-    ---@param args? table 参数说明
+    ---@param args? table 表现数据配置
     ---@return framework.appearance.data
     function o.create_data(args)
         if args == nil then
@@ -213,7 +213,7 @@ function M.renderer(args)
         end
     end
 
-    ---@param args? table|framework.appearance.data 参数说明
+    ---@param args? table|framework.appearance.data 渲染输入数据
     ---@return framework.appearance.result
     function o.render(args)
         local data = o.create_data(args)
@@ -252,10 +252,10 @@ function M.renderer(args)
 
     function o.stop()
         o.loop_scope()
-        o.loop_scope = o.factory.delete({ name = "loop" })
+        o.factory.loop_scope.delete({ name = "loop" })
     end
 
-    ---@param get_data? fun():table|framework.appearance.data|nil 参数说明
+    ---@param get_data? fun():table|framework.appearance.data|nil 每次循环获取渲染输入的函数
     ---@return fun()
     function o.start(get_data)
         assert(get_data == nil or type(get_data) == "function", "appearance renderer start get_data must be a function")

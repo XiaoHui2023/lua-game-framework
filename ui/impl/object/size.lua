@@ -5,21 +5,12 @@ local apis = require "framework.ui.apis"
 ---@type framework.event
 local event = require "framework.event"
 
----@alias ui.size_mode
+---@alias framework.ui.size_mode
 ---| "fill" 拉伸
 ---| "contain" 保持
 
----@class ui.options
----@field scale_factor? number 整体缩放因子
----@field width_scale_factor? number 宽度缩放因子
----@field height_scale_factor? number 高度缩放因子
----@field size_mode? ui.size_mode 尺寸适配模式
----@field width? number 相对宽度比例
----@field height? number 相对高度比例
----@field size? number 默认正方形尺寸比例
-
----@param o ui
----@param args ui.options
+---@param o framework.ui 要装配尺寸能力的 UI 对象
+---@param args framework.ui.options UI 创建参数
 return function (o,args)
     args.scale_factor = args.scale_factor or 1
     args.width_scale_factor = args.width_scale_factor or 1
@@ -29,13 +20,13 @@ return function (o,args)
     args.width = args.width or args.size or args.height
     args.height = args.height or args.size or args.width
 
-    ---@class ui
+    ---@class framework.ui
     o = o
 
     o.is_content_sized = false
 
     local function get_size_basis()
-        ---@type ui
+        ---@type framework.ui
         local parent = o.parent()
         if parent and not parent.is_content_sized and parent.pixel_size then
             return parent.pixel_size()
@@ -43,13 +34,13 @@ return function (o,args)
         return o.window_size()
     end
 
-    ---@type reactive.computed 百分比大小<number,number>（直接设置的参数）
-    o.relative_size = o.factory.computed(function()
+    ---@type reactive.computed 百分比大小<number,number>，来自创建参数
+    o.factory.relative_size.computed(function()
         return args.width, args.height
     end)
 
     ---@type reactive.computed 像素大小<number,number>（衍生出的值）
-    o.pixel_size = o.factory.computed(function()
+    o.factory.pixel_size.computed(function()
         local width_percent, height_percent = o.relative_size()
         local basis_width, basis_height = get_size_basis()
         local pixel_width = basis_width * width_percent
@@ -67,26 +58,26 @@ return function (o,args)
     end)
 
     ---@type lib.reactive.ref 整体缩放因子<number>
-    o.scale_factor = o.factory.set(args.scale_factor)
+    o.factory.scale_factor.set(args.scale_factor)
 
     ---@type lib.reactive.ref 宽度缩放因子<number>
-    o.width_scale_factor = o.factory.set(args.width_scale_factor)
+    o.factory.width_scale_factor.set(args.width_scale_factor)
 
     ---@type lib.reactive.ref 高度缩放因子<number>
-    o.height_scale_factor = o.factory.set(args.height_scale_factor)
+    o.factory.height_scale_factor.set(args.height_scale_factor)
 
     ---@type lib.reactive.ref 窗口大小<number,number>
     local window_size_api = apis.GET_WINDOW_SIZE({})
     assert(window_size_api.width ~= nil, "framework.ui.size requires runtime backend width")
     assert(window_size_api.height ~= nil, "framework.ui.size requires runtime backend height")
-    o.window_size = o.factory.set(window_size_api.width, window_size_api.height)
+    o.factory.window_size.set(window_size_api.width, window_size_api.height)
 
-    ---@type lib.reactive.ref 尺寸模式<ui.size_mode>
-    o.size_mode = o.factory.set(args.size_mode)
+    ---@type lib.reactive.ref 尺寸模式<framework.ui.size_mode>
+    o.factory.size_mode.set(args.size_mode)
     
-    ---@type reactive.computed 宽高比（宽 ÷ 高），用于保持对象缩放时为正方形或固定比例
-    o.size_ratio = o.factory.computed(function()
-        ---@type ui.size_mode
+    ---@type reactive.computed 宽高比，宽度除以高度，用于保持正方形或固定比例
+    o.factory.size_ratio.computed(function()
+        ---@type framework.ui.size_mode
         local size_mode = o.size_mode()
         if size_mode == "fill" then
             local width,height = get_size_basis()
@@ -97,13 +88,13 @@ return function (o,args)
     end)
 
     ---@type reactive.computed 得到大小总缩放（从最父级开始计算）<width:number,height:number>
-    o.total_size_scale_factor = o.factory.computed(function()
+    o.factory.total_size_scale_factor.computed(function()
         local scale_factor = o.scale_factor()
         local width_scale_factor = o.width_scale_factor()
         local height_scale_factor = o.height_scale_factor()
         width_scale_factor = width_scale_factor * scale_factor
         height_scale_factor = height_scale_factor * scale_factor
-        ---@type ui
+        ---@type framework.ui
         local parent = o.parent()
         if parent then
             local parent_width_scale_factor,parent_height_scale_factor = parent.total_size_scale_factor()
@@ -113,7 +104,7 @@ return function (o,args)
         return width_scale_factor, height_scale_factor
     end)
     
-    -- 按缩放因子缩放尺寸
+    -- 按缩放因子缩放尺寸。
     ---@param width number? 原始宽度
     ---@param height number? 原始高度
     ---@return number? width 缩放后宽度
@@ -141,32 +132,34 @@ return function (o,args)
     end
 
     ---@type reactive.computed 缩放过的相对尺寸
-    o.scaled_relative_size = o.factory.computed(function ()
+    o.factory.scaled_relative_size.computed(function ()
         return scale_size(o.relative_size())
     end)
 
     ---@type reactive.computed 缩放过的像素尺寸
-    o.scaled_pixel_size = o.factory.computed(function ()
+    o.factory.scaled_pixel_size.computed(function ()
         return scale_size(o.pixel_size())
     end)
 
     ---@type reactive.computed 总计缩放过的相对尺寸
-    o.total_scaled_relative_size = o.factory.computed(function ()
+    o.factory.total_scaled_relative_size.computed(function ()
         return total_scale_size(o.relative_size())
     end)
 
     ---@type reactive.computed 总计缩放过的像素尺寸
-    o.total_scaled_pixel_size = o.factory.computed(function ()
+    o.factory.total_scaled_pixel_size.computed(function ()
         return total_scale_size(o.pixel_size())
     end)
 
     ---@type reactive.computed 实际尺寸（决定应用）
-    o.actual_size = o.factory.computed(function ()
-        return o.total_scaled_pixel_size()
+    o.factory.actual_size.computed(function ()
+        local width, height = o.total_scaled_pixel_size()
+        local scale = M.settings.UI_APPLICATION_SIZE_SCALE
+        return width * scale, height * scale
     end)
 
     ---@type reactive.computed 视觉尺寸（像素）
-    o.visual_size = o.factory.computed(function()
+    o.factory.visual_size.computed(function()
         return o.actual_size()
     end)
 

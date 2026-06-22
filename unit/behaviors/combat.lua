@@ -12,12 +12,12 @@ event_apis.ON_UNIT_DAMAGE_TAKEN(function (api)
 end)
 
 ---@class unit.options
----@field health number? 字段说明
+---@field health number? 初始生命值
 
 ---@class unit.combat.context: lib.combat.context
 ---@field target unit 目标
----@field source? unit 字段说明
----@field inflictor? object 字段说明
+---@field source? unit 伤害来源单位，省略时使用攻击者
+---@field inflictor? object 实际施加伤害的对象，省略时使用来源单位
 
 ---@class unit.combat.result: lib.combat.result
 ---@field target unit 目标
@@ -35,21 +35,21 @@ return function (o,args)
     args.damage = args.damage or M.settings.DEFAULT_DAMAGE
 
     ---@type hook.set<number>
-    o.health = o.factory.set(args.health)
+    o.factory.health.set(args.health)
     ---@type hook.set<number>
-    o.max_health = o.factory.set(args.max_health)
+    o.factory.max_health.set(args.max_health)
     ---@type hook.set<number> 伤害
-    o.damage = o.factory.set(args.damage)
+    o.factory.damage.set(args.damage)
     ---@type hook.event
-    o.on_attack_release = o.factory.event()
+    o.factory.on_attack_release.event()
     ---@type hook.event
-    o.on_damage_taken = o.factory.event()
+    o.factory.on_damage_taken.event()
     ---@type hook.event
-    o.on_damage_dealt = o.factory.event()
+    o.factory.on_damage_dealt.event()
     ---@type hook.event
-    o.on_crowd_controlled = o.factory.event()
+    o.factory.on_crowd_controlled.event()
     ---@type hook.event 生命值变化事件（新生命值，旧生命值）
-    o.on_health_changed = o.factory.event()
+    o.factory.on_health_changed.event()
 
     ---@type lib.combat
     local combat = require "lib.combat"()
@@ -60,7 +60,7 @@ return function (o,args)
     o.combat_defender = combat.defender
 
     -- 打击
-    ---@param context unit.combat.context 参数说明
+    ---@param context unit.combat.context 本次战斗计算上下文
     o.combat = function(context)
         ---@type unit
         local target = context.target

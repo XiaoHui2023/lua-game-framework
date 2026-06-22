@@ -11,7 +11,7 @@ local function ensure_select_unit_event(player)
     end
 
     ---@type reactive.event
-    player.on_select_unit = player.factory.event()
+    player.factory.on_select_unit.event()
 end
 
 player_apis.PLAYER_CREATED(function(api)

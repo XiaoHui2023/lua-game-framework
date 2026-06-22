@@ -7,14 +7,14 @@ local factory = require "lib.reactive".factory
 local apis = require ".apis"
 
 ---@class projectile.options: lib.reactive.factory.options
----@field effect? any 字段说明
----@field owner? unit 字段说明
----@field position? point 字段说明
----@field facing? number 字段说明
----@field height? number 字段说明
----@field duration? number 字段说明
+---@field effect? any 投射物使用的特效资源
+---@field owner? unit 投射物所属单位
+---@field position? point 初始位置
+---@field facing? number 初始朝向
+---@field height? number 初始离地高度
+---@field duration? number 存活时间
 
----@param args? projectile.options 参数说明
+---@param args? projectile.options 投射物配置
 ---@param ... projectile.options
 ---@return projectile
 M.create = function(args, ...)
@@ -34,8 +34,8 @@ M.create = function(args, ...)
     local o = factory(args)
     o.set_class("projectile")
 
-    o.effect = o.factory.set(args.effect)
-    o.owner = o.factory.set(args.owner)
+    o.factory.effect.set(args.effect)
+    o.factory.owner.set(args.owner)
     local create_api = apis.CREATE_EFFECT({
         effect = args.effect,
         position = args.position,
@@ -45,7 +45,7 @@ M.create = function(args, ...)
         duration = args.duration,
     })
     assert(create_api.handle ~= nil, "framework.projectile.create requires runtime backend")
-    o.effect_handle = o.factory.set(create_api.handle)
+    o.factory.effect_handle.set(create_api.handle)
     o.destroy = function()
         o.delete()
     end

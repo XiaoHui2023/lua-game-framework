@@ -1,38 +1,44 @@
----@type framework.ui
-local M = require "framework.ui"
----@type framework.event
-local event = require "framework.event"
+---@type framework.ui.apis
+local apis = require "framework.ui.apis"
 
----@class ui.anchor_position.options : ui.anchor
+---@class framework.ui.anchor_position.options : framework.ui.anchor
 ---@field vertical_space? number 纵向间距偏移
 ---@field horizontal_space? number 横向间距偏移
 
----@param o ui
----@param args ui.options
+---@param o framework.ui 要装配锚点能力的 UI 对象
+---@param args framework.ui.options UI 创建参数
 return function (o,args)
-    args.anchor = args.anchor or M.anchor()
+    local function create_anchor(anchor)
+        local api = apis.CREATE_ANCHOR({
+            anchor = anchor,
+        })
+        assert(api.anchor ~= nil, "framework.ui.anchor impl requires CREATE_ANCHOR result")
+        return api.anchor
+    end
+
+    args.anchor = args.anchor or create_anchor()
     
-    ---@class ui
+    ---@class framework.ui
     o = o
 
     ---@type lib.reactive.ref
-    o.anchor = o.factory.set(args.anchor)
+    o.factory.anchor.set(args.anchor)
 
-    ---@param relative_ui ui 目标UI
-    ---@param anchor ui.anchor 锚点配置
-    ---@param point ui.position 当前 UI 锚点方位
-    ---@param relative_point ui.position 目标 UI 锚点方位
+    ---@param relative_ui framework.ui 目标UI
+    ---@param anchor framework.ui.anchor 锚点配置
+    ---@param point framework.ui.position 当前 UI 锚点方位
+    ---@param relative_point framework.ui.position 目标 UI 锚点方位
     local function anchor_position(relative_ui,anchor,point,relative_point)
         anchor.point = anchor.point or point
         anchor.relative_point = anchor.relative_point or relative_point
         anchor.relative_ui = anchor.relative_ui or relative_ui
-        anchor = M.anchor(anchor)
+        anchor = create_anchor(anchor)
         -- 应用
         o.anchor.set(anchor)
     end
 
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_center = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -47,8 +53,8 @@ return function (o,args)
     end
 
     -- 外侧贴合左边
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_left_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -63,8 +69,8 @@ return function (o,args)
     end
 
     -- 外侧贴合右边
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_right_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -79,8 +85,8 @@ return function (o,args)
     end
 
     -- 外侧贴合顶部
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_top_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -95,8 +101,8 @@ return function (o,args)
     end
 
     -- 外侧贴合底部
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_bottom_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -111,8 +117,8 @@ return function (o,args)
     end
 
     -- 外侧贴合右上
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_right_top_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -127,8 +133,8 @@ return function (o,args)
     end
 
     -- 外侧贴合上右
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_top_right_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -143,8 +149,8 @@ return function (o,args)
     end
 
     -- 外侧贴合右下
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_right_bottom_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -159,8 +165,8 @@ return function (o,args)
     end
 
     -- 外侧贴合左上
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_left_top_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -175,8 +181,8 @@ return function (o,args)
     end
 
     -- 外侧贴合上左
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_top_left_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -191,8 +197,8 @@ return function (o,args)
     end
 
     -- 外侧贴合左下
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_left_bottom_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -207,8 +213,8 @@ return function (o,args)
     end
 
     -- 内侧贴合左边
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_left_inner = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -223,8 +229,8 @@ return function (o,args)
     end
 
     -- 内侧贴合右边
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_right_inner = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -239,8 +245,8 @@ return function (o,args)
     end
 
     -- 内侧贴合顶部
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_top_inner = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -255,8 +261,8 @@ return function (o,args)
     end
 
     -- 内侧贴合底部
-    ---@param target_ui ui 目标UI
-    ---@param opts ui.anchor_position.options? 间距偏移配置
+    ---@param target_ui framework.ui 目标UI
+    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
     o.anchor_bottom_inner = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -270,8 +276,8 @@ return function (o,args)
         anchor_position(target_ui,anchor,"bottom_center","bottom_center")
     end
 
-    -- 计算目标的方位
-    ---@param position ui.position 方位
+    -- 计算目标方位。
+    ---@param position framework.ui.position 方位
     ---@param x? number 目标中心横坐标
     ---@param y? number 目标中心纵坐标
     ---@param width? number 目标宽度
@@ -307,8 +313,8 @@ return function (o,args)
         return x,y
     end
 
-    -- 计算自身的方位
-    ---@param position ui.position 方位
+    -- 计算自身方位。
+    ---@param position framework.ui.position 方位
     ---@param x number 横坐标
     ---@param y number 纵坐标
     ---@return number x 横坐标
@@ -355,14 +361,14 @@ return function (o,args)
     end
 
     -- 渲染目标
-    ---@param anchor ui.anchor
-    ---@return point
+    ---@param anchor framework.ui.anchor 锚点配置
+    ---@return point position 渲染后的目标位置
     local function render_target(anchor)
-        ---@type ui
+        ---@type framework.ui
         local target = anchor.relative_ui
-        ---@type ui.position
+        ---@type framework.ui.position
         local position = anchor.point
-        ---@type ui.position
+        ---@type framework.ui.position
         local target_position = anchor.relative_point
         
         local target_width, target_height = target.visual_size()
@@ -371,19 +377,19 @@ return function (o,args)
         local p = target.pixel_position()
         local x,y = p.x,p.y
 
-        -- 计算目标的方位
+        -- 计算目标方位。
         x,y = compute_target_position(target_position,x,y,target_width,target_height)
-        -- 计算自身的方位
+        -- 计算自身方位。
         x,y = compute_self_position(position,x,y)
-        -- 计算偏移（百分比）
+        -- 计算百分比偏移。
         x,y = compute_offset(x,y,anchor.x,anchor.y,target_width,target_height)
         
         return {x=x, y=y}
     end
 
     -- 渲染窗口
-    ---@param anchor ui.anchor
-    ---@return point
+    ---@param anchor framework.ui.anchor 锚点配置
+    ---@return point position 渲染后的窗口位置
     local function render_window(anchor)
         -- 计算世界方位
         local x,y = compute_target_position(anchor.relative_point)
@@ -391,16 +397,16 @@ return function (o,args)
         -- 计算自身方位
         x,y = compute_self_position(anchor.point,x,y)
 
-        -- 计算偏移（百分比）
+        -- 计算百分比偏移。
         local window_width, window_height = o.window_size()
         x,y = compute_offset(x,y,anchor.x,anchor.y,window_width,window_height)
 
         return {x=x, y=y}
     end
 
-    ---@type reactive.computed 渲染位置<ui.position>
+    ---@type reactive.computed 渲染位置<framework.ui.position>
     local render_position = o.factory.computed(function()
-        ---@type ui.anchor
+        ---@type framework.ui.anchor
         local anchor = o.anchor()
         
         if anchor.relative_ui == nil then
@@ -423,8 +429,8 @@ return function (o,args)
         local old_y = old_anchor and old_anchor.y
         local old_relative_ui = old_anchor and old_anchor.relative_ui
 
-        -- 默认值
-        anchor = M.anchor(anchor)
+        -- 补齐默认锚点配置。
+        anchor = create_anchor(anchor)
         anchor.point = anchor.point or old_point
         anchor.relative_point = anchor.relative_point or old_relative_point
         anchor.x = anchor.x or old_x

@@ -49,9 +49,9 @@ local function create_permutation()
     return permutation
 end
 
----@param array table 参数说明
----@param n integer 参数说明
----@return table 返回值
+---@param array table 候选数组
+---@param n integer 需要选取的数量
+---@return table selected 随机选出的元素列表
 local function select_random(array, n)
     local m = #array
     if n >= m then
@@ -64,8 +64,8 @@ local function select_random(array, n)
     return li.slice(1,n).to_table()
 end
 
----@param terrain_group terrain.group 参数说明
----@param selection integer 参数说明
+---@param terrain_group terrain.group 地形组
+---@param selection integer 选中的地形序号
 ---@return terrain.painter
 M.create_painter = function (terrain_group, selection)
     ---@class terrain.painter
@@ -75,12 +75,12 @@ M.create_painter = function (terrain_group, selection)
     local terrains = select_random(terrain_group, selection)
     local main_terrain = list(terrains).pop_random()
 
-    ---@field noise_frequency number 字段说明
-    ---@field noise_octaves integer 字段说明
-    ---@field noise_persistence number 字段说明
+    ---@field noise_frequency number 噪声频率
+    ---@field noise_octaves integer 噪声叠加层数
+    ---@field noise_persistence number 噪声振幅衰减
     ---@field noise_lacunarity number 棰戠巼澧為暱
-    ---@field voronoi_cell_size number 字段说明
-    ---@field voronoi_blend number 字段说明
+    ---@field voronoi_cell_size number Voronoi 单元尺寸
+    ---@field voronoi_blend number Voronoi 混合强度
     o.config = {
         noise_frequency = 0.004,
         noise_octaves = 4,
@@ -95,7 +95,7 @@ M.create_painter = function (terrain_group, selection)
 
     ---@param x number
     ---@param y number
-    ---@return number 返回值
+    ---@return number value 噪声值
     local function perlin_noise_2d(x, y)
         local xi = math.floor(x) % 256
         local yi = math.floor(y) % 256
@@ -120,9 +120,9 @@ M.create_painter = function (terrain_group, selection)
     ---@param x number
     ---@param y number
     ---@param octaves integer 灞傛暟
-    ---@param persistence number 参数说明
-    ---@param lacunarity number 参数说明
-    ---@return number 返回值
+    ---@param persistence number 振幅衰减
+    ---@param lacunarity number 频率增长倍率
+    ---@return number value 分形噪声值
     local function fbm(x, y, octaves, persistence, lacunarity)
         local total = 0
         local frequency = 1
@@ -139,10 +139,10 @@ M.create_painter = function (terrain_group, selection)
         return (total / max_value + 1) / 2
     end
 
-    ---@param x number 参数说明
-    ---@param y number 参数说明
-    ---@param center_position point 参数说明
-    ---@param radius number 参数说明
+    ---@param x number 采样点 X 坐标
+    ---@param y number 采样点 Y 坐标
+    ---@param center_position point 区域中心点
+    ---@param radius number 区域半径
     ---@return integer|nil 绾圭悊ID
     o.paint_radial = function(x, y, center_position, radius)
         local sum_terrain = #terrains

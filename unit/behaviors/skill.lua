@@ -7,10 +7,10 @@ return function (o,args)
     ---@class unit
     o = o
 
-    ---@type hook.add 被动技能skill>
-    o.skills = o.factory.add()
+    ---@type hook.add<skill> 被动技能列表
+    o.factory.skills.add()
 
-    -- 添加技能时，绑定单位
+    -- 添加技能时，绑定单位上下文
     o.skills.wrap_add(
         ---@param skill skill
         ---@return skill

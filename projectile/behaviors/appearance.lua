@@ -4,12 +4,12 @@ local projectile = require "framework.projectile"
 local apis = require "..apis"
 
 ---@class projectile.options
----@field scale? number 字段说明
----@field scale_x? number 字段说明
----@field scale_y? number 字段说明
----@field scale_z? number 字段说明
----@field animation_speed? number 字段说明
----@field visible? boolean 字段说明
+---@field scale? number 整体缩放
+---@field scale_x? number X 轴缩放
+---@field scale_y? number Y 轴缩放
+---@field scale_z? number Z 轴缩放
+---@field animation_speed? number 动画速度倍率
+---@field visible? boolean 是否显示
 
 ---@param o projectile
 ---@param args projectile.options
@@ -23,12 +23,12 @@ return function(o, args)
         args.visible = projectile.settings.DEFAULT_VISIBLE
     end
 
-    o.scale = o.factory.set(args.scale)
-    o.scale_x = o.factory.set(args.scale_x)
-    o.scale_y = o.factory.set(args.scale_y)
-    o.scale_z = o.factory.set(args.scale_z)
-    o.animation_speed = o.factory.set(args.animation_speed)
-    o.visible = o.factory.set(args.visible)
+    o.factory.scale.set(args.scale)
+    o.factory.scale_x.set(args.scale_x)
+    o.factory.scale_y.set(args.scale_y)
+    o.factory.scale_z.set(args.scale_z)
+    o.factory.animation_speed.set(args.animation_speed)
+    o.factory.visible.set(args.visible)
 
     local function set_scale(scale_x, scale_y, scale_z)
         apis.SET_SCALE({

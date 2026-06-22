@@ -9,18 +9,18 @@ local reactive = require "lib.reactive"
 local apis = require ".apis"
 
 ---@class unit.options: lib.reactive.factory.options
----@field position
----@field facing
----@field key
----@field player
----@field faction
+---@field position? point 初始位置
+---@field facing? number 初始朝向
+---@field key? py.UnitKey 单位类型 key
+---@field player? player 所属玩家
+---@field faction? faction 所属阵营
 
 ---@param args unit.options
----@param ... unit.options 参数说明
----@return unit 返回值
+---@param ... unit.options 后续配置会合并到首个配置表
+---@return unit unit 创建出的单位对象
 M.create = function(args,...)
     args = table.merge(args, ...)
-    -- 姒涙
+    -- 合并默认配置
     args = args or {}
     args.key = args.key or M.settings.DEFAULT_KEY
     args.player = args.player or M.settings.DEFAULT_PLAYER
@@ -32,16 +32,16 @@ M.create = function(args,...)
     local o = factory(args)
     o.set_class("unit")
 
-    ---@type reactive.set 浣嶇疆
-    o.position = o.factory.set(args.position)
+    ---@type reactive.set 位置
+    o.factory.position.set(args.position)
     ---@type reactive.set
-    o.facing = o.factory.set(args.facing)
+    o.factory.facing.set(args.facing)
     ---@type reactive.set
-    o.key = o.factory.set(args.key)
+    o.factory.key.set(args.key)
     ---@type reactive.set
-    o.player = o.factory.set(args.player)
+    o.factory.player.set(args.player)
     ---@type reactive.set
-    o.faction = o.factory.set(args.faction)
+    o.factory.faction.set(args.faction)
     ---@type reactive.set
     local create_api = apis.CREATE_HANDLE({
         key = args.key,
@@ -50,7 +50,7 @@ M.create = function(args,...)
         facing = args.facing,
     })
     assert(create_api.handle ~= nil, "framework.unit.create requires runtime backend")
-    o.handle = o.factory.set(create_api.handle)
+    o.factory.handle.set(create_api.handle)
 
     M.HANDLE_TO_OBJECT[o.handle()] = o
     o.delete.add(function()

@@ -10,15 +10,15 @@ local reactive = require "lib.reactive"
 local apis = require ".apis"
 
 ---@class skill.action.options: lib.reactive.factory.options
----@field stat_defs skill.stat.definition[] 字段说明
+---@field stat_defs? table<string, skill.stat.definition> 动作使用的属性定义表
 ---@field on_run fun(skill.action):nil 运行事件
 ---@field target_key skill.target.key 目标
 
----@class skill.stat.definition 瀹氫箟
----@field name
----@field kind skill.stat.kind 绉嶇被
----@field unit skill.stat.unit 字段说明
----@field value number 字段说明
+---@class skill.stat.definition
+---@field name? string 属性名称，省略时使用定义表键名
+---@field kind skill.stat.kind 属性类型
+---@field unit skill.stat.unit 属性单位
+---@field value number 属性初始值
 ---@param args skill.action.options
 ---@return skill.action
 M.create_action = function(args)
@@ -31,13 +31,13 @@ M.create_action = function(args)
     o.on_run = args.on_run
 
     ---@type reactive.computed
-    o.context = o.factory.computed()
+    o.factory.context.computed()
 
     ---@type reactive.add
-    o.stats = o.factory.add()
+    o.factory.stats.add()
 
     ---@type reactive.add 目标<skill.target>
-    o.targets = o.factory.add()
+    o.factory.targets.add()
 
     -- 运行
     o.run = function ()
@@ -49,8 +49,7 @@ M.create_action = function(args)
     o.create_stat = function(args)
         ---@type skill.stat
         local stat = Stat(args)
-        -- 娣诲姞
-        o.stats.add(stat)
+        -- 绑定动作属性
         return stat
     end
 
@@ -70,8 +69,6 @@ M.create_action = function(args)
         action = o,
         options = args,
     })
-
-    o.factory.register_hook_fields()
 
     return o
 end

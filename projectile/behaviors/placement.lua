@@ -4,9 +4,9 @@ local projectile = require "framework.projectile"
 local apis = require "..apis"
 
 ---@class projectile.options
----@field position? point 字段说明
----@field facing? number 字段说明
----@field height? number 字段说明
+---@field position? point 投射物位置
+---@field facing? number 投射物朝向
+---@field height? number 投射物离地高度
 
 ---@param o projectile
 ---@param args projectile.options
@@ -15,9 +15,9 @@ return function(o, args)
     args.facing = args.facing or projectile.settings.DEFAULT_FACING
     args.height = args.height or projectile.settings.DEFAULT_HEIGHT
 
-    o.position = o.factory.set(args.position)
-    o.facing = o.factory.set(args.facing)
-    o.height = o.factory.set(args.height)
+    o.factory.position.set(args.position)
+    o.factory.facing.set(args.facing)
+    o.factory.height.set(args.height)
 
     o.position.wrap_equal(function(position, old_position)
         return old_position and position.x == old_position.x and position.y == old_position.y

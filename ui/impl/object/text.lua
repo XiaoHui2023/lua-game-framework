@@ -3,8 +3,8 @@ local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
----@param o ui
----@param options ui.options
+---@param o framework.ui 要装配文本能力的 UI 对象
+---@param options framework.ui.options UI 创建参数
 return function(o, options)
     if o.type ~= "text" then
         return

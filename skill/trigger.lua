@@ -11,11 +11,11 @@ M.create_trigger = function (args)
     local o = factory_model(args)
     o.set_class("skill.trigger")
 
-    ---@type hook.computed 上下文<skill.context>
-    o.context = o.factory.computed()
+    ---@type hook.computed<skill.context> 上下文
+    o.factory.context.computed()
 
     ---@type hook.computed 触发事件<hook.event>
-    o.event = o.factory.computed(function ()
+    o.factory.field("event").computed(function ()
         error("not implemented")
     end)
 

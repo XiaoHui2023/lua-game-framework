@@ -3,30 +3,30 @@ local M = require "framework.ui"
 ---@type mathx.geometry
 local geometry = require "mathx.geometry"
 
----@param o ui
+---@param o framework.ui 要装配吸附能力的 UI 对象
 return function (o)
-    ---@class ui
+    ---@class framework.ui
     o = o
 
-    ---@type reactive.event 吸附悬浮事件（吸附物：ui）
-    o.on_snap_hover = o.factory.event()
+    ---@type reactive.event 吸附悬浮事件，参数为被吸附 UI
+    o.factory.on_snap_hover.event()
 
-    ---@type reactive.event 吸附离开事件（吸附物：ui）
-    o.on_snap_leave = o.factory.event()
+    ---@type reactive.event 吸附离开事件，参数为被吸附 UI
+    o.factory.on_snap_leave.event()
 
-    ---@type reactive.event 吸附放下事件（吸附物：ui）
-    o.on_snap_drop = o.factory.event()
+    ---@type reactive.event 吸附放下事件，参数为被吸附 UI
+    o.factory.on_snap_drop.event()
 
     ---@type reactive.add 吸附
-    o.snap = o.factory.add()
+    o.factory.snap.add()
 
-    ---@type ui?
+    ---@type framework.ui?
     local snap_ui
-    ---@type ui?
+    ---@type framework.ui?
     local last_snap_ui
 
     local function render_drag()
-        ---@type ui 最短距离的ui
+        ---@type framework.ui 最短距离的framework.ui
         local min_ui = nil
 
         if o.snap.count() > 0 then
@@ -37,26 +37,26 @@ return function (o)
             ---@type number 最短距离
             local min_distance = nil
 
-            ---@param target ui
+            ---@param target framework.ui 候选吸附目标
             list.for_each(function(target)
-                ---@type point 吸附物位置
+                ---@type point 吸附目标位置
                 local target_point = target.pixel_position()
 
-                -- 需要可见
+                -- 不可见目标不参与吸附。
                 if not target.visible() then
                     return
                 end
 
-                -- 需要接触
-                local self_width,self_height = o.total_scaled_pixel_size()
-                local target_width,target_height = target.total_scaled_pixel_size()
+                -- 未接触目标不参与吸附。
+                local self_width,self_height = o.visual_size()
+                local target_width,target_height = target.visual_size()
                 local dx = math.abs(point.x - target_point.x)
                 local dy = math.abs(point.y - target_point.y)
                 if dx > (target_width+self_width) / 2 or dy > (target_height+self_height) / 2 then
                     return
                 end
 
-                -- 匹配最短距离
+                -- 选择距离最近的目标。
                 local distance = geometry.distance(point, target_point)
                 if not min_distance or distance < min_distance then
                     min_distance = distance
@@ -102,8 +102,8 @@ return function (o)
     end)
 
     o.snap.on_add.add(
-        ---@param target ui
-        ---@param delete reactive.once_event
+        ---@param target framework.ui 新增的吸附目标
+        ---@param delete reactive.once_event 目标移除时的清理事件
         function(target, delete)
             target.delete.mount(delete)
         end
