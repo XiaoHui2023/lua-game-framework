@@ -1,5 +1,5 @@
----@type framework.ui
-local ui_model = require "framework.ui"
+---@type framework.ui.settings
+local settings = require "..settings"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 ---@type jass
@@ -14,10 +14,10 @@ apis.CREATE_SLIDER(function(api)
     args.width = args.width or 0.139
     args.percent = args.percent or 1
     if args.label == nil then
-        if args.direction == SLIDER_VERTICAL and ui_model.settings.DEFAULT_SLIDER_Y_FRAME then
-            args.label = ui_model.settings.DEFAULT_SLIDER_Y_FRAME()
-        elseif ui_model.settings.DEFAULT_SLIDER_X_FRAME then
-            args.label = ui_model.settings.DEFAULT_SLIDER_X_FRAME()
+        if args.direction == SLIDER_VERTICAL and settings.DEFAULT_SLIDER_Y_FRAME then
+            args.label = settings.DEFAULT_SLIDER_Y_FRAME()
+        elseif settings.DEFAULT_SLIDER_X_FRAME then
+            args.label = settings.DEFAULT_SLIDER_X_FRAME()
         end
     end
     args.type = args.type or "slider"

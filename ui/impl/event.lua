@@ -1,5 +1,5 @@
----@class framework.ui
-local M = require "framework.ui"
+---@type framework.ui.state
+local state = require "framework.ui.state"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 ---@type lib.tablex
@@ -10,7 +10,7 @@ local reactive = require "lib.reactive"
 ---@param keys string[] 需要创建的事件名列表
 ---@return framework.ui.event.registry registry 事件注册表
 local function create_event_registry(keys)
-    ---@class framework.ui.event.registry
+    ---@type framework.ui.event.registry
     local registry = {}
 
     ---@type table<string, reactive.event>
@@ -55,19 +55,19 @@ local function register_mouse_event(handle, event, func)
     end
 end
 
----@alias framework.ui.event.key
----| "left_up"
----| "left_down"
----| "right_up"
----| "right_down"
----| "focus"
----| "blur"
----| "click"
+---@alias framework.ui.event.key UI 鼠标事件名
+---| "left_up" 左键抬起
+---| "left_down" 左键按下
+---| "right_up" 右键抬起
+---| "right_down" 右键按下
+---| "focus" 鼠标进入
+---| "blur" 鼠标离开
+---| "click" 点击
 
 ---@class framework.ui.event.registry
 ---@field get fun(key:framework.ui.event.key):reactive.event 按事件名获取响应式事件
 ---@field add fun(key:framework.ui.event.key, callback:function):function 按事件名添加回调并返回删除函数
-M.event_registry = create_event_registry({
+state.event_registry = create_event_registry({
     "left_up",
     "left_down",
     "right_up",
@@ -78,12 +78,12 @@ M.event_registry = create_event_registry({
 })
 
 ---@param o framework.ui 要装配鼠标事件能力的 UI 对象
----@param args framework.ui.options UI 创建参数
+---@param args framework.ui.object_config UI 创建参数
 return function (o,args)
     args.focusable = args.focusable or false
     args.clickable = args.clickable or false
 
-    ---@class framework.ui
+    ---@type framework.ui
     o = o
 
     ---@type lib.reactive.ref 鼠标焦点是否在UI上面
@@ -197,7 +197,7 @@ return function (o,args)
     )
     
     -- 注册事件
-    M.event_registry.register(o,{
+    state.event_registry.register(o,{
         left_up = o.on_mouse_left_up,
         left_down = o.on_mouse_left_down,
         right_up = o.on_mouse_right_up,

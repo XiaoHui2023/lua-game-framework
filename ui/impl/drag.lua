@@ -1,18 +1,16 @@
----@type framework.ui
-local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
 ---@param o framework.ui 要装配拖拽能力的 UI 对象
----@param args framework.ui.options UI 创建参数
+---@param args framework.ui.object_config UI 创建参数
 return function (o,args)
-    args.dragable = args.dragable or false
+    args.draggable = args.draggable or false
 
-    ---@class framework.ui
+    ---@type framework.ui
     o = o
 
     ---@type lib.reactive.ref 是否可以拖拽
-    o.factory.draggable.set(args.dragable)
+    o.factory.draggable.set(args.draggable)
 
     ---@type reactive.event 拖拽开始事件
     o.factory.on_drag_start.event()

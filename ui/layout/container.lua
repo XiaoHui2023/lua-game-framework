@@ -1,26 +1,26 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
-local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
----@alias framework.ui.container.mode
----| 'single'
----| 'toggle'
----| 'overlay'
----@alias framework.ui.container.layout.type
----| "horizontal"
----| "vertical"
----| "grid"
+---@alias framework.ui.container.mode 容器内容切换模式
+---| 'single' 单一内容模式
+---| 'toggle' 多内容切换模式
+---| 'overlay' 多内容叠加模式
 
----@alias framework.ui.container.layout.flow
----| "top_to_bottom"
----| "bottom_to_top"
----| "left_to_right"
----| "right_to_left"
+---@alias framework.ui.container.layout.type 容器布局类型
+---| "horizontal" 横向布局
+---| "vertical" 纵向布局
+---| "grid" 网格布局
 
----@alias framework.ui.container.layout.grid_wrap
----| "row"
+---@alias framework.ui.container.layout.flow 容器布局流向
+---| "top_to_bottom" 从上到下
+---| "bottom_to_top" 从下到上
+---| "left_to_right" 从左到右
+---| "right_to_left" 从右到左
+
+---@alias framework.ui.container.layout.grid_wrap 网格换行方向
+---| "row" 按行换行
 ---@class framework.ui.container.layout.options
 ---@field type? framework.ui.container.layout.type 布局类型
 ---@field reverse? boolean 是否反向排列
@@ -31,7 +31,7 @@ local apis = require "framework.ui.apis"
 ---@field grid_wrap? framework.ui.container.layout.grid_wrap 网格换行方向
 ---@field grid_spacing? {x:number, y:number}
 
----@class framework.ui.container.options: framework.ui.options
+---@class framework.ui.container.options: framework.ui.object_config
 ---@field mode? framework.ui.container.mode 容器尺寸模式
 ---@field layout? framework.ui.container.layout.options 布局配置
 

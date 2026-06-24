@@ -1,16 +1,14 @@
----@type framework.ui
-local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 ---@type framework.event
 local event = require "framework.event"
 
 ---@param o framework.ui 要装配显隐能力的 UI 对象
----@param args framework.ui.options UI 创建参数
+---@param args framework.ui.object_config UI 创建参数
 return function (o,args)
     args.show = (args.show == nil) and false or args.show
 
-    ---@class framework.ui
+    ---@type framework.ui
     o = o
     
     ---@type reactive.semaphore

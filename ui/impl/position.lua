@@ -1,14 +1,12 @@
 ---@type lib.metatablex
 local metatable = require "lib.metatablex"
----@type framework.ui
-local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
 ---@param o framework.ui 要装配位置能力的 UI 对象
----@param args framework.ui.options UI 创建参数
+---@param args framework.ui.object_config UI 创建参数
 return function (o,args)
-    ---@class framework.ui
+    ---@type framework.ui
     o = o
 
     ---@type lib.reactive.ref

@@ -1,5 +1,3 @@
----@type framework.ui
-local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 

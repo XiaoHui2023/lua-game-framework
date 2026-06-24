@@ -1,10 +1,10 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
----@class framework.ui
+---@type framework.ui
 ---@field DEFAULT_SLOT_IMAGE_IMAGE any 默认槽位图标图片
 ---@field DEFAULT_SLOT_PROGRESS_IMAGE any 默认槽位进度图片
 ---@field DEFAULT_SLOT_BACKGROUND_IMAGE any 默认槽位背景图片
-local M = require "framework.ui"
+local settings = require "..settings"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
@@ -16,19 +16,19 @@ local function create_anchor(options)
     return api.anchor
 end
 
----@class framework.ui.slot.progress.options: framework.ui.options
+---@class framework.ui.slot.progress.options: framework.ui.object_config
 ---@field enable? boolean 是否创建进度子控件
 
----@class framework.ui.slot.image.options: framework.ui.options
+---@class framework.ui.slot.image.options: framework.ui.object_config
 ---@field enable? boolean 是否创建图标子控件
 
----@class framework.ui.slot.background.options: framework.ui.options
+---@class framework.ui.slot.background.options: framework.ui.object_config
 ---@field enable? boolean 是否创建背景子控件
 
----@class framework.ui.slot.text.options: framework.ui.options
+---@class framework.ui.slot.text.options: framework.ui.object_config
 ---@field enable? boolean 是否创建文本子控件
 
----@class framework.ui.slot.options: framework.ui.options
+---@class framework.ui.slot.options: framework.ui.object_config
 ---@field progress? framework.ui.slot.progress.options 进度子控件配置
 ---@field image? framework.ui.slot.image.options 图标子控件配置
 ---@field background? framework.ui.slot.background.options 背景子控件配置
@@ -46,13 +46,13 @@ apis.CREATE_SLOT(function(api)
     args.background = args.background or {}
     args.text = args.text or {}
     args.image.enable = args.image.enable or false
-    args.image.image = args.image.image or M.settings.DEFAULT_SLOT_IMAGE_IMAGE
+    args.image.image = args.image.image or settings.DEFAULT_SLOT_IMAGE_IMAGE
     args.image.size = args.image.size or 1
     args.background.enable = args.background.enable or false
-    args.background.image = args.background.image or M.settings.DEFAULT_SLOT_BACKGROUND_IMAGE
+    args.background.image = args.background.image or settings.DEFAULT_SLOT_BACKGROUND_IMAGE
     args.background.size = args.background.size or 1
     args.progress.enable = args.progress.enable or false
-    args.progress.image = args.progress.image or M.settings.DEFAULT_SLOT_PROGRESS_IMAGE
+    args.progress.image = args.progress.image or settings.DEFAULT_SLOT_PROGRESS_IMAGE
     args.progress.size = args.progress.size or 1
     args.text.enable = args.text.enable or false
     args.text.size = args.text.size or 1

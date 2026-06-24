@@ -6,7 +6,7 @@ local apis = require "framework.ui.apis"
 ---@field horizontal_space? number 横向间距偏移
 
 ---@param o framework.ui 要装配锚点能力的 UI 对象
----@param args framework.ui.options UI 创建参数
+---@param args framework.ui.object_config UI 创建参数
 return function (o,args)
     local function create_anchor(anchor)
         local api = apis.CREATE_ANCHOR({
@@ -18,7 +18,7 @@ return function (o,args)
 
     args.anchor = args.anchor or create_anchor()
     
-    ---@class framework.ui
+    ---@type framework.ui
     o = o
 
     ---@type lib.reactive.ref

@@ -1,7 +1,7 @@
 ---@type lib.stringx
 local string = require "lib.stringx"
----@type framework.ui
-local ui_model = require "framework.ui"
+---@type framework.ui.settings
+local settings = require "..settings"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 ---@type jass
@@ -9,8 +9,8 @@ local jass = require "jass"
 
 apis.CREATE_EDITBOX(function(api)
     local args = api.options or {}
-    if ui_model.settings.DEFAULT_EDITBOX_FRAME then
-        args.label = args.label or ui_model.settings.DEFAULT_EDITBOX_FRAME()
+    if settings.DEFAULT_EDITBOX_FRAME then
+        args.label = args.label or settings.DEFAULT_EDITBOX_FRAME()
     end
     args.type = args.type or "input"
     args.width = args.width or 0.2

@@ -2,28 +2,23 @@
 local string = require "lib.stringx"
 ---@type lib.tablex
 local table = require "lib.tablex"
----@class framework.ui
+---@type framework.ui
 ---@field DEFAULT_TEXT_FONT any 默认文本字体资源
 ---@field DEFAULT_TEXT_FONT_SIZE number 默认字体大小比例
 ---@field DEFAULT_TEXT_ALIGN framework.ui.position 默认文本排列位置
 ---@field TEXT_GET_TEXT_PIXEL_SIZE_WIDTH_SCALE number 文本宽度估算缩放系数
 ---@field TEXT_GET_TEXT_PIXEL_SIZE_HEIGHT_SCALE number 文本高度估算缩放系数
-local M = require "framework.ui"
+local settings = require "..settings"
 ---@type framework.ui.apis
 local apis = require "..apis"
 
----@class framework.ui.options
+---@class framework.ui.text.options: framework.ui.object_config
 ---@field text? string 初始显示文本
 ---@field font_size? number 字体大小比例
 ---@field font? any 字体资源
 
----@class framework.ui.text.render_result
----@field text string 实际渲染文本
----@field width number 文本像素宽度
----@field height number 文本像素高度
-
----@param args? framework.ui.options 文本创建参数
----@param ... framework.ui.options 需要合并的额外创建参数
+---@param args? framework.ui.object_config 文本创建参数
+---@param ... framework.ui.object_config 需要合并的额外创建参数
 ---@return framework.ui.text 文本 UI 对象
 apis.CREATE_TEXT(function(api)
     local options_extra = api.options_extra
@@ -31,10 +26,10 @@ apis.CREATE_TEXT(function(api)
     args = args or {}
     args = table.merge(args, options_extra)
     args.text = args.text or ""
-    args.font_size = args.font_size or M.settings.DEFAULT_TEXT_FONT_SIZE
-    args.align = args.align or M.settings.DEFAULT_TEXT_ALIGN
+    args.font_size = args.font_size or settings.DEFAULT_TEXT_FONT_SIZE
+    args.align = args.align or settings.DEFAULT_TEXT_ALIGN
     args.type = args.type or "text"
-    args.font = args.font or M.settings.DEFAULT_TEXT_FONT
+    args.font = args.font or settings.DEFAULT_TEXT_FONT
     args.size = args.size or 1
     args.size_mode = args.size_mode or "contain"
 
@@ -137,7 +132,7 @@ apis.CREATE_TEXT(function(api)
     render_text_clamped.on_change.add(function(render_result)
         apis.SET_TEXT({ handle = o.handle(), text = render_result.text })
         o.visual_size.compute(function()
-            local scale = M.settings.UI_APPLICATION_SIZE_SCALE
+            local scale = settings.UI_APPLICATION_SIZE_SCALE
             return render_result.width * scale, render_result.height * scale
         end)
     end)

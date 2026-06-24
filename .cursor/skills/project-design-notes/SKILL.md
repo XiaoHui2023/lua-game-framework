@@ -37,6 +37,7 @@ Lua 游戏通用框架：在宿主环境（如 Y3 地图脚本）上提供可复
 - `impl` 统一使用 `impl/` 目录和 `impl/init.lua` 聚合；禁止继续新增或保留顶层 `impl.lua`。
 
 - Runtime dependency injection rule: host/engine callable capabilities for `framework/*` must be declared in `framework/<module>/apis.lua` and implemented by `runtime/framework/<module>.lua` registering `module.apis` handlers. Runtime code must not replace framework facade functions. One-off runtime handlers are registered inline, and each registration has a short Chinese responsibility comment.
+- Directory move rule: when moving `framework/<module>/<name>.lua` into `framework/<module>/impl/<name>.lua` and flattening `framework/<module>/impl/<name>/`, verify all three facts with literal paths before reporting success: the root file no longer exists, the target `impl/<name>.lua` exists, and the old `impl/<name>/` directory no longer exists. On Windows, use `Test-Path -LiteralPath` because `Test-Path path\object` can match `object.lua` and hide a failed directory cleanup.
 
 ## 备忘与待定（原记录）
 

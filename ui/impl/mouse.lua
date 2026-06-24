@@ -3,7 +3,7 @@ local event_apis = require "framework.event.apis"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
--- Bridges the framework input event into the UI mouse-move API.
+-- 桥接框架输入事件到 UI 鼠标移动 API。
 event_apis.ON_MOUSE_MOVE_ASYNC(function(api)
     local data = api.input
     local window_size_api = apis.GET_WINDOW_SIZE({})

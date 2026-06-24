@@ -1,16 +1,12 @@
----@type framework.ui
-local M = require "framework.ui"
+---@type framework.ui.settings
+local settings = require "framework.ui.settings"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 ---@type framework.event
 local event = require "framework.event"
 
----@alias framework.ui.size_mode
----| "fill" 拉伸
----| "contain" 保持
-
 ---@param o framework.ui 要装配尺寸能力的 UI 对象
----@param args framework.ui.options UI 创建参数
+---@param args framework.ui.object_config UI 创建参数
 return function (o,args)
     args.scale_factor = args.scale_factor or 1
     args.width_scale_factor = args.width_scale_factor or 1
@@ -20,7 +16,7 @@ return function (o,args)
     args.width = args.width or args.size or args.height
     args.height = args.height or args.size or args.width
 
-    ---@class framework.ui
+    ---@type framework.ui
     o = o
 
     o.is_content_sized = false
@@ -154,7 +150,7 @@ return function (o,args)
     ---@type reactive.computed 实际尺寸（决定应用）
     o.factory.actual_size.computed(function ()
         local width, height = o.total_scaled_pixel_size()
-        local scale = M.settings.UI_APPLICATION_SIZE_SCALE
+        local scale = settings.UI_APPLICATION_SIZE_SCALE
         return width * scale, height * scale
     end)
 

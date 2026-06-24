@@ -11,7 +11,7 @@ require "framework.ui.types"
 ---@field SET_VISIBLE lib.callback.api 设置 UI 可见性
 ---@field SET_MODEL lib.callback.api 设置 UI 模型资源
 ---@field PLAY_EFFECT lib.callback.api 播放 UI 特效
----@field PLAY_ANIMA lib.callback.api 播放 UI 模型动画
+---@field PLAY_ANIMATION lib.callback.api 播放 UI 模型动画
 ---@field ON_MOUSE_EVENT lib.callback.api 绑定 UI 鼠标事件
 ---@field SET_IMAGE lib.callback.api 设置 UI 图片资源
 ---@field SET_IMAGE_COLOR lib.callback.api 设置 UI 图片颜色
@@ -49,30 +49,30 @@ M.ON_CREATE = callback.api({ name = "ui.ON_CREATE" })
 
 ---@class framework.ui.api.ObjectCreated: lib.callback.instance
 ---@field framework.ui framework.ui 正在装配的 UI 对象
----@field options framework.ui.options 创建 UI 时传入的选项
+---@field options framework.ui.object_config 创建 UI 时传入的选项
 ---@type lib.callback.api
 M.OBJECT_CREATED = callback.api({ name = "ui.OBJECT_CREATED" })
 
 ---@class framework.ui.api.CreateObject: lib.callback.instance
----@field options framework.ui.options? 创建参数
+---@field options framework.ui.object_config? 创建参数
 ---@field ui framework.ui? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_OBJECT = callback.api({ name = "ui.CREATE_OBJECT" })
 
 ---@class framework.ui.api.CreateVoid: lib.callback.instance
----@field options framework.ui.options? 创建参数
+---@field options framework.ui.object_config? 创建参数
 ---@field ui framework.ui.void? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_VOID = callback.api({ name = "ui.CREATE_VOID" })
 
 ---@class framework.ui.api.CreateImage: lib.callback.instance
----@field options framework.ui.options? 创建参数
+---@field options framework.ui.object_config? 创建参数
 ---@field ui framework.ui.image? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_IMAGE = callback.api({ name = "ui.CREATE_IMAGE" })
 
 ---@class framework.ui.api.CreateText: lib.callback.instance
----@field options framework.ui.options? 创建参数
+---@field options framework.ui.object_config? 创建参数
 ---@field ui framework.ui.text? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_TEXT = callback.api({ name = "ui.CREATE_TEXT" })
@@ -96,19 +96,19 @@ M.CREATE_MODEL = callback.api({ name = "ui.CREATE_MODEL" })
 M.CREATE_EFFECT = callback.api({ name = "ui.CREATE_EFFECT" })
 
 ---@class framework.ui.api.CreateProgress: lib.callback.instance
----@field options framework.ui.options? 创建参数
+---@field options framework.ui.object_config? 创建参数
 ---@field ui framework.ui.progress? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_PROGRESS = callback.api({ name = "ui.CREATE_PROGRESS" })
 
 ---@class framework.ui.api.CreateProgressRing: lib.callback.instance
----@field options framework.ui.options? 创建参数
+---@field options framework.ui.object_config? 创建参数
 ---@field ui framework.ui.progress? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_PROGRESS_RING = callback.api({ name = "ui.CREATE_PROGRESS_RING" })
 
 ---@class framework.ui.api.CreateProgressBar: lib.callback.instance
----@field options framework.ui.options? 创建参数
+---@field options framework.ui.object_config? 创建参数
 ---@field ui framework.ui.progress? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_PROGRESS_BAR = callback.api({ name = "ui.CREATE_PROGRESS_BAR" })
@@ -138,14 +138,14 @@ M.CREATE_EDITBOX = callback.api({ name = "ui.CREATE_EDITBOX" })
 M.CREATE_SLIDER = callback.api({ name = "ui.CREATE_SLIDER" })
 
 ---@class framework.ui.api.SetupReactiveFields: lib.callback.instance
----@field ui framework.ui UI object being prepared.
----@field options framework.ui.options Creation options.
+---@field ui framework.ui 正在准备响应式字段的 UI 对象
+---@field options framework.ui.object_config 创建选项
 ---@type lib.callback.api
 M.SETUP_REACTIVE_FIELDS = callback.api({ name = "ui.SETUP_REACTIVE_FIELDS" })
 
 ---@class framework.ui.api.SetupReactiveLogic: lib.callback.instance
----@field ui framework.ui UI object being wired.
----@field options framework.ui.options Creation options.
+---@field ui framework.ui 正在装配响应式逻辑的 UI 对象
+---@field options framework.ui.object_config 创建选项
 ---@type lib.callback.api
 M.SETUP_REACTIVE_LOGIC = callback.api({ name = "ui.SETUP_REACTIVE_LOGIC" })
 
@@ -187,13 +187,13 @@ M.SET_MODEL = callback.api({ name = "ui.SET_MODEL" })
 ---@type lib.callback.api
 M.PLAY_EFFECT = callback.api({ name = "ui.PLAY_EFFECT" })
 
----@class framework.ui.api.PlayAnima: lib.callback.instance
+---@class framework.ui.api.PlayAnimation: lib.callback.instance
 ---@field handle framework.ui.handle 要播放动画的模型控件句柄
----@field anima any 动画资源或动画名
+---@field animation any 动画资源或动画名
 ---@field is_loop boolean? 是否循环播放
 ---@field speed number? 播放速度
 ---@type lib.callback.api
-M.PLAY_ANIMA = callback.api({ name = "ui.PLAY_ANIMA" })
+M.PLAY_ANIMATION = callback.api({ name = "ui.PLAY_ANIMATION" })
 
 ---@class framework.ui.api.OnMouseEvent: lib.callback.instance
 ---@field handle framework.ui.handle 要绑定鼠标事件的控件句柄

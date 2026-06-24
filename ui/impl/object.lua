@@ -1,14 +1,14 @@
 local factory = require("lib.reactive").factory
----@type framework.ui
-local ui_model = require "framework.ui"
+---@type framework.ui.layers
+local layers = require "framework.ui.layers"
 ---@type framework.ui.apis
-local apis = require ".apis"
+local apis = require "framework.ui.apis"
 
 apis.CREATE_OBJECT(function(api)
     local args = api.options or {}
     args.image = args.image or ""
     args.alpha = args.alpha or 255
-    args.layer = args.layer or ui_model.LAYER.DEFAULT
+    args.layer = args.layer or layers.get("DEFAULT")
     args.priority = args.priority or 0
     args.progress = args.progress or 1
     args.rotation = args.rotation or 0

@@ -19,10 +19,10 @@ apis.CREATE_MODEL(function(api)
         apis.SET_MODEL({ handle = ui.handle(), model = model })
     end)
 
-    ui.play = function(anima, is_loop, speed)
-        apis.PLAY_ANIMA({
+    ui.play = function(animation, is_loop, speed)
+        apis.PLAY_ANIMATION({
             handle = ui.handle(),
-            anima = anima,
+            animation = animation,
             is_loop = is_loop,
             speed = speed,
         })

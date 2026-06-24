@@ -1,7 +1,9 @@
----@class framework.ui
-local M = require "framework.ui"
 ---@type framework.ui.apis
 local apis = require ".apis"
+
+---@class framework.ui.layers
+---@field LAYER framework.ui.layer.registry UI 分层注册表
+local M = {}
 
 ---@type framework.ui.layer.registry
 M.LAYER = {
@@ -34,5 +36,11 @@ setmetatable(M.LAYER, {
         return layer
     end,
 })
+
+---@param name framework.ui.layer_name UI 分层名称
+---@return framework.ui.handle? handle UI 分层句柄
+function M.get(name)
+    return M.LAYER[name]
+end
 
 return M

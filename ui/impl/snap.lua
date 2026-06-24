@@ -1,11 +1,9 @@
----@type framework.ui
-local M = require "framework.ui"
 ---@type mathx.geometry
 local geometry = require "mathx.geometry"
 
 ---@param o framework.ui 要装配吸附能力的 UI 对象
 return function (o)
-    ---@class framework.ui
+    ---@type framework.ui
     o = o
 
     ---@type reactive.event 吸附悬浮事件，参数为被吸附 UI

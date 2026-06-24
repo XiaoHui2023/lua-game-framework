@@ -1,13 +1,13 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
----@type framework.ui
-local ui_model = require "framework.ui"
+---@type framework.ui.settings
+local settings = require "..settings"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
 apis.CREATE_PROGRESS(function(api)
     local args = table.merge(api.options or {}, api.options_extra)
-    args.image = args.image or ui_model.settings.DEFAULT_IMAGE
+    args.image = args.image or settings.DEFAULT_IMAGE
     args.type = args.type or "progress_ring"
 
     local create_api = apis.CREATE_OBJECT({ options = args })
