@@ -26,7 +26,7 @@ M.create_action = function(args)
 
     ---@class skill.action: lib.reactive.factory
     local o = factory_model(args)
-    o.set_class("skill.action")
+    o.factory.set_class("skill.action")
 
     o.on_run = args.on_run
 

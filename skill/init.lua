@@ -59,7 +59,7 @@ M.new = function(args)
 
     ---@class skill: lib.reactive.factory
     local o = factory_model(args)
-    o.set_class("skill")
+    o.factory.set_class("skill")
 
     ---@type hook.set<string>
     o.factory.display_name.set(args.name or "")

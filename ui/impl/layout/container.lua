@@ -3,41 +3,18 @@ local table = require "lib.tablex"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
----@alias framework.ui.container.mode 容器内容切换模式
----| 'single' 单一内容模式
----| 'toggle' 多内容切换模式
----| 'overlay' 多内容叠加模式
+local FLOW_BY_TYPE = {
+    horizontal = {
+        left_to_right = true,
+        right_to_left = true,
+    },
+    vertical = {
+        top_to_bottom = true,
+        bottom_to_top = true,
+    },
+}
 
----@alias framework.ui.container.layout.type 容器布局类型
----| "horizontal" 横向布局
----| "vertical" 纵向布局
----| "grid" 网格布局
-
----@alias framework.ui.container.layout.flow 容器布局流向
----| "top_to_bottom" 从上到下
----| "bottom_to_top" 从下到上
----| "left_to_right" 从左到右
----| "right_to_left" 从右到左
-
----@alias framework.ui.container.layout.grid_wrap 网格换行方向
----| "row" 按行换行
----@class framework.ui.container.layout.options
----@field type? framework.ui.container.layout.type 布局类型
----@field reverse? boolean 是否反向排列
----@field spacing? number 子项间距比例
----@field padding? number 容器内边距比例
----@field grid_columns? integer 网格列数
----@field grid_rows? integer 网格行数
----@field grid_wrap? framework.ui.container.layout.grid_wrap 网格换行方向
----@field grid_spacing? {x:number, y:number}
-
----@class framework.ui.container.options: framework.ui.object_config
----@field mode? framework.ui.container.mode 容器尺寸模式
----@field layout? framework.ui.container.layout.options 布局配置
-
----@param args? framework.ui.container.options 容器创建参数
----@param ... framework.ui.container.options 需要合并的额外容器参数
----@return framework.ui.container container 容器 UI 对象
+---@param api framework.ui.api.CreateContainer 容器创建回调参数
 apis.CREATE_CONTAINER(function(api)
     local options_extra = api.options_extra
     local args = api.options
@@ -46,17 +23,15 @@ apis.CREATE_CONTAINER(function(api)
     args.layout = args.layout or {}
     args.layout.type = args.layout.type or "horizontal"
     args.layout.flow = args.layout.flow or (args.layout.type == "vertical" and "top_to_bottom" or "left_to_right")
+    assert(FLOW_BY_TYPE[args.layout.type], "framework.ui.container requires supported layout type")
+    assert(FLOW_BY_TYPE[args.layout.type][args.layout.flow], "framework.ui.container layout flow must match layout type")
     args.layout.reverse = args.layout.reverse or false
     args.layout.spacing = args.layout.spacing or 0
     args.layout.padding = args.layout.padding or 0
-    args.layout.grid_columns = args.layout.grid_columns or 1
-    args.layout.grid_rows = args.layout.grid_rows or 1
-    args.layout.grid_wrap = args.layout.grid_wrap or "row"
-    args.layout.grid_spacing = args.layout.grid_spacing or { x = 0, y = 0 }
 
-    ---@class framework.ui.container: framework.ui.void
     local void_api = apis.CREATE_VOID({ options = args })
     assert(void_api.ui ~= nil, "framework.ui.CREATE_CONTAINER requires CREATE_VOID result")
+    ---@type framework.ui.container
     local o = void_api.ui
     o.is_content_sized = true
 
@@ -72,17 +47,12 @@ apis.CREATE_CONTAINER(function(api)
 
     o.factory.mode.set(args.mode)
 
-    ---@class framework.ui.container.layout
     o.layout = {}
     o.layout.type = o.factory.set(args.layout.type)
     o.layout.flow = o.factory.set(args.layout.flow)
     o.layout.reverse = o.factory.set(args.layout.reverse)
     o.layout.spacing = o.factory.set(args.layout.spacing)
     o.layout.padding = o.factory.set(args.layout.padding)
-    o.layout.grid_columns = o.factory.set(args.layout.grid_columns)
-    o.layout.grid_rows = o.factory.set(args.layout.grid_rows)
-    o.layout.grid_wrap = o.factory.set(args.layout.grid_wrap)
-    o.layout.grid_spacing = o.factory.set(args.layout.grid_spacing)
 
     local widget_removers = {}
     local hidden_widget_unlocks = {}
@@ -94,14 +64,10 @@ apis.CREATE_CONTAINER(function(api)
         end
     end
 
-    ---@param framework.ui framework.ui 需要加入布局的子 UI
+    ---@param ui framework.ui 需要加入布局的子 UI
     o.add_child = function(ui)
         if ui.parent and ui.parent() ~= o then
-            if ui.set_parent then
-                ui.set_parent(o)
-            else
-                ui.parent.set(o)
-            end
+            ui.factory.set_parent(o)
         end
         if not widget_removers[ui] then
             widget_removers[ui] = o.widgets.add(ui)
@@ -115,15 +81,15 @@ apis.CREATE_CONTAINER(function(api)
         end
     end
 
-    ---@param framework.ui framework.ui 需要从布局移除的子 UI
+    ---@param ui framework.ui 需要从布局移除的子 UI
     o.remove_child = function(ui)
         local remove_widget = widget_removers[ui]
         if remove_widget then
             remove_widget()
             widget_removers[ui] = nil
         end
-        if o.detach_child then
-            o.detach_child(ui)
+        if ui.factory and ui.factory.get_parent() == o then
+            ui.factory.set_parent(nil)
         end
         local unlock = hidden_widget_unlocks[ui]
         if unlock then
@@ -341,11 +307,6 @@ apis.CREATE_CONTAINER(function(api)
     end
 
     o.widgets.on_add.add(function(widget)
-        if o.attach_child then
-            o.attach_child(widget)
-        else
-            o.children.add(widget)
-        end
         o.factory.capture("", widget)
         refresh_layout()
     end)

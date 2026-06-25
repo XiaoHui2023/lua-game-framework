@@ -1,5 +1,5 @@
 ---@type framework.ui.settings
-local settings = require "..settings"
+local settings = require "framework.ui.settings"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 ---@type jass

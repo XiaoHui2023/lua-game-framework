@@ -1,10 +1,6 @@
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 
----@class framework.ui.anchor_position.options : framework.ui.anchor
----@field vertical_space? number 纵向间距偏移
----@field horizontal_space? number 横向间距偏移
-
 ---@param o framework.ui 要装配锚点能力的 UI 对象
 ---@param args framework.ui.object_config UI 创建参数
 return function (o,args)
@@ -38,7 +34,7 @@ return function (o,args)
     end
 
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_center = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -54,7 +50,7 @@ return function (o,args)
 
     -- 外侧贴合左边
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_left_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -70,7 +66,7 @@ return function (o,args)
 
     -- 外侧贴合右边
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_right_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -86,7 +82,7 @@ return function (o,args)
 
     -- 外侧贴合顶部
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_top_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -102,7 +98,7 @@ return function (o,args)
 
     -- 外侧贴合底部
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_bottom_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -118,7 +114,7 @@ return function (o,args)
 
     -- 外侧贴合右上
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_right_top_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -134,7 +130,7 @@ return function (o,args)
 
     -- 外侧贴合上右
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_top_right_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -150,7 +146,7 @@ return function (o,args)
 
     -- 外侧贴合右下
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_right_bottom_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -166,7 +162,7 @@ return function (o,args)
 
     -- 外侧贴合左上
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_left_top_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -182,7 +178,7 @@ return function (o,args)
 
     -- 外侧贴合上左
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_top_left_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -198,7 +194,7 @@ return function (o,args)
 
     -- 外侧贴合左下
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_left_bottom_outer = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -214,7 +210,7 @@ return function (o,args)
 
     -- 内侧贴合左边
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_left_inner = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -230,7 +226,7 @@ return function (o,args)
 
     -- 内侧贴合右边
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_right_inner = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -246,7 +242,7 @@ return function (o,args)
 
     -- 内侧贴合顶部
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_top_inner = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -262,7 +258,7 @@ return function (o,args)
 
     -- 内侧贴合底部
     ---@param target_ui framework.ui 目标UI
-    ---@param opts framework.ui.anchor_position.options? 间距偏移配置
+    ---@param opts framework.ui.anchor.offset_options? 间距偏移配置
     o.anchor_bottom_inner = function (target_ui,opts)
         local anchor = {}
         if opts then
@@ -349,6 +345,8 @@ return function (o,args)
     ---@param y number 纵坐标
     ---@param x_offset number 横偏移（百分比）
     ---@param y_offset number 纵偏移（百分比）
+    ---@param basis_width? number 偏移基准宽度
+    ---@param basis_height? number 偏移基准高度
     ---@return number x 横坐标
     ---@return number y 纵坐标
     local function compute_offset(x,y,x_offset,y_offset,basis_width,basis_height)

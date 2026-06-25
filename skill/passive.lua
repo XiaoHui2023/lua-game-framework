@@ -9,7 +9,7 @@ local M = require "framework.skill"
 M.create_passive = function(args)
     ---@class skill.passive: skill
     local o = M.new(args)
-    o.set_class("skill.passive")
+    o.factory.set_class("skill.passive")
 
     -- 绑定事件
     ---@param event hook.event

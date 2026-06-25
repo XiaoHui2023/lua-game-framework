@@ -52,7 +52,7 @@ return function(args)
 
     ---@class skill.stat: reactive.factory
     local o = reactive.factory(args)
-    o.set_class("skill.stat")
+    o.factory.set_class("skill.stat")
 
     ---@type reactive.set<string>
     o.factory.kind.set(args.kind)

@@ -9,7 +9,7 @@ local factory_model = require "lib.reactive".factory
 M.create_trigger = function (args)
     ---@class skill.trigger: lib.reactive.factory
     local o = factory_model(args)
-    o.set_class("skill.trigger")
+    o.factory.set_class("skill.trigger")
 
     ---@type hook.computed<skill.context> 上下文
     o.factory.context.computed()

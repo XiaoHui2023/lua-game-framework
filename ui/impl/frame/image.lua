@@ -1,7 +1,7 @@
 ---@type lib.tablex
 local table = require "lib.tablex"
 ---@type framework.ui.settings
-local settings = require "..settings"
+local settings = require "framework.ui.settings"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
 

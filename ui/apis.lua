@@ -43,12 +43,12 @@ M.ON_MOUSE_MOVE_ASYNC = callback.api({ name = "ui.ON_MOUSE_MOVE_ASYNC" })
 M.ON_WINDOW_SIZE_CHANGE = callback.api({ name = "ui.ON_WINDOW_SIZE_CHANGE" })
 
 ---@class framework.ui.Created: lib.callback.instance
----@field framework.ui framework.ui 已创建的 UI 对象
+---@field ui framework.ui 已创建的 UI 对象
 ---@type lib.callback.api
 M.ON_CREATE = callback.api({ name = "ui.ON_CREATE" })
 
 ---@class framework.ui.api.ObjectCreated: lib.callback.instance
----@field framework.ui framework.ui 正在装配的 UI 对象
+---@field ui framework.ui 正在装配的 UI 对象
 ---@field options framework.ui.object_config 创建 UI 时传入的选项
 ---@type lib.callback.api
 M.OBJECT_CREATED = callback.api({ name = "ui.OBJECT_CREATED" })
@@ -61,18 +61,21 @@ M.CREATE_OBJECT = callback.api({ name = "ui.CREATE_OBJECT" })
 
 ---@class framework.ui.api.CreateVoid: lib.callback.instance
 ---@field options framework.ui.object_config? 创建参数
+---@field options_extra framework.ui.object_config? 额外创建参数，注册实现会合并到 options
 ---@field ui framework.ui.void? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_VOID = callback.api({ name = "ui.CREATE_VOID" })
 
 ---@class framework.ui.api.CreateImage: lib.callback.instance
 ---@field options framework.ui.object_config? 创建参数
+---@field options_extra framework.ui.object_config? 额外创建参数，注册实现会合并到 options
 ---@field ui framework.ui.image? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_IMAGE = callback.api({ name = "ui.CREATE_IMAGE" })
 
 ---@class framework.ui.api.CreateText: lib.callback.instance
----@field options framework.ui.object_config? 创建参数
+---@field options framework.ui.text.options? 创建参数
+---@field options_extra framework.ui.object_config? 额外创建参数，注册实现会合并到 options
 ---@field ui framework.ui.text? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_TEXT = callback.api({ name = "ui.CREATE_TEXT" })
@@ -97,6 +100,7 @@ M.CREATE_EFFECT = callback.api({ name = "ui.CREATE_EFFECT" })
 
 ---@class framework.ui.api.CreateProgress: lib.callback.instance
 ---@field options framework.ui.object_config? 创建参数
+---@field options_extra framework.ui.object_config? 额外创建参数，注册实现会合并到 options
 ---@field ui framework.ui.progress? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_PROGRESS = callback.api({ name = "ui.CREATE_PROGRESS" })
@@ -115,12 +119,14 @@ M.CREATE_PROGRESS_BAR = callback.api({ name = "ui.CREATE_PROGRESS_BAR" })
 
 ---@class framework.ui.api.CreateContainer: lib.callback.instance
 ---@field options framework.ui.container.options? 创建参数
+---@field options_extra framework.ui.container.options? 额外容器参数，注册实现会合并到 options
 ---@field ui framework.ui.container? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_CONTAINER = callback.api({ name = "ui.CREATE_CONTAINER" })
 
 ---@class framework.ui.api.CreateSlot: lib.callback.instance
 ---@field options framework.ui.slot.options? 创建参数
+---@field options_extra framework.ui.slot.options? 额外槽位参数，注册实现会合并到 options
 ---@field ui framework.ui.slot? 创建完成的 UI 对象
 ---@type lib.callback.api
 M.CREATE_SLOT = callback.api({ name = "ui.CREATE_SLOT" })
@@ -138,17 +144,16 @@ M.CREATE_EDITBOX = callback.api({ name = "ui.CREATE_EDITBOX" })
 M.CREATE_SLIDER = callback.api({ name = "ui.CREATE_SLIDER" })
 
 ---@class framework.ui.api.SetupReactiveFields: lib.callback.instance
----@field ui framework.ui 正在准备响应式字段的 UI 对象
----@field options framework.ui.object_config 创建选项
+---@field ui framework.ui 正在装配基础响应式字段的 UI 对象
+---@field options framework.ui.object_config UI 创建参数，供字段阶段设置初始值
 ---@type lib.callback.api
 M.SETUP_REACTIVE_FIELDS = callback.api({ name = "ui.SETUP_REACTIVE_FIELDS" })
 
 ---@class framework.ui.api.SetupReactiveLogic: lib.callback.instance
----@field ui framework.ui 正在装配响应式逻辑的 UI 对象
----@field options framework.ui.object_config 创建选项
+---@field ui framework.ui 已完成基础字段装配的 UI 对象
+---@field options framework.ui.object_config UI 创建参数，供逻辑阶段绑定监听和生命周期
 ---@type lib.callback.api
 M.SETUP_REACTIVE_LOGIC = callback.api({ name = "ui.SETUP_REACTIVE_LOGIC" })
-
 ---@class framework.ui.api.Create: lib.callback.instance
 ---@field type framework.ui.type? UI 类型，省略时创建空节点
 ---@field parent_handle framework.ui.handle? 父控件句柄，省略时挂到根节点
@@ -204,13 +209,13 @@ M.PLAY_ANIMATION = callback.api({ name = "ui.PLAY_ANIMATION" })
 M.ON_MOUSE_EVENT = callback.api({ name = "ui.ON_MOUSE_EVENT" })
 
 ---@class framework.ui.api.SetImage: lib.callback.instance
----@field framework.ui framework.ui 要设置图片的 UI 对象
+---@field ui framework.ui 要设置图片的 UI 对象
 ---@field image py.Texture|string 图片资源或图片路径
 ---@type lib.callback.api
 M.SET_IMAGE = callback.api({ name = "ui.SET_IMAGE" })
 
 ---@class framework.ui.api.SetImageColor: lib.callback.instance
----@field framework.ui framework.ui 要设置图片颜色的 UI 对象
+---@field ui framework.ui 要设置图片颜色的 UI 对象
 ---@field color lib.color|table 图片颜色
 ---@type lib.callback.api
 M.SET_IMAGE_COLOR = callback.api({ name = "ui.SET_IMAGE_COLOR" })
@@ -228,7 +233,7 @@ M.SET_ALPHA = callback.api({ name = "ui.SET_ALPHA" })
 M.GET_WINDOW_SIZE = callback.api({ name = "ui.GET_WINDOW_SIZE" })
 
 ---@class framework.ui.api.SetSize: lib.callback.instance
----@field framework.ui framework.ui 要设置尺寸的 UI 对象
+---@field ui framework.ui 要设置尺寸的 UI 对象
 ---@field width number 目标宽度
 ---@field height number 目标高度
 ---@type lib.callback.api
@@ -247,12 +252,6 @@ M.SET_FONT_SIZE = callback.api({ name = "ui.SET_FONT_SIZE" })
 ---@type lib.callback.api
 M.SET_TEXT_ALIGNMENT = callback.api({ name = "ui.SET_TEXT_ALIGNMENT" })
 
----@class framework.ui.text.outline
----@field enable? boolean 是否启用描边
----@field width? number 描边宽度
----@field color? lib.color|table 描边颜色
----@field alpha? number 描边透明度
-
 ---@class framework.ui.api.SetTextOutline: lib.callback.instance
 ---@field handle framework.ui.handle 要设置描边的文本控件句柄
 ---@field outline framework.ui.text.outline|nil|false 描边配置，nil 或 false 表示关闭描边
@@ -260,14 +259,14 @@ M.SET_TEXT_ALIGNMENT = callback.api({ name = "ui.SET_TEXT_ALIGNMENT" })
 M.SET_TEXT_OUTLINE = callback.api({ name = "ui.SET_TEXT_OUTLINE" })
 
 ---@class framework.ui.api.SetPosition: lib.callback.instance
----@field framework.ui framework.ui 要设置位置的 UI 对象
+---@field ui framework.ui 要设置位置的 UI 对象
 ---@field x number 目标横坐标
 ---@field y number 目标纵坐标
 ---@type lib.callback.api
 M.SET_POSITION = callback.api({ name = "ui.SET_POSITION" })
 
 ---@class framework.ui.api.SetAnchor: lib.callback.instance
----@field framework.ui framework.ui 要设置锚点的 UI 对象
+---@field ui framework.ui 要设置锚点的 UI 对象
 ---@field x number 锚点横向比例
 ---@field y number 锚点纵向比例
 ---@type lib.callback.api
@@ -279,19 +278,19 @@ M.SET_ANCHOR = callback.api({ name = "ui.SET_ANCHOR" })
 M.CREATE_ANCHOR = callback.api({ name = "ui.CREATE_ANCHOR" })
 
 ---@class framework.ui.api.SetParent: lib.callback.instance
----@field framework.ui framework.ui 要调整父级的 UI 对象
+---@field ui framework.ui 要调整父级的 UI 对象
 ---@field parent_handle framework.ui.handle? 目标父控件句柄，省略时挂到根节点
 ---@type lib.callback.api
 M.SET_PARENT = callback.api({ name = "ui.SET_PARENT" })
 
 ---@class framework.ui.api.SetProgress: lib.callback.instance
----@field framework.ui framework.ui 要设置进度的 UI 对象
+---@field ui framework.ui 要设置进度的 UI 对象
 ---@field progress number 进度值，范围 0 到 1
 ---@type lib.callback.api
 M.SET_PROGRESS = callback.api({ name = "ui.SET_PROGRESS" })
 
 ---@class framework.ui.api.SetRotation: lib.callback.instance
----@field framework.ui framework.ui 要设置旋转的 UI 对象
+---@field ui framework.ui 要设置旋转的 UI 对象
 ---@field rotation number 旋转角度
 ---@type lib.callback.api
 M.SET_ROTATION = callback.api({ name = "ui.SET_ROTATION" })

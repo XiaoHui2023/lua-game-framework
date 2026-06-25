@@ -2,24 +2,17 @@
 local string = require "lib.stringx"
 ---@type lib.tablex
 local table = require "lib.tablex"
----@type framework.ui
----@field DEFAULT_TEXT_FONT any 默认文本字体资源
----@field DEFAULT_TEXT_FONT_SIZE number 默认字体大小比例
----@field DEFAULT_TEXT_ALIGN framework.ui.position 默认文本排列位置
----@field TEXT_GET_TEXT_PIXEL_SIZE_WIDTH_SCALE number 文本宽度估算缩放系数
----@field TEXT_GET_TEXT_PIXEL_SIZE_HEIGHT_SCALE number 文本高度估算缩放系数
-local settings = require "..settings"
+---@type framework.ui.settings
+local settings = require "framework.ui.settings"
 ---@type framework.ui.apis
-local apis = require "..apis"
+local apis = require "framework.ui.apis"
 
 ---@class framework.ui.text.options: framework.ui.object_config
 ---@field text? string 初始显示文本
 ---@field font_size? number 字体大小比例
 ---@field font? any 字体资源
 
----@param args? framework.ui.object_config 文本创建参数
----@param ... framework.ui.object_config 需要合并的额外创建参数
----@return framework.ui.text 文本 UI 对象
+---@param api framework.ui.api.CreateText 文本创建回调参数
 apis.CREATE_TEXT(function(api)
     local options_extra = api.options_extra
     local args = api.options
@@ -33,9 +26,9 @@ apis.CREATE_TEXT(function(api)
     args.size = args.size or 1
     args.size_mode = args.size_mode or "contain"
 
-    ---@class framework.ui.text : framework.ui
     local create_api = apis.CREATE_OBJECT({ options = args })
     assert(create_api.ui ~= nil, "framework.ui.CREATE_TEXT requires CREATE_OBJECT result")
+    ---@type framework.ui.text
     local o = create_api.ui
 
     ---@type lib.reactive.ref 字体资源

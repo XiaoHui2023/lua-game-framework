@@ -54,7 +54,7 @@ function M.renderer(args)
 
     ---@class framework.appearance.renderer : lib.reactive.factory
     local o = reactive.factory(args)
-    o.set_class("framework.appearance.renderer")
+    o.factory.set_class("framework.appearance.renderer")
 
     o.factory.modifiers.add({
         name = "modifiers",

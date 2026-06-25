@@ -32,10 +32,10 @@ M.create = function(args, ...)
 
     ---@class projectile: lib.reactive.factory
     local o = factory(args)
-    o.set_class("projectile")
+    o.factory.set_class("projectile")
 
     o.factory.effect.set(args.effect)
-    o.factory.owner.set(args.owner)
+    o.factory.field("owner").set(args.owner)
     local create_api = apis.CREATE_EFFECT({
         effect = args.effect,
         position = args.position,

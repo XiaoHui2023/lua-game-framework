@@ -1,5 +1,5 @@
----@type mathx.geometry
-local geometry = require "mathx.geometry"
+---@type lib.mathx.geometry
+local geometry = require "lib.mathx.geometry"
 
 ---@param o framework.ui 要装配吸附能力的 UI 对象
 return function (o)

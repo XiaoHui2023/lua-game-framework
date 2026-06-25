@@ -4,9 +4,10 @@ local M = {}
 package.loaded[...] = M
 
 M.settings = require ".settings"
+local state = require ".state"
 
 require ".impl"
-require ".frame"
-require ".layout"
+
+M.event_registry = state.event_registry
 
 return M

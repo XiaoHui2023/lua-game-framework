@@ -30,7 +30,7 @@ M.create = function(args,...)
 
     ---@class unit: reactive.factory
     local o = factory(args)
-    o.set_class("unit")
+    o.factory.set_class("unit")
 
     ---@type reactive.set 位置
     o.factory.position.set(args.position)

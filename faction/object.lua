@@ -43,7 +43,7 @@ M.create = function(args)
     local o = factory({
         name = args.name,
     })
-    o.set_class("faction")
+    o.factory.set_class("faction")
 
     o.delete.mount(M.POOL_OBJECT.add(o))
 

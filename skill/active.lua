@@ -47,7 +47,7 @@ M.create_active = function(args)
 
     ---@class skill.active: skill
     local o = M.new(args)
-    o.set_class("skill.active")
+    o.factory.set_class("skill.active")
 
     ---@type hook.set<number>
     o.factory.cooldown.set(args.cooldown)

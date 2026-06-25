@@ -9,10 +9,8 @@ return function (o,args)
     ---@type framework.ui
     o = o
 
-    ---@type lib.reactive.ref
     o.factory.relative_position.set({x=0.5,y=0.5})
 
-    ---@type lib.reactive.ref
     o.factory.pixel_position.set({x=0,y=0})
 
     local is_syncing_position = false
