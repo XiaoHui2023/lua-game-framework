@@ -4,14 +4,14 @@ local M = require "framework.lighting"
 local factory = require("lib.reactive").factory
 
 ---@class framework.lighting.params
----@field name string 闪电链名称
----@field start_point point 起点
----@field end_point point 终点
----@field start_height? number 起点高度
----@field end_height? number 终点高度
+---@field name string ?????
+---@field start_point point ??
+---@field end_point point ??
+---@field start_height? number ????
+---@field end_height? number ????
 
 ---@param k framework.lighting.params
----@return lighting lighting 闪电链对象
+---@return lighting lightning ?????
 M.new = function(k)
     ---@type point
     local po = k.start_point
@@ -26,17 +26,10 @@ M.new = function(k)
     ---@type number
     o.handle = nil
 
-    ---@type reactive.set
-    o.factory.start_point.set(po)
-
-    ---@type reactive.set
-    o.factory.end_point.set(pt)
-
-    ---@type reactive.set 起点高度
-    o.factory.start_height.set(ho)
-
-    ---@type reactive.set 终点高度
-    o.factory.end_height.set(ht)
+    o.factory.ref_field("start_point", po)
+    o.factory.ref_field("end_point", pt)
+    o.factory.ref_field("start_height", ho)
+    o.factory.ref_field("end_height", ht)
 
     return o
 end

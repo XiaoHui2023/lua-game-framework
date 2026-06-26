@@ -45,13 +45,13 @@ M.create = function(args)
     })
     o.factory.set_class("faction")
 
-    o.delete.mount(M.POOL_OBJECT.add(o))
+    o.factory.delete.mount(M.POOL_OBJECT.add(o))
 
     ---@type hook.set<faction.stance>
-    o.factory.default_stance.set(args.default_stance)
+    o.factory.ref_field("default_stance", args.default_stance)
 
     ---@type hook.set<table<faction, faction.stance>>
-    o.factory.stance.set({})
+    o.factory.ref_field("stance", {})
 
     ---@param fac faction target faction.
     ---@return faction.stance stance current stance.

@@ -15,7 +15,7 @@ end
 return function(o, args)
     args.collision_radius = args.collision_radius or projectile.settings.DEFAULT_COLLISION_RADIUS
 
-    o.factory.collision_radius.set(args.collision_radius)
+    o.factory.ref_field("collision_radius", args.collision_radius)
 
     ---@param position point
     ---@param radius? number 额外碰撞半径

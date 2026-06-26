@@ -17,10 +17,10 @@ return function (o,args)
     o = o
     
     ---@type hook.set 高度
-    o.factory.height.set(args.height)
+    o.factory.ref_field("height", args.height)
 
     ---@type hook.set 转身速度
-    o.factory.turn_speed.set(args.turn_speed)
+    o.factory.ref_field("turn_speed", args.turn_speed)
 
     -- 传送单位到指定位置
     o.turn_speed.on_change.add(function(speed)

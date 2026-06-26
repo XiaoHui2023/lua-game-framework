@@ -10,9 +10,7 @@ apis.CREATE_VOID(function(api)
     local create_api = apis.CREATE_OBJECT({ options = args })
     assert(create_api.ui ~= nil, "framework.ui.CREATE_VOID requires CREATE_OBJECT result")
     local ui = create_api.ui
-
-    ---@type reactive.event<framework.ui>
-    ui.factory.on_children_layout_change.event()
+    ui.factory.event_field("on_children_layout_change")
 
     api.ui = ui
 end)

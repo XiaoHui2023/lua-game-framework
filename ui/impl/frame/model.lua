@@ -4,13 +4,14 @@ local apis = require "framework.ui.apis"
 apis.CREATE_MODEL(function(api)
     local args = api.options or {}
     args.model = args.model or nil
+    args.size = args.size or { width = 120, height = 120 }
     args.type = args.type or "model"
 
     local create_api = apis.CREATE_OBJECT({ options = args })
     assert(create_api.ui ~= nil, "framework.ui.CREATE_MODEL requires CREATE_OBJECT result")
     local ui = create_api.ui
 
-    ui.factory.model.set(args.model)
+    ui.factory.ref_field("model", args.model)
     ui.model.on_change.add(function(model)
         if model == nil or model == "" then
             return

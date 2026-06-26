@@ -54,16 +54,29 @@ bindings use `engine.y3` and `engine.GameAPI`.
 ## Layout
 
 ```text
-runtime/            host bootstrap, framework injection, and library backend setup
-lib/reactive/       engine-independent reactive primitives
-framework/          reusable engine-independent game framework
-framework/state_machine/ hierarchical state machine for gameplay orchestration
-config/             project-level defaults and overrides
-scene/              map scene instances
-prefab/             reusable prefab definitions
-game/systems/       gameplay systems
-game/plugins/       optional gameplay/UI/camera plugins
+appearance/     appearance modifiers and rendering boundary
+camera/         camera APIs, defaults, and state
+chat/           chat input, history, and message events
+event/          host event abstraction
+faction/        faction objects and relation model
+game/           game-level lifecycle APIs and defaults
+lighting/       lighting objects
+log/            log types and facade
+player/         player objects, lookup, and default behaviors
+projectile/     projectile objects and behavior groups
+skill/          skill composition model
+sound/          sound objects and runtime APIs
+sync/           per-channel sync messages
+terrain/        terrain painting APIs
+timer/          loop, delay, and reactive timer driver
+ui/             UI object model, frame creation, layout, and events
+unit/           unit objects and behavior groups
+visual_effect/  visual effect creation options and APIs
 ```
+
+Each top-level framework module has its own `README.md`. The root README keeps
+the host-injection and layout overview; module usage, directory notes, API
+families, and settings belong in the module README.
 
 Inside a framework domain module:
 

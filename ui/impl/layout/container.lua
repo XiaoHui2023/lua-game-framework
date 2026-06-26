@@ -2,60 +2,69 @@
 local table = require "lib.tablex"
 ---@type framework.ui.apis
 local apis = require "framework.ui.apis"
+local length = require "framework.ui.impl.core.length"
 
-local FLOW_BY_TYPE = {
-    horizontal = {
-        left_to_right = true,
-        right_to_left = true,
-    },
-    vertical = {
-        top_to_bottom = true,
-        bottom_to_top = true,
-    },
+local DEFAULT_LAYOUT = {
+    type = "overlay",
+    direction = "horizontal",
+    gap = 0,
+    padding = 0,
+    align = "center",
+    justify = "start",
 }
 
----@param api framework.ui.api.CreateContainer 容器创建回调参数
+local function normalize_layout(layout)
+    layout = table.merge(DEFAULT_LAYOUT, layout or {})
+    layout.padding = length.normalize_padding(layout.padding)
+    layout.gap = layout.gap or 0
+    layout.align = layout.align or "center"
+    layout.justify = layout.justify or "start"
+    layout.direction = layout.direction or "horizontal"
+    assert(layout.type == "none" or layout.type == "overlay" or layout.type == "stack", "unsupported container layout")
+    assert(layout.direction == "horizontal" or layout.direction == "vertical", "unsupported stack direction")
+    return layout
+end
+
+local function get_child_constraints(size, padding)
+    return {
+        min_width = 0,
+        max_width = math.max(0, size.width - padding.left - padding.right),
+        min_height = 0,
+        max_height = math.max(0, size.height - padding.top - padding.bottom),
+    }
+end
+
+---@param api framework.ui.api.CreateContainer
 apis.CREATE_CONTAINER(function(api)
-    local options_extra = api.options_extra
-    local args = api.options
-    args = table.merge(args or {}, options_extra)
-    args.mode = args.mode or "single"
-    args.layout = args.layout or {}
-    args.layout.type = args.layout.type or "horizontal"
-    args.layout.flow = args.layout.flow or (args.layout.type == "vertical" and "top_to_bottom" or "left_to_right")
-    assert(FLOW_BY_TYPE[args.layout.type], "framework.ui.container requires supported layout type")
-    assert(FLOW_BY_TYPE[args.layout.type][args.layout.flow], "framework.ui.container layout flow must match layout type")
-    args.layout.reverse = args.layout.reverse or false
-    args.layout.spacing = args.layout.spacing or 0
-    args.layout.padding = args.layout.padding or 0
+    local args = table.merge(api.options or {}, api.options_extra)
+    args.layout = normalize_layout(args.layout)
 
     local void_api = apis.CREATE_VOID({ options = args })
     assert(void_api.ui ~= nil, "framework.ui.CREATE_CONTAINER requires CREATE_VOID result")
     ---@type framework.ui.container
     local o = void_api.ui
-    o.is_content_sized = true
 
     ---@type reactive.add<framework.ui>
-    o.factory.widgets.add({
-        ---@param a framework.ui 待排序的前一个子 UI
-        ---@param b framework.ui 待排序的后一个子 UI
-        ---@return boolean before a 是否排在 b 前面
+    o.factory.collection_field("widgets", {
         compare = function(a, b)
             return a.priority() < b.priority()
         end,
     })
 
-    o.factory.mode.set(args.mode)
-
-    o.layout = {}
-    o.layout.type = o.factory.set(args.layout.type)
-    o.layout.flow = o.factory.set(args.layout.flow)
-    o.layout.reverse = o.factory.set(args.layout.reverse)
-    o.layout.spacing = o.factory.set(args.layout.spacing)
-    o.layout.padding = o.factory.set(args.layout.padding)
+    o.layout = {
+        type = o.factory.ref_field("layout_type", args.layout.type),
+        direction = o.factory.ref_field("layout_direction", args.layout.direction),
+        gap = o.factory.ref_field("layout_gap", args.layout.gap),
+        padding = o.factory.ref_field("layout_padding", args.layout.padding),
+        align = o.factory.ref_field("layout_align", args.layout.align),
+        justify = o.factory.ref_field("layout_justify", args.layout.justify),
+    }
 
     local widget_removers = {}
     local hidden_widget_unlocks = {}
+    local refreshing_layout = false
+    local pending_layout_refresh = false
+    local measuring_content = false
 
     local function clear_hidden_widget_locks()
         for widget, unlock in pairs(hidden_widget_unlocks) do
@@ -64,263 +73,187 @@ apis.CREATE_CONTAINER(function(api)
         end
     end
 
-    ---@param ui framework.ui 需要加入布局的子 UI
-    o.add_child = function(ui)
-        if ui.parent and ui.parent() ~= o then
-            ui.factory.set_parent(o)
+    local function get_widgets()
+        return o.widgets()
+    end
+
+    local function measure_overlay()
+        local max_width, max_height = 0, 0
+        get_widgets().for_each(function(widget)
+            local size = widget.measured_size()
+            max_width = math.max(max_width, size.width)
+            max_height = math.max(max_height, size.height)
+        end)
+        local padding = o.layout.padding()
+        return {
+            width = max_width + padding.left + padding.right,
+            height = max_height + padding.top + padding.bottom,
+        }
+    end
+
+    local function measure_stack()
+        local direction = o.layout.direction()
+        local gap = o.layout.gap()
+        local count = get_widgets().count
+        local main, cross = 0, 0
+        get_widgets().for_each(function(widget)
+            local size = widget.measured_size()
+            if direction == "horizontal" then
+                main = main + size.width
+                cross = math.max(cross, size.height)
+            else
+                main = main + size.height
+                cross = math.max(cross, size.width)
+            end
+        end)
+        main = main + math.max(0, count - 1) * gap
+
+        local padding = o.layout.padding()
+        if direction == "horizontal" then
+            return {
+                width = main + padding.left + padding.right,
+                height = cross + padding.top + padding.bottom,
+            }
         end
+        return {
+            width = cross + padding.left + padding.right,
+            height = main + padding.top + padding.bottom,
+        }
+    end
+
+    local function measure_content_size()
+        local layout_type = o.layout.type()
+        if layout_type == "stack" then
+            return measure_stack()
+        end
+        if layout_type == "none" then
+            return { width = 0, height = 0 }
+        end
+        return measure_overlay()
+    end
+
+    o.content_size.compute(function()
+        measuring_content = true
+        local ok, size = xpcall(measure_content_size, debug.traceback)
+        measuring_content = false
+        if not ok then
+            error(size, 0)
+        end
+        return size
+    end)
+
+    local function set_child_constraints()
+        local size = o.measured_size()
+        local padding = o.layout.padding()
+        local constraints = get_child_constraints(size, padding)
+        get_widgets().for_each(function(widget)
+            widget.constraints.set(constraints)
+        end)
+    end
+
+    local function layout_overlay()
+        clear_hidden_widget_locks()
+        local size = o.measured_size()
+        local position = o.pixel_position()
+        get_widgets().for_each(function(widget)
+            widget.pixel_position.set({ x = position.x, y = position.y })
+            widget.layout_rect.set(length.rect(position.x, position.y, size.width, size.height))
+        end)
+    end
+
+    local function layout_stack()
+        clear_hidden_widget_locks()
+        local size = o.measured_size()
+        local position = o.pixel_position()
+        local padding = o.layout.padding()
+        local direction = o.layout.direction()
+        local gap = o.layout.gap()
+        local x = position.x - size.width / 2 + padding.left
+        local y = position.y + size.height / 2 - padding.top
+
+        get_widgets().for_each(function(widget)
+            local child_size = widget.measured_size()
+            if direction == "horizontal" then
+                local child_x = x + child_size.width / 2
+                widget.pixel_position.set({ x = child_x, y = position.y })
+                widget.layout_rect.set(length.rect(child_x, position.y, child_size.width, child_size.height))
+                x = x + child_size.width + gap
+            else
+                local child_y = y - child_size.height / 2
+                widget.pixel_position.set({ x = position.x, y = child_y })
+                widget.layout_rect.set(length.rect(position.x, child_y, child_size.width, child_size.height))
+                y = y - child_size.height - gap
+            end
+        end)
+    end
+
+    local function do_refresh_layout()
+        set_child_constraints()
+        local layout_type = o.layout.type()
+        if layout_type == "stack" then
+            layout_stack()
+        elseif layout_type == "overlay" then
+            layout_overlay()
+        end
+    end
+
+    local function refresh_layout()
+        if measuring_content then
+            pending_layout_refresh = true
+            return
+        end
+        if refreshing_layout then
+            pending_layout_refresh = true
+            return
+        end
+
+        refreshing_layout = true
+        local ok, err = xpcall(function()
+            repeat
+                pending_layout_refresh = false
+                do_refresh_layout()
+            until not pending_layout_refresh
+        end, debug.traceback)
+        refreshing_layout = false
+        if not ok then
+            error(err, 0)
+        end
+    end
+
+    local function add_widget(ui)
         if not widget_removers[ui] then
             widget_removers[ui] = o.widgets.add(ui)
+            ui.measured_size.on_change.add(refresh_layout)
         end
+        refresh_layout()
     end
 
-    ---@param uis framework.ui[] 需要批量加入布局的子 UI 列表
-    o.add_children = function(uis)
-        for _, ui in ipairs(uis) do
-            o.add_child(ui)
-        end
-    end
-
-    ---@param ui framework.ui 需要从布局移除的子 UI
-    o.remove_child = function(ui)
+    local function remove_widget(ui)
         local remove_widget = widget_removers[ui]
         if remove_widget then
             remove_widget()
             widget_removers[ui] = nil
-        end
-        if ui.factory and ui.factory.get_parent() == o then
-            ui.factory.set_parent(nil)
         end
         local unlock = hidden_widget_unlocks[ui]
         if unlock then
             unlock()
             hidden_widget_unlocks[ui] = nil
         end
-    end
-
-    ---@type reactive.computed<framework.ui?>
-    local primary_widget = o.factory.computed(function()
-        ---@type list<framework.ui>
-        local widgets = o.widgets()
-        if widgets.count == 0 then
-            return nil
-        end
-        return widgets.first()
-    end)
-
-    local function relative_layout_pixels()
-        local spacing = o.layout.spacing()
-        local padding = o.layout.padding()
-        local window_width, window_height = o.window_size()
-        return {
-            spacing_x = spacing * window_width,
-            spacing_y = spacing * window_height,
-            padding_x = padding * window_width,
-            padding_y = padding * window_height,
-        }
-    end
-
-    local function get_single_pixel_size()
-        ---@type framework.ui
-        local ui = primary_widget()
-        return ui.scaled_pixel_size()
-    end
-
-    local function get_stack_pixel_size()
-        ---@type list<framework.ui>
-        local widgets = o.widgets()
-        ---@type framework.ui.container.layout.type
-        local layout_type = o.layout.type()
-        local spacing = relative_layout_pixels()
-        local count = widgets.count
-
-        if layout_type == "horizontal" then
-            local max_height = 0
-            local width_sum = 0
-            widgets.for_each(function(widget)
-                local width, height = widget.scaled_pixel_size()
-                max_height = math.max(max_height, height)
-                width_sum = width_sum + width
-            end)
-            return width_sum + math.max(0, count - 1) * spacing.spacing_x + spacing.padding_x * 2,
-                max_height + spacing.padding_y * 2
-        elseif layout_type == "vertical" then
-            local max_width = 0
-            local height_sum = 0
-            widgets.for_each(function(widget)
-                local width, height = widget.scaled_pixel_size()
-                max_width = math.max(max_width, width)
-                height_sum = height_sum + height
-            end)
-            return max_width + spacing.padding_x * 2,
-                height_sum + math.max(0, count - 1) * spacing.spacing_y + spacing.padding_y * 2
-        else
-            error("not implemented")
-        end
-    end
-
-    o.pixel_size.compute(function()
-        ---@type framework.ui.container.mode
-        local mode = o.mode()
-        ---@type list<framework.ui>
-        local widgets = o.widgets()
-        if widgets.count == 0 then
-            return 0, 0
-        end
-        if mode == "single" then
-            return get_single_pixel_size()
-        elseif mode == "stack" then
-            return get_stack_pixel_size()
-        else
-            error("not implemented")
-        end
-    end)
-
-    local function layout_single()
-        ---@type framework.ui
-        local ui = primary_widget()
-        ---@type list<framework.ui>
-        local widgets = o.widgets()
-        clear_hidden_widget_locks()
-        if ui == nil then
-            return
-        end
-        widgets.for_each(function(widget)
-            if widget ~= ui then
-                hidden_widget_unlocks[widget] = widget.hide_lock.acquire()
-            end
-        end)
-
-        ui.anchor_center(o)
-    end
-
-    local function stack_offset(point, layout_type, has_previous, relative_ui)
-        local spacing = o.layout.spacing()
-        local padding = o.layout.padding()
-        local distance = has_previous and spacing or padding
-        if distance == 0 then
-            return 0, 0
-        end
-        local window_width, window_height = o.window_size()
-        local target_width, target_height = relative_ui.visual_size()
-        if layout_type == "horizontal" then
-            if target_width == 0 then
-                return 0, 0
-            end
-            local x = distance * window_width / target_width
-            return point == "left_center" and x or -x, 0
-        elseif layout_type == "vertical" then
-            if target_height == 0 then
-                return 0, 0
-            end
-            local y = distance * window_height / target_height
-            return 0, point == "top_center" and -y or y
-        end
-        return 0, 0
-    end
-
-    local function layout_stack()
-        ---@type list<framework.ui>
-        local widgets = o.widgets()
-        if widgets.count == 0 then
-            return
-        end
-        ---@type framework.ui.container.layout.type
-        local layout_type = o.layout.type()
-        ---@type framework.ui.container.layout.flow
-        local flow = o.layout.flow()
-        local reverse = o.layout.reverse()
-        ---@type framework.ui
-        local last
-
-        clear_hidden_widget_locks()
-        widgets.for_each(function(widget)
-            ---@type framework.ui.position
-            local point
-            ---@type framework.ui.position
-            local relative_point
-            ---@type framework.ui
-            local relative_ui
-
-            if last then
-                if layout_type == "horizontal" then
-                    if (flow == "left_to_right" and not reverse) or (flow == "right_to_left" and reverse) then
-                        point = "left_center"
-                        relative_point = "right_center"
-                    elseif (flow == "left_to_right" and reverse) or (flow == "right_to_left" and not reverse) then
-                        point = "right_center"
-                        relative_point = "left_center"
-                    end
-                elseif layout_type == "vertical" then
-                    if (flow == "top_to_bottom" and not reverse) or (flow == "bottom_to_top" and reverse) then
-                        point = "top_center"
-                        relative_point = "bottom_center"
-                    elseif (flow == "top_to_bottom" and reverse) or (flow == "bottom_to_top" and not reverse) then
-                        point = "bottom_center"
-                        relative_point = "top_center"
-                    end
-                end
-                relative_ui = last
-            else
-                if layout_type == "horizontal" then
-                    if (flow == "left_to_right" and not reverse) or (flow == "right_to_left" and reverse) then
-                        point = "left_center"
-                        relative_point = "left_center"
-                    elseif (flow == "left_to_right" and reverse) or (flow == "right_to_left" and not reverse) then
-                        point = "right_center"
-                        relative_point = "right_center"
-                    end
-                elseif layout_type == "vertical" then
-                    if (flow == "top_to_bottom" and not reverse) or (flow == "bottom_to_top" and reverse) then
-                        point = "top_center"
-                        relative_point = "top_center"
-                    elseif (flow == "top_to_bottom" and reverse) or (flow == "bottom_to_top" and not reverse) then
-                        point = "bottom_center"
-                        relative_point = "bottom_center"
-                    end
-                end
-                relative_ui = o
-            end
-
-            local x, y = stack_offset(point, layout_type, last ~= nil, relative_ui)
-            widget.anchor.set({
-                point = point,
-                relative_point = relative_point,
-                x = x,
-                y = y,
-                relative_ui = relative_ui,
-            })
-            last = widget
-        end)
-    end
-
-    local function refresh_layout()
-        ---@type framework.ui.container.mode
-        local mode = o.mode()
-        if mode == "single" then
-            layout_single()
-        elseif mode == "stack" then
-            layout_stack()
-        else
-            error("not implemented")
-        end
-    end
-
-    o.widgets.on_add.add(function(widget)
-        o.factory.capture("", widget)
         refresh_layout()
-    end)
+    end
 
-    o.widgets.on_change.add(function()
-        refresh_layout()
-    end)
-
-    o.mode.on_change.add(refresh_layout)
+    o.widgets.on_change.add(refresh_layout)
+    o.measured_size.on_change.add(refresh_layout)
+    o.pixel_position.on_change.add(refresh_layout)
     o.layout.type.on_change.add(refresh_layout)
-    o.layout.flow.on_change.add(refresh_layout)
-    o.layout.reverse.on_change.add(refresh_layout)
-    o.layout.spacing.on_change.add(refresh_layout)
+    o.layout.direction.on_change.add(refresh_layout)
+    o.layout.gap.on_change.add(refresh_layout)
     o.layout.padding.on_change.add(refresh_layout)
+    o.layout.align.on_change.add(refresh_layout)
+    o.layout.justify.on_change.add(refresh_layout)
+
+    o.factory.on_add_child.add(add_widget)
+    o.factory.on_remove_child.add(remove_widget)
 
     api.ui = o
 end)

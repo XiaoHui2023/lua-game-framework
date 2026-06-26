@@ -21,13 +21,13 @@ return function (o,args)
     o = o
 
     ---@type hook.set 移动速度
-    o.factory.move_speed.set(args.move_speed)
+    o.factory.ref_field("move_speed", args.move_speed)
     ---@type hook.set 基础攻击速度
-    o.factory.base_attack_speed.set(args.base_attack_speed)
+    o.factory.ref_field("base_attack_speed", args.base_attack_speed)
     ---@type hook.set 攻击速度
-    o.factory.attack_speed.set(args.attack_speed)
+    o.factory.ref_field("attack_speed", args.attack_speed)
     ---@type hook.set 攻击范围
-    o.factory.attack_range.set(args.attack_range)
+    o.factory.ref_field("attack_range", args.attack_range)
 
     -- 重载设置移动速度
     o.move_speed.on_change.add(function(speed)

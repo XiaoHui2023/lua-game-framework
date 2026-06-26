@@ -13,8 +13,7 @@ apis.CREATE_EDITBOX(function(api)
         args.label = args.label or settings.DEFAULT_EDITBOX_FRAME()
     end
     args.type = args.type or "input"
-    args.width = args.width or 0.2
-    args.height = args.height or 0.04
+    args.size = args.size or { width = 240, height = 36 }
     args.length_limit = args.length_limit or 8
     args.is_int = args.is_int or false
     args.content = args.content or ""
@@ -23,10 +22,10 @@ apis.CREATE_EDITBOX(function(api)
     assert(create_api.ui ~= nil, "framework.ui.CREATE_EDITBOX requires CREATE_OBJECT result")
     local ui = create_api.ui
 
-    ui.factory.is_int.set(args.is_int)
-    ui.factory.on_input_change.event()
-    ui.factory.content.set(args.content)
-    ui.factory.length_limit.set(args.length_limit)
+    ui.factory.ref_field("is_int", args.is_int)
+    ui.factory.event_field("on_input_change")
+    ui.factory.ref_field("content", args.content)
+    ui.factory.ref_field("length_limit", args.length_limit)
 
     ui.factory.interval(function()
         local new_content = jass.dzapi.frame_get_text(ui.handle())

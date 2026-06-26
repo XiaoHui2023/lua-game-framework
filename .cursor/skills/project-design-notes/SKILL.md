@@ -22,6 +22,7 @@ Lua 游戏通用框架：在宿主环境（如 Y3 地图脚本）上提供可复
 - 相对 `require` 使用点号模块路径；跨父目录用 `require "..apis"`，禁止用 `require "../apis"` 这类文件路径斜杠。
 - 当前文件新建或注册并返回的模块表统一命名为 `M`；导入其他模块时不用 `M`，按语义使用下划线小写别名。
 - 用户向文档分工：根 `README.md` 写框架定位与加载方式；各子模块 `README.md` 写该模块用法；设计口径不写进源码长注释。
+- 每个 `framework/*` 顶层子模块都必须有自己的 `README.md`；新增、重命名或拆分子模块时，同轮补齐或迁移模块 README，并同步根 `README.md` 的模块索引。
 - Agent 三件套（预加载、设计笔记、changelog）放在 `.cursor/skills/`；通用规范在 `~/.cursor/skills/`。
 - 子模块文件按职责命名，禁止新增泛名 `base.lua`、`config.lua`、`api.lua`：`init.lua` 承载模块公开门面、枚举、非 callback 契约和加载顺序；`state.lua` 承载模块级可变状态，且只能使用普通 Lua 值，不能用 reactive ref/event/semaphore；`settings.lua` 承载框架默认值和可覆盖开关；`types.lua` 承载较大的 EmmyLua 类型声明；`apis.lua` 仅承载 callback.api 声明；`impl/` 放引擎无关 callback handler；引擎外部能力由 `runtime/framework/*` 注册 callback 实现。
 - 发现历史 `base.lua` 被当作模块共享表时，必须迁移为 `init.lua` 创建总表 `M` 并组装子模块；类型声明放 `types.lua`，模块内共享可变值放 `state.lua`，稳定默认值和可覆盖常量放 `settings.lua`，callback 契约放 `apis.lua`。子模块需要扩展总表时 require 公开模块名并依赖 `init.lua` 预先写入 `package.loaded[...] = M`，不得继续新增或传播 `.base` 依赖。

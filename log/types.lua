@@ -1,0 +1,12 @@
+---@class framework.log.backend
+---@field debug? fun(...) Write a debug-level log entry.
+---@field info? fun(...) Write an info-level log entry.
+---@field warn? fun(...) Write a warning-level log entry.
+---@field error? fun(...) Write an error-level log entry.
+
+---@class framework.log
+---@field set_backend fun(next_backend: framework.log.backend) Set the active log output backend.
+---@field debug fun(...) Write a debug-level log entry.
+---@field info fun(...) Write an info-level log entry.
+---@field warn fun(...) Write a warning-level log entry.
+---@field error fun(...) Write an error-level log entry.

@@ -3,6 +3,7 @@ local apis = require "framework.ui.apis"
 
 apis.CREATE_BUTTON(function(api)
     local args = api.options or {}
+    args.size = args.size or { width = 120, height = 36 }
     args.type = args.type or "button"
 
     local create_api = apis.CREATE_OBJECT({ options = args })

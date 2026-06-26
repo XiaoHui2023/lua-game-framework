@@ -295,4 +295,30 @@ M.SET_PROGRESS = callback.api({ name = "ui.SET_PROGRESS" })
 ---@type lib.callback.api
 M.SET_ROTATION = callback.api({ name = "ui.SET_ROTATION" })
 
+---@class framework.ui.api.SetDebug: lib.callback.instance
+---@field enabled boolean Whether UI layout diagnostics are enabled.
+---@type lib.callback.api
+M.SET_DEBUG = callback.api({ name = "ui.SET_DEBUG" })
+
+---@class framework.ui.api.GetLayoutStats: lib.callback.instance
+---@field root? framework.ui Optional root UI. When omitted, all known roots are inspected.
+---@field stats framework.ui.layout.stats? Layout statistics written by impl.
+---@type lib.callback.api
+M.GET_LAYOUT_STATS = callback.api({ name = "ui.GET_LAYOUT_STATS" })
+
+---@class framework.ui.api.DumpLayoutTree: lib.callback.instance
+---@field root? framework.ui Optional root UI. When omitted, all known roots are inspected.
+---@field force? boolean Dump even when diagnostics are disabled.
+---@field print? boolean Whether to send the dump to runtime logging. Defaults to true.
+---@field lines string[]? Layout tree lines written by impl.
+---@field stats framework.ui.layout.stats? Layout statistics written by impl.
+---@type lib.callback.api
+M.DUMP_LAYOUT_TREE = callback.api({ name = "ui.DUMP_LAYOUT_TREE" })
+
+---@class framework.ui.api.WriteDebugInfo: lib.callback.instance
+---@field level? "debug"|"info"|"warn"|"error" Runtime log level. Defaults to debug.
+---@field message string Diagnostic message.
+---@type lib.callback.api
+M.WRITE_DEBUG_INFO = callback.api({ name = "ui.WRITE_DEBUG_INFO" })
+
 return M

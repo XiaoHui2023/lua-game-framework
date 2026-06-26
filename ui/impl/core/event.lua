@@ -7,9 +7,7 @@ local table = require "lib.tablex"
 ---@type lib.reactive
 local reactive = require "lib.reactive"
 
----@param keys framework.ui.event.key[] 需要创建的事件名列表
----@param registry framework.ui.event.registry 需要装配的事件注册表
----@return framework.ui.event.registry registry 事件注册表
+---@param keys framework.ui.event.key[] 需要创建的事件名列�?
 local function setup_event_registry(keys, registry)
     ---@type table<framework.ui.event.key, reactive.event>
     local events = {}
@@ -28,11 +26,11 @@ local function setup_event_registry(keys, registry)
     end
 
     ---@param obj framework.ui 需要挂接事件的 UI 对象
-    ---@param event_map table<framework.ui.event.key, reactive.event> 对象事件到共享注册表事件的映射
+
     function registry.register(obj, event_map)
         for key, trigger in table.sorted_pairs(event_map) do
             local handler = registry.get(key)
-            obj.delete.add(trigger.add(function(...)
+            obj.factory.delete.add(trigger.add(function(...)
                 handler.run(obj, ...)
             end))
         end
@@ -41,10 +39,9 @@ local function setup_event_registry(keys, registry)
     return registry
 end
 
----@param handle framework.ui.handle 鼠标事件所属控件句柄
 ---@param event string 运行时鼠标事件名
----@param func fun() 事件触发回调
----@return fun() remove 解绑函数
+---@param func fun()
+---@return fun() remove
 local function register_mouse_event(handle, event, func)
     local api = apis.ON_MOUSE_EVENT({
         handle = handle,
@@ -73,39 +70,19 @@ return function (o,args)
 
     ---@type framework.ui
     o = o
-
-    ---@type lib.reactive.ref 鼠标焦点是否在UI上面
-    o.factory.focusable.set(args.focusable)
-
-    ---@type lib.reactive.ref 是否可以点击
-    o.factory.clickable.set(args.clickable)
-
-    ---@type reactive.event
-    o.factory.on_mouse_left_up.event()
-
-    ---@type reactive.event
-    o.factory.on_mouse_left_down.event()
-
-    ---@type reactive.event
-    o.factory.on_mouse_right_up.event()
-
-    ---@type reactive.event
-    o.factory.on_mouse_right_down.event()
-
-    ---@type reactive.event
-    o.factory.on_focus.event()
-
-    ---@type reactive.event
-    o.factory.on_blur.event()
-
-    ---@type lib.reactive.ref 当前是否聚焦
-    o.factory.is_focused.set(false)
-
-    ---@type reactive.event
-    o.factory.on_click.event()
+    o.factory.ref_field("focusable", args.focusable)
+    o.factory.ref_field("clickable", args.clickable)
+    o.factory.event_field("on_mouse_left_up")
+    o.factory.event_field("on_mouse_left_down")
+    o.factory.event_field("on_mouse_right_up")
+    o.factory.event_field("on_mouse_right_down")
+    o.factory.event_field("on_focus")
+    o.factory.event_field("on_blur")
+    o.factory.ref_field("is_focused", false)
+    o.factory.event_field("on_click")
 
     -- 注册事件
-    o.delete.add(register_mouse_event(o.handle(), "鼠标-移入", function()
+    o.factory.delete.add(register_mouse_event(o.handle(), "鼠标-移入", function()
         if not o.focusable() then
             return
         end
@@ -115,7 +92,7 @@ return function (o,args)
 
         o.on_focus()
     end))
-    o.delete.add(register_mouse_event(o.handle(), "鼠标-移出", function()
+    o.factory.delete.add(register_mouse_event(o.handle(), "鼠标-移出", function()
         if not o.focusable() then
             return
         end
@@ -125,7 +102,7 @@ return function (o,args)
 
         o.on_blur()
     end))
-    o.delete.add(register_mouse_event(o.handle(), "左键-按下", function()
+    o.factory.delete.add(register_mouse_event(o.handle(), "左键-按下", function()
         if not o.clickable() then
             return
         end
@@ -135,7 +112,7 @@ return function (o,args)
 
         o.on_mouse_left_down()
     end))
-    o.delete.add(register_mouse_event(o.handle(), "左键-抬起", function()
+    o.factory.delete.add(register_mouse_event(o.handle(), "左键-抬起", function()
         if not o.clickable() then
             return
         end
@@ -145,7 +122,7 @@ return function (o,args)
 
         o.on_mouse_left_up()
     end))
-    o.delete.add(register_mouse_event(o.handle(), "右键-按下", function()
+    o.factory.delete.add(register_mouse_event(o.handle(), "右键-按下", function()
         if not o.clickable() then
             return
         end
@@ -155,7 +132,7 @@ return function (o,args)
 
         o.on_mouse_right_down()
     end))
-    o.delete.add(register_mouse_event(o.handle(), "右键-抬起", function()
+    o.factory.delete.add(register_mouse_event(o.handle(), "右键-抬起", function()
         if not o.clickable() then
             return
         end

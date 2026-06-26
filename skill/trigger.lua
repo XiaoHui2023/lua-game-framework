@@ -12,7 +12,7 @@ M.create_trigger = function (args)
     o.factory.set_class("skill.trigger")
 
     ---@type hook.computed<skill.context> 上下文
-    o.factory.context.computed()
+    o.factory.computed_field("context")
 
     ---@type hook.computed 触发事件<hook.event>
     o.factory.field("event").computed(function ()

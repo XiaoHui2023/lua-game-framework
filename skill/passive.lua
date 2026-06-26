@@ -4,7 +4,6 @@ local M = require "framework.skill"
 ---@class skill.passive.options: skill.options
 
 -- 创建被动技能
----@param args skill.passive.options
 ---@return skill.passive
 M.create_passive = function(args)
     ---@class skill.passive: skill
@@ -15,7 +14,7 @@ M.create_passive = function(args)
     ---@param event hook.event
     ---@param on fun(...):nil
     o.bind_event = function (event,on)
-        o.delete.add(event.add(on))
+        o.factory.delete.add(event.add(on))
     end
 
     return o

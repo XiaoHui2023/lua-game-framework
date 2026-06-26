@@ -8,21 +8,12 @@ return function (o,args)
 
     ---@type framework.ui
     o = o
+    o.factory.ref_field("draggable", args.draggable)
 
-    ---@type lib.reactive.ref 是否可以拖拽
-    o.factory.draggable.set(args.draggable)
-
-    ---@type reactive.event 拖拽开始事件
-    o.factory.on_drag_start.event()
-
-    ---@type reactive.event 拖拽中事件，参数为窗口百分比位置
-    o.factory.on_drag.event()
-
-    ---@type reactive.event 拖拽结束事件
-    o.factory.on_drag_end.event()
-
-    ---@type lib.reactive.ref 当前是否拖拽
-    o.factory.is_dragging.set(false)
+    o.factory.event_field("on_drag_start")
+    o.factory.event_field("on_drag")
+    o.factory.event_field("on_drag_end")
+    o.factory.ref_field("is_dragging", false)
 
     local unbind_move = nil
 
@@ -43,11 +34,10 @@ return function (o,args)
     -- 按下绑定拖拽
     o.on_mouse_left_down.add(
         function()
-            -- 未开启拖拽时跳过。
+            clear_move()
             if not o.draggable() then
                 return
             end
-            -- 不可见时跳过拖拽。
             if not o.visible() then
                 return
             end    
@@ -72,5 +62,5 @@ return function (o,args)
         end
     )
 
-    o.delete.add(clear_move)
+    o.factory.delete.add(clear_move)
 end

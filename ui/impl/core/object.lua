@@ -15,7 +15,7 @@ local function apply_default_options(args)
 end
 
 ---@param args framework.ui.object_config
----@return framework.ui ui 新建的 UI 响应式对象空壳
+---@return framework.ui ui Newly created reactive UI shell.
 local function create_ui_shell(args)
     local parent = args.parent
     args.parent = nil
@@ -27,19 +27,19 @@ local function create_ui_shell(args)
     return ui
 end
 
--- 注册 UI 创建流水线：先创建对象空壳，再按“字段 -> 逻辑”的顺序完成装配。
+-- Register the UI creation pipeline: shell, fields, then logic.
 apis.CREATE_OBJECT(function(api)
     local args = api.options or {}
     apply_default_options(args)
 
     local ui = create_ui_shell(args)
 
-    -- 字段阶段必须先运行，后续逻辑阶段会直接读取这些响应式字段。
+    -- Field setup must run before logic setup.
     apis.SETUP_REACTIVE_FIELDS:emit({
         ui = ui,
         options = args,
     })
-    -- 逻辑阶段只绑定监听、生命周期和运行时同步，不再创建基础字段。
+    -- Logic setup binds listeners, lifecycle, and runtime sync.
     apis.SETUP_REACTIVE_LOGIC:emit({
         ui = ui,
         options = args,
