@@ -45,8 +45,6 @@ local function detach_effect(effect, skill)
         effect.on_detach(skill)
     end
 end
-
-        effect.on_detach(skill)
 M.new = function(args)
     args = args or {}
     args.context = args.context or {}
@@ -139,6 +137,7 @@ require ".passive"
 require ".active"
 require ".trigger"
 require ".target"
+require ".search"
 require ".action"
 
 return M

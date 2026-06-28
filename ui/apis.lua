@@ -15,8 +15,19 @@ require "framework.ui.types"
 ---@field ON_MOUSE_EVENT lib.callback.api 绑定 UI 鼠标事件
 ---@field SET_IMAGE lib.callback.api 设置 UI 图片资源
 ---@field SET_IMAGE_COLOR lib.callback.api 设置 UI 图片颜色
+---@field SET_TEXT_COLOR lib.callback.api 设置 UI 文本颜色
+---@field SET_TEXT_OVER_LENGTH lib.callback.api 设置 UI 文本超长处理
 ---@field SET_ALPHA lib.callback.api 设置 UI 透明度
 ---@field GET_WINDOW_SIZE lib.callback.api 获取窗口真实尺寸
+---@field GET_SCRIPT_POSITION lib.callback.api 获取脚本计算的 UI 位置
+---@field GET_SCRIPT_SIZE lib.callback.api 获取脚本计算的 UI 尺寸
+---@field GET_SCRIPT_RECT lib.callback.api 获取脚本计算的 UI 矩形
+---@field GET_ENGINE_RELATIVE_POSITION lib.callback.api 从引擎读取 UI 相对位置
+---@field GET_ENGINE_ABSOLUTE_POSITION lib.callback.api 从引擎读取 UI 绝对位置
+---@field GET_ENGINE_SIZE lib.callback.api 从引擎读取 UI 设定尺寸
+---@field GET_ENGINE_REAL_SIZE lib.callback.api 从引擎读取 UI 真实尺寸
+---@field GET_ENGINE_RECT lib.callback.api 从引擎读取 UI 绝对矩形
+---@field GET_ENGINE_REAL_RECT lib.callback.api 从引擎读取 UI 真实绝对矩形
 ---@field SET_SIZE lib.callback.api 设置 UI 尺寸
 ---@field SET_FONT_SIZE lib.callback.api 设置字体尺寸并写回实际值
 ---@field SET_TEXT_ALIGNMENT lib.callback.api 设置文本排列方式
@@ -220,6 +231,19 @@ M.SET_IMAGE = callback.api({ name = "ui.SET_IMAGE" })
 ---@type lib.callback.api
 M.SET_IMAGE_COLOR = callback.api({ name = "ui.SET_IMAGE_COLOR" })
 
+---@class framework.ui.api.SetTextColor: lib.callback.instance
+---@field ui framework.ui 要设置文本颜色的 UI 对象
+---@field color lib.color|table 文本颜色
+---@type lib.callback.api
+M.SET_TEXT_COLOR = callback.api({ name = "ui.SET_TEXT_COLOR" })
+
+---@class framework.ui.api.SetTextOverLength: lib.callback.instance
+---@field handle framework.ui.handle 要设置文本超长处理的控件句柄
+---@field mode any 超长处理模式
+---@field min_size? number 自适应最小字号
+---@type lib.callback.api
+M.SET_TEXT_OVER_LENGTH = callback.api({ name = "ui.SET_TEXT_OVER_LENGTH" })
+
 ---@class framework.ui.api.SetAlpha: lib.callback.instance
 ---@field handle framework.ui.handle 要设置透明度的控件句柄
 ---@field alpha number 透明度，范围 0 到 255
@@ -231,6 +255,84 @@ M.SET_ALPHA = callback.api({ name = "ui.SET_ALPHA" })
 ---@field height integer? 运行时写回的窗口高度
 ---@type lib.callback.api
 M.GET_WINDOW_SIZE = callback.api({ name = "ui.GET_WINDOW_SIZE" })
+
+---@class framework.ui.api.GetScriptPosition: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field x number? 脚本计算的 X 坐标
+---@field y number? 脚本计算的 Y 坐标
+---@type lib.callback.api
+M.GET_SCRIPT_POSITION = callback.api({ name = "ui.GET_SCRIPT_POSITION" })
+
+---@class framework.ui.api.GetScriptSize: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field width number? 脚本计算的宽度
+---@field height number? 脚本计算的高度
+---@type lib.callback.api
+M.GET_SCRIPT_SIZE = callback.api({ name = "ui.GET_SCRIPT_SIZE" })
+
+---@class framework.ui.api.GetScriptRect: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field x number? 脚本计算的 X 坐标
+---@field y number? 脚本计算的 Y 坐标
+---@field width number? 脚本计算的宽度
+---@field height number? 脚本计算的高度
+---@field rect framework.ui.rect? 脚本计算的矩形
+---@type lib.callback.api
+M.GET_SCRIPT_RECT = callback.api({ name = "ui.GET_SCRIPT_RECT" })
+
+---@class framework.ui.api.GetEngineRelativePosition: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field available boolean? 引擎是否提供该读取能力
+---@field x number? 引擎读取的相对 X 坐标
+---@field y number? 引擎读取的相对 Y 坐标
+---@type lib.callback.api
+M.GET_ENGINE_RELATIVE_POSITION = callback.api({ name = "ui.GET_ENGINE_RELATIVE_POSITION" })
+
+---@class framework.ui.api.GetEngineAbsolutePosition: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field available boolean? 引擎是否提供该读取能力
+---@field x number? 引擎读取的绝对 X 坐标
+---@field y number? 引擎读取的绝对 Y 坐标
+---@type lib.callback.api
+M.GET_ENGINE_ABSOLUTE_POSITION = callback.api({ name = "ui.GET_ENGINE_ABSOLUTE_POSITION" })
+
+---@class framework.ui.api.GetEngineSize: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field available boolean? 引擎是否提供该读取能力
+---@field width number? 引擎读取的宽度
+---@field height number? 引擎读取的高度
+---@type lib.callback.api
+M.GET_ENGINE_SIZE = callback.api({ name = "ui.GET_ENGINE_SIZE" })
+
+---@class framework.ui.api.GetEngineRealSize: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field available boolean? 引擎是否提供该读取能力
+---@field width number? 引擎读取的真实宽度
+---@field height number? 引擎读取的真实高度
+---@type lib.callback.api
+M.GET_ENGINE_REAL_SIZE = callback.api({ name = "ui.GET_ENGINE_REAL_SIZE" })
+
+---@class framework.ui.api.GetEngineRect: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field available boolean? 引擎是否提供该读取能力
+---@field x number? 引擎读取的绝对 X 坐标
+---@field y number? 引擎读取的绝对 Y 坐标
+---@field width number? 引擎读取的宽度
+---@field height number? 引擎读取的高度
+---@field rect framework.ui.rect? 引擎读取的绝对矩形
+---@type lib.callback.api
+M.GET_ENGINE_RECT = callback.api({ name = "ui.GET_ENGINE_RECT" })
+
+---@class framework.ui.api.GetEngineRealRect: lib.callback.instance
+---@field ui framework.ui 要查询的 UI 对象
+---@field available boolean? 引擎是否提供该读取能力
+---@field x number? 引擎读取的绝对 X 坐标
+---@field y number? 引擎读取的绝对 Y 坐标
+---@field width number? 引擎读取的真实宽度
+---@field height number? 引擎读取的真实高度
+---@field rect framework.ui.rect? 引擎读取的真实绝对矩形
+---@type lib.callback.api
+M.GET_ENGINE_REAL_RECT = callback.api({ name = "ui.GET_ENGINE_REAL_RECT" })
 
 ---@class framework.ui.api.SetSize: lib.callback.instance
 ---@field ui framework.ui 要设置尺寸的 UI 对象
@@ -294,31 +396,5 @@ M.SET_PROGRESS = callback.api({ name = "ui.SET_PROGRESS" })
 ---@field rotation number 旋转角度
 ---@type lib.callback.api
 M.SET_ROTATION = callback.api({ name = "ui.SET_ROTATION" })
-
----@class framework.ui.api.SetDebug: lib.callback.instance
----@field enabled boolean Whether UI layout diagnostics are enabled.
----@type lib.callback.api
-M.SET_DEBUG = callback.api({ name = "ui.SET_DEBUG" })
-
----@class framework.ui.api.GetLayoutStats: lib.callback.instance
----@field root? framework.ui Optional root UI. When omitted, all known roots are inspected.
----@field stats framework.ui.layout.stats? Layout statistics written by impl.
----@type lib.callback.api
-M.GET_LAYOUT_STATS = callback.api({ name = "ui.GET_LAYOUT_STATS" })
-
----@class framework.ui.api.DumpLayoutTree: lib.callback.instance
----@field root? framework.ui Optional root UI. When omitted, all known roots are inspected.
----@field force? boolean Dump even when diagnostics are disabled.
----@field print? boolean Whether to send the dump to runtime logging. Defaults to true.
----@field lines string[]? Layout tree lines written by impl.
----@field stats framework.ui.layout.stats? Layout statistics written by impl.
----@type lib.callback.api
-M.DUMP_LAYOUT_TREE = callback.api({ name = "ui.DUMP_LAYOUT_TREE" })
-
----@class framework.ui.api.WriteDebugInfo: lib.callback.instance
----@field level? "debug"|"info"|"warn"|"error" Runtime log level. Defaults to debug.
----@field message string Diagnostic message.
----@type lib.callback.api
-M.WRITE_DEBUG_INFO = callback.api({ name = "ui.WRITE_DEBUG_INFO" })
 
 return M

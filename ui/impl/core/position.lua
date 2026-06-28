@@ -10,6 +10,7 @@ return function(o, args)
     local initial_position = args.position or { x = 0.5, y = 0.5 }
     o.factory.ref_field("relative_position", initial_position)
     o.factory.ref_field("pixel_position", { x = 0, y = 0 })
+    o.factory.ref_field("is_layout_managed", false)
 
     local is_syncing_position = false
 

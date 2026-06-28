@@ -15,6 +15,7 @@ apis.CREATE_TEXT(function(api)
     args.align = args.align or settings.DEFAULT_TEXT_ALIGN
     args.type = args.type or "text"
     args.font = args.font or settings.DEFAULT_TEXT_FONT
+    args.over_length = args.over_length or 3
     args.size = args.size or { width = "auto", height = "auto" }
 
     local create_api = apis.CREATE_OBJECT({ options = args })
@@ -28,6 +29,7 @@ apis.CREATE_TEXT(function(api)
     o.factory.ref_field("text", args.text)
     o.factory.ref_field("align", args.align)
     o.factory.ref_field("outline", args.outline)
+    o.factory.ref_field("over_length", args.over_length)
 
     local render_text = o.factory.computed_field("render_text", function()
         local constraints = o.constraints()
@@ -53,6 +55,9 @@ apis.CREATE_TEXT(function(api)
     end)
     o.outline.on_change.add(function(outline)
         apis.SET_TEXT_OUTLINE({ handle = o.handle(), outline = outline })
+    end)
+    o.over_length.on_change.add(function(over_length)
+        apis.SET_TEXT_OVER_LENGTH({ handle = o.handle(), mode = over_length })
     end)
 
     render_text.on_change.add(function(render_result)

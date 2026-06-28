@@ -45,6 +45,10 @@ return function(o)
         if not color then
             return
         end
-        apis.SET_IMAGE_COLOR({ ui = o, color = color })
+        if o.type == "text" then
+            apis.SET_TEXT_COLOR({ ui = o, color = color })
+        else
+            apis.SET_IMAGE_COLOR({ ui = o, color = color })
+        end
     end)
 end

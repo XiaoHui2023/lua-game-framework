@@ -67,7 +67,7 @@ return function (o,args)
             context = context
         })
 
-        result.is_lethal = result.damage >= target.health
+        result.is_lethal = result.damage >= target.health()
         result.target = context.target
         result.source = context.source
         result.inflictor = context.inflictor
@@ -87,7 +87,7 @@ return function (o,args)
         local damage = result.damage
 
         if result.has_damage then
-            target.set_health(target.health - damage)
+            target.set_health(target.health() - damage)
 
             -- 触发造成伤害事件
             o.on_damage_dealt(result)
@@ -106,6 +106,7 @@ return function (o,args)
     o.set_health = function(health)
         local old_health = o.health()
         o.health.set(health)
+        o.on_health_changed(o.health(), old_health)
     end
 
 end

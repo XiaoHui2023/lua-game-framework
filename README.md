@@ -57,16 +57,20 @@ bindings use `engine.y3` and `engine.GameAPI`.
 appearance/     appearance modifiers and rendering boundary
 camera/         camera APIs, defaults, and state
 chat/           chat input, history, and message events
+damage/         damage resolution phases, modifiers, and effects
 event/          host event abstraction
 faction/        faction objects and relation model
 game/           game-level lifecycle APIs and defaults
 lighting/       lighting objects
 log/            log types and facade
+motion/         motion data, modifiers, and renderer boundary
 player/         player objects, lookup, and default behaviors
 projectile/     projectile objects and behavior groups
 skill/          skill composition model
 sound/          sound objects and runtime APIs
+spatial/        spatial objects, groups, collision queries, and spatial indexes
 sync/           per-channel sync messages
+target/         targetable objects, target groups, filters, and search
 terrain/        terrain painting APIs
 timer/          loop, delay, and reactive timer driver
 ui/             UI object model, frame creation, layout, and events

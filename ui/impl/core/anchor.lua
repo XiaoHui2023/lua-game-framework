@@ -183,6 +183,10 @@ return function(o, args)
 
     ---@type reactive.computed<framework.ui.position>
     local render_position = o.factory.computed_field("render_position", function()
+            if o.is_layout_managed and o.is_layout_managed() then
+                return o.pixel_position()
+            end
+
             ---@type framework.ui.anchor
             local anchor = o.anchor()
 
@@ -193,6 +197,9 @@ return function(o, args)
     end)
 
     render_position.on_update.add(function(position)
+        if o.is_layout_managed and o.is_layout_managed() then
+            return
+        end
         o.pixel_position.set(position)
     end)
 

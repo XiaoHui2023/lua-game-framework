@@ -17,6 +17,9 @@ end
 local function center_child(slot, child)
     local position = slot.pixel_position()
     local size = child.measured_size()
+    if child.is_layout_managed then
+        child.is_layout_managed.set(true)
+    end
     child.constraints.set(child_constraints(slot))
     child.pixel_position.set({ x = position.x, y = position.y })
     child.layout_rect.set(length.rect(position.x, position.y, size.width, size.height))
@@ -43,6 +46,15 @@ apis.CREATE_SLOT(function(api)
     assert(void_api.ui ~= nil, "framework.ui.CREATE_SLOT requires CREATE_VOID result")
     ---@type framework.ui.slot
     local o = void_api.ui
+    local layout_children = {}
+    local content_children = {}
+
+    local function add_child(child, include_in_content)
+        layout_children[#layout_children + 1] = child
+        if include_in_content ~= false then
+            content_children[#content_children + 1] = child
+        end
+    end
 
     if args.background.enable then
         local image_api = apis.CREATE_IMAGE({
@@ -51,8 +63,12 @@ apis.CREATE_SLOT(function(api)
                 parent = o.factory,
             }),
         })
-        o.background = image_api.ui
-        o.background.include_in_content = args.background.include_in_content ~= false
+        assert(image_api.ui ~= nil, "framework.ui.CREATE_SLOT requires CREATE_IMAGE result for background")
+        local background = image_api.ui
+        ---@cast background framework.ui.slot.background
+        background.include_in_content = args.background.include_in_content ~= false
+        o.background = background
+        add_child(background, args.background.include_in_content)
     end
 
     if args.progress.enable then
@@ -62,8 +78,12 @@ apis.CREATE_SLOT(function(api)
                 parent = o.factory,
             }),
         })
-        o.progress = progress_api.ui
-        o.progress.include_in_content = args.progress.include_in_content ~= false
+        assert(progress_api.ui ~= nil, "framework.ui.CREATE_SLOT requires CREATE_PROGRESS result")
+        local progress = progress_api.ui
+        ---@cast progress framework.ui.slot.progress
+        progress.include_in_content = args.progress.include_in_content ~= false
+        o.progress = progress
+        add_child(progress, args.progress.include_in_content)
     end
 
     if args.image.enable then
@@ -73,8 +93,12 @@ apis.CREATE_SLOT(function(api)
                 parent = o.factory,
             }),
         })
-        o.image = image_api.ui
-        o.image.include_in_content = args.image.include_in_content ~= false
+        assert(image_api.ui ~= nil, "framework.ui.CREATE_SLOT requires CREATE_IMAGE result")
+        local image = image_api.ui
+        ---@cast image framework.ui.slot.image
+        image.include_in_content = args.image.include_in_content ~= false
+        o.image = image
+        add_child(image, args.image.include_in_content)
     end
 
     if args.text.enable then
@@ -84,27 +108,27 @@ apis.CREATE_SLOT(function(api)
                 parent = o.factory,
             }),
         })
-        o.text = text_api.ui
-        o.text.include_in_content = args.text.include_in_content ~= false
+        assert(text_api.ui ~= nil, "framework.ui.CREATE_SLOT requires CREATE_TEXT result")
+        local text = text_api.ui
+        ---@cast text framework.ui.slot.text
+        text.include_in_content = args.text.include_in_content ~= false
+        o.text = text
+        add_child(text, args.text.include_in_content)
     end
 
     o.content_size.compute(function()
         local max_width, max_height = 0, 0
-        for _, child in ipairs({ o.background, o.progress, o.image, o.text }) do
-            if child and child.include_in_content ~= false then
-                local size = child.measured_size()
-                max_width = math.max(max_width, size.width)
-                max_height = math.max(max_height, size.height)
-            end
+        for _, child in ipairs(content_children) do
+            local size = child.measured_size()
+            max_width = math.max(max_width, size.width)
+            max_height = math.max(max_height, size.height)
         end
         return { width = max_width, height = max_height }
     end)
 
     local function refresh_children()
-        for _, child in ipairs({ o.background, o.progress, o.image, o.text }) do
-            if child then
-                center_child(o, child)
-            end
+        for _, child in ipairs(layout_children) do
+            center_child(o, child)
         end
     end
 

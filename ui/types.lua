@@ -60,11 +60,11 @@
 ---@field font_size? number
 ---@field font? any
 ---@field outline? framework.ui.text.outline|false
+---@field over_length? any
 
 ---@class framework.ui.state
 ---@field HANDLE_TO_OBJECT table<framework.ui.handle, framework.ui>
 ---@field event_registry framework.ui.event.registry
----@field DEBUG boolean
 
 ---@class framework.ui.module
 ---@field settings framework.ui.settings
@@ -112,6 +112,7 @@
 ---@field layout_scale lib.reactive.ref
 ---@field relative_position lib.reactive.ref
 ---@field pixel_position lib.reactive.ref
+---@field is_layout_managed lib.reactive.ref<boolean>
 ---@field anchor lib.reactive.ref
 ---@field focusable lib.reactive.ref
 ---@field clickable lib.reactive.ref
@@ -158,7 +159,10 @@
 ---@field text lib.reactive.ref
 ---@field align lib.reactive.ref
 ---@field outline lib.reactive.ref
+---@field over_length lib.reactive.ref
 ---@field render_text lib.reactive.computed
+
+---@class framework.ui.text.options: framework.ui.object_config
 
 ---@class framework.ui.progress: framework.ui
 ---@class framework.ui.button: framework.ui
@@ -215,11 +219,41 @@
 ---@class framework.ui.container.options: framework.ui.object_config
 ---@field layout? framework.ui.container.layout.options
 
+---@class framework.ui.slot.progress: framework.ui.progress
+---@field include_in_content boolean 是否计入 slot 的内容尺寸
+
+---@class framework.ui.slot.image: framework.ui.image
+---@field include_in_content boolean 是否计入 slot 的内容尺寸
+
+---@class framework.ui.slot.background: framework.ui.image
+---@field include_in_content boolean 是否计入 slot 的内容尺寸
+
+---@class framework.ui.slot.text: framework.ui.text
+---@field include_in_content boolean 是否计入 slot 的内容尺寸
+
+---@class framework.ui.slot.child.options: framework.ui.object_config
+---@field enable? boolean 是否创建该子控件
+---@field include_in_content? boolean 是否计入 slot 的内容尺寸
+
+---@class framework.ui.slot.progress.options: framework.ui.slot.child.options
+
+---@class framework.ui.slot.image.options: framework.ui.slot.child.options
+
+---@class framework.ui.slot.background.options: framework.ui.slot.child.options
+
+---@class framework.ui.slot.text.options: framework.ui.slot.child.options
+
+---@class framework.ui.slot.options: framework.ui.object_config
+---@field progress? framework.ui.slot.progress.options 进度子控件选项
+---@field image? framework.ui.slot.image.options 图片子控件选项
+---@field background? framework.ui.slot.background.options 背景子控件选项
+---@field text? framework.ui.slot.text.options 文本子控件选项
+
 ---@class framework.ui.slot: framework.ui.void
----@field progress? framework.ui.progress
----@field image? framework.ui.image
----@field background? framework.ui.image
----@field text? framework.ui.text
+---@field progress? framework.ui.slot.progress 进度子控件
+---@field image? framework.ui.slot.image 图片子控件
+---@field background? framework.ui.slot.background 背景子控件
+---@field text? framework.ui.slot.text 文本子控件
 
 ---@alias framework.ui.type
 ---| "void"
@@ -289,20 +323,5 @@
 ---@field text string
 ---@field width number
 ---@field height number
-
----@class framework.ui.layout.stats
----@field debug_enabled boolean
----@field total_count integer
----@field root_count integer
----@field visible_count integer
----@field hidden_count integer
----@field container_count integer
----@field content_sized_count integer
----@field zero_size_count integer
----@field max_depth integer
----@field total_area number
----@field max_area number
----@field largest_ui_name string
----@field by_type table<string, integer>
 
 return true

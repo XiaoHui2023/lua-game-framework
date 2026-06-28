@@ -190,6 +190,11 @@ apis.CREATE_CONTAINER(function(api)
     local function do_refresh_layout()
         set_child_constraints()
         local layout_type = o.layout.type()
+        get_widgets().for_each(function(widget)
+            if widget.is_layout_managed then
+                widget.is_layout_managed.set(layout_type ~= "none")
+            end
+        end)
         if layout_type == "stack" then
             layout_stack()
         elseif layout_type == "overlay" then
@@ -233,6 +238,9 @@ apis.CREATE_CONTAINER(function(api)
         if remove_widget then
             remove_widget()
             widget_removers[ui] = nil
+        end
+        if ui.is_layout_managed then
+            ui.is_layout_managed.set(false)
         end
         local unlock = hidden_widget_unlocks[ui]
         if unlock then

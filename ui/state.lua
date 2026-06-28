@@ -9,6 +9,4 @@ M.HANDLE_TO_OBJECT = {}
 ---@type framework.ui.event.registry
 M.event_registry = {}
 
-M.DEBUG = false
-
 return M
