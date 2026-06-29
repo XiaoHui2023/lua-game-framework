@@ -4,8 +4,9 @@
 ---@field DEFAULT_COOLDOWN_TIME_OUT number
 ---@field DEFAULT_COOLDOWN_ALPHA_UPPER_THRESHOLD number
 ---@field DEFAULT_COOLDOWN_ALPHA_LOWER_THRESHOLD number
-local M = require "framework.ui"
+local M = {}
 local factory = require("lib.reactive").factory
+local settings = require "framework.ui.settings"
 ---@type framework.ui.components.animation.cooldown.api
 local cooldown_apis = require "framework.ui.components.animation.cooldown_api"
 
@@ -28,8 +29,8 @@ M.DEFAULT_COOLDOWN_ALPHA_LOWER_THRESHOLD = 0.3
 ---@return framework.ui.animation.cooldown
 M.cooldown = function(args)
     args = args or {}
-    args.art_ready = args.art_ready or M.DEFAULT_COOLDOWN_READY_IMAGE
-    args.art_progress = args.art_progress or M.DEFAULT_COOLDOWN_PROGRESS_IMAGE
+    args.art_ready = args.art_ready or M.DEFAULT_COOLDOWN_READY_IMAGE or settings.DEFAULT_COOLDOWN_READY_IMAGE
+    args.art_progress = args.art_progress or M.DEFAULT_COOLDOWN_PROGRESS_IMAGE or settings.DEFAULT_COOLDOWN_PROGRESS_IMAGE
     args.time_out = args.time_out or M.DEFAULT_COOLDOWN_TIME_OUT
     args.alpha_upper_threshold = args.alpha_upper_threshold or M.DEFAULT_COOLDOWN_ALPHA_UPPER_THRESHOLD
     args.alpha_lower_threshold = args.alpha_lower_threshold or M.DEFAULT_COOLDOWN_ALPHA_LOWER_THRESHOLD
@@ -63,3 +64,5 @@ M.cooldown = function(args)
 
     return o
 end
+
+return M

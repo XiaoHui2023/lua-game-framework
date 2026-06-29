@@ -12,11 +12,11 @@ event_apis.ON_UNIT_DAMAGE_TAKEN(function (api)
 end)
 ---@class unit.options
 ---@field health number? 初始生命�?
----@class unit.combat.context: lib.combat.context
+---@class unit.combat.context: framework.damage.context
 ---@field target unit 目标
 ---@field source? unit 伤害来源单位，省略时使用攻击�?
 ---@field inflictor? object 实际施加伤害的对象，省略时使用来源单�?
----@class unit.combat.result: lib.combat.result
+---@class unit.combat.result: framework.damage.result
 ---@field target unit 目标
 ---@field source unit 来源
 ---@field inflictor object 施加者（中介或来源本身）
@@ -45,11 +45,11 @@ return function (o,args)
     o.factory.event_field("on_crowd_controlled")
 ---@type hook.event 生命值变化事件（新生命值，旧生命值）
     o.factory.event_field("on_health_changed")
----@type lib.combat
-    local combat = require "lib.combat"()
----@type lib.combat.attacker
+---@type framework.damage
+    local combat = require "framework.damage"()
+---@type framework.damage.source_side
     o.combat_attacker = combat.attacker
----@type lib.combat.defender
+---@type framework.damage.target_side
     o.combat_defender = combat.defender
 
     -- 打击
@@ -60,12 +60,10 @@ return function (o,args)
 
         context.source = context.source or o
         context.inflictor = context.inflictor or context.source
+        context.damage = context.damage or o.damage()
+        context.target = target
 ---@class unit.combat.result
-        local result = combat.run({
-            attacker = o.combat_attacker,
-            defender = target.combat_defender,
-            context = context
-        })
+        local result = combat.run(context)
 
         result.is_lethal = result.damage >= target.health()
         result.target = context.target
@@ -99,7 +97,7 @@ return function (o,args)
     -- 应用控制效果
 ---@param result unit.combat.result 结果
     o.apply_cc = function(result)
-        if result.has_cc then
+        if result.has_cc or result.has_control then
             o.on_crowd_controlled(result)
         end
     end

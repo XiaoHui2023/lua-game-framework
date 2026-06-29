@@ -36,7 +36,7 @@ return function (o,args)
     o = o
 ---@type hook.set 模型
     o.factory.ref_field("model", args.model)
----@type hook.set 透明�?    o.factory.ref_field("alpha", args.alpha)
+    o.factory.ref_field("alpha", args.alpha)
 ---@type hook.set 动画速度
     o.factory.ref_field("animation_speed", args.animation_speed)
 ---@type hook.set 颜色使能
@@ -53,9 +53,9 @@ return function (o,args)
     o.factory.ref_field("outline", args.outline)
 ---@type hook.set 缩放
     o.factory.ref_field("scale", args.scale)
----@type hook.set X 轴缩�?    o.factory.ref_field("scale_x", args.scale_x)
----@type hook.set Y 轴缩�?    o.factory.ref_field("scale_y", args.scale_y)
----@type hook.set Z 轴缩�?    o.factory.ref_field("scale_z", args.scale_z)
+    o.factory.ref_field("scale_x", args.scale_x)
+    o.factory.ref_field("scale_y", args.scale_y)
+    o.factory.ref_field("scale_z", args.scale_z)
 
     -- 重载设置模型
     o.model.wrap_set(function(model)
